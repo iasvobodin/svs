@@ -9,6 +9,7 @@ import { terser } from 'rollup-plugin-terser';
 import config from 'sapper/config/rollup.js';
 import pkg from './package.json';
 import json from '@rollup/plugin-json';
+import glslify from 'rollup-plugin-glslify';
 
 const mode = process.env.NODE_ENV;
 const dev = mode === 'development';
@@ -24,6 +25,7 @@ export default {
 		input: config.client.input(),
 		output: config.client.output(),
 		plugins: [
+			glslify(),
 			json(),
 			replace({
 				'process.browser': true,
@@ -74,6 +76,7 @@ export default {
 		input: config.server.input(),
 		output: config.server.output(),
 		plugins: [
+			glslify(),
 			json(),
 			replace({
 				'process.browser': false,
