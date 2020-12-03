@@ -76,7 +76,7 @@ export default {
 		input: config.server.input(),
 		output: config.server.output(),
 		plugins: [
-			glslify(),
+			// glslify(),
 			json(),
 			replace({
 				'process.browser': false,

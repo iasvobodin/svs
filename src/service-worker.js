@@ -16,7 +16,6 @@ self.addEventListener('install', event => {
 			.then(cache => cache.addAll(to_cache))
 			.then(() => {
 				self.skipWaiting();
-				console.log(ff);
 			})
 	);
 });
