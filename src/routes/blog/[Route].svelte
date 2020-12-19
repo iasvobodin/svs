@@ -19,7 +19,7 @@
   let height = 1000;
   let layout,
     gallery,
-    visible = false;
+    visible = true;
   async function getJL(w, h, text) {
     layout = justifiedLayout([...text.Aspect], {
       fullWidthBreakoutRowCadence: 2,

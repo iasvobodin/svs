@@ -11,7 +11,16 @@
 </script>
 
 <script>
+  import { getContext, beforeUpdate, tick } from "svelte";
+  const cc = getContext("curtains");
+  // beforeUpdate(async () => {
+  //   console.log(cc, "компонент сейчас будет обновляться");
+  //   await tick();
+  //   console.log(cc, "компонент обновился");
+  // });
+  console.log(cc);
   export let posts;
+  // console.log(current, "from index");
 </script>
 
 <style>
