@@ -1,5 +1,5 @@
 <script>
-    import Canvas from "../../components/canvas.svelte";
+    import Canvas2 from "../../components/canvas2.svelte";
     export let segment;
 </script>
 
@@ -13,6 +13,6 @@
 </style>
 
 <div class="canvas">
-    <Canvas bind:page={segment} />
+    <Canvas2 bind:page={segment} />
 </div>
 <slot />

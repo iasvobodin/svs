@@ -1,4 +1,4 @@
-<!--<script context="module">
+<script context="module">
   export function preload() {
     return this.fetch(`/db/Photoseries.json`)
       .then((r) => r.json())
@@ -104,4 +104,4 @@
       </picture>
     {/each}
   </div>
-</div> -->
+</div>

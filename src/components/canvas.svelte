@@ -25,6 +25,7 @@
 
         const planeElement = document.getElementsByClassName("plane");
         for (let i = 0; i < planeElement.length; i++) {
+            console.log("333");
             const params = {
                 vertexShader: vertex,
                 fragmentShader: fragment,
