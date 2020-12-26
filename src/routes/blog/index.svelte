@@ -6,11 +6,14 @@
         return { photoseries };
       });
   }
-����'�r��z{</script>-->
-<!--<script>
+</script>
+
+<script>
   import photoseries from "../../../static/db/Photoseries.json";
   // export let photoseries;
-</script><style>
+</script>
+
+<style>
   :root {
     --margin__wrapper: calc((100vh - var(--plane__height)) / 2);
     --title__height: calc(14px + 4vw);
@@ -75,7 +78,9 @@
     object-fit: cover;
     object-position: center;
   }
-</style><div class="wrapper">
+</style>
+
+<div class="wrapper">
   <div
     data-id="index"
     data-route="seriya.Route"
