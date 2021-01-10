@@ -1,28 +1,22 @@
-<script context="module">
-    export const curtains = {};
-</script>
-
+<!--<script context="module" ✂prettier:content✂="CiAgICBsZXQgcGxhbmVzID0gW107Cg==" ✂prettier:content✂="e30=" ✂prettier:content✂="e30=" ✂prettier:content✂="e30=" ✂prettier:content✂="e30=" ✂prettier:content✂="e30=" ✂prettier:content✂="e30=">{}</script>-->
 <script>
     import { setContext } from "svelte";
-    import { Curtains, Plane, Vec3 } from "curtainsjs/src/index.mjs";
-    import { onMount } from "svelte";
-    import vertex from "./../../assets/photoday.vert";
-    import fragment from "./../../assets/photoday.frag";
-    // let current = "module";
-    let canvas;
-    setContext("curtains", curtains.cc);
-    function initCurtains() {
-        curtains.cc = new Curtains({
-            container: canvas,
-            pixelRatio: Math.min(1.5, window.devicePixelRatio),
-        });
-    }
-    onMount(() => {
-        initCurtains();
-    });
+
+    import Canvas2 from "../../components/canvas2.svelte";
+    export let segment;
+    setContext("planes", []);
+    setContext("curtains", {});
 </script>
 
-<h1>Настройки</h1>
-<div bind:this={canvas} class="webgl" />
+<style>
+    .canvas {
+        height: 100vh;
+    }
+</style>
 
-<slot />
+<div class="canvas">
+    <Canvas2 bind:pageslug={segment} />
+</div>
+<div class="route">
+    <slot />
+</div>

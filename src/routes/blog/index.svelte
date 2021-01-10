@@ -1,47 +1,10 @@
-<script context="module">
-  export function preload() {
-    // return this.fetch(`blog.json`).then(r => r.json()).then(posts => {
-    // 	return { posts };
-    return this.fetch(`/db/Photoseries.json`)
-      .then((r) => r.json())
-      .then((posts) => {
-        return { posts };
-      });
-  }
-</script>
-
+<!--<script context="module" ✂prettier:content✂="CiAgZXhwb3J0IGZ1bmN0aW9uIHByZWxvYWQoKSB7CiAgICByZXR1cm4gdGhpcy5mZXRjaChgL2RiL1Bob3Rvc2VyaWVzLmpzb25gKQogICAgICAudGhlbigocikgPT4gci5qc29uKCkpCiAgICAgIC50aGVuKChwaG90b3NlcmllcykgPT4gewogICAgICAgIHJldHVybiB7IHBob3Rvc2VyaWVzIH07CiAgICAgIH0pOwogIH0K" ✂prettier:content✂="e30=" ✂prettier:content✂="e30=" ✂prettier:content✂="e30=" ✂prettier:content✂="e30=" ✂prettier:content✂="e30=" ✂prettier:content✂="e30=" ✂prettier:content✂="e30=" ✂prettier:content✂="e30=" ✂prettier:content✂="e30=" ✂prettier:content✂="e30=" ✂prettier:content✂="e30=" ✂prettier:content✂="e30=">{}</script>-->
 <script>
-  import { getContext, beforeUpdate, tick } from "svelte";
-  const cc = getContext("curtains");
-  // beforeUpdate(async () => {
-  //   console.log(cc, "компонент сейчас будет обновляться");
-  //   await tick();
-  //   console.log(cc, "компонент обновился");
-  // });
-  console.log(cc);
-  export let posts;
-  // console.log(current, "from index");
+  import { fly } from "svelte/transition";
+  import { leaveIndex } from "store.js";
 </script>
 
-<style>
-  ul {
-    margin: 0 0 1em 0;
-    line-height: 1.5;
-  }
-</style>
-
-<svelte:head>
-  <title>Blog</title>
-</svelte:head>
-
-<h1>Recent posts</h1>
-
-<ul>
-  {#each posts as post}
-    <!-- we're using the non-standard `rel=prefetch` attribute to
-				tell Sapper to load the data for the page as soon as
-				the user hovers over the link or taps it, instead of
-				waiting for the 'click' event -->
-    <li><a rel="prefetch" href="blog/{post.Route}">{post.Title}</a></li>
-  {/each}
-</ul>
+<p
+  style="height: 0px; margin: 0px"
+  transition:fly
+  on:outrostart={() => leaveIndex.set(true)} />

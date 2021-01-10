@@ -1,16 +1,5 @@
-<script>
-	import Nav from "../components/Nav.svelte";
-	import Canvas from "../components/canvas.svelte";
-	export let segment;
-</script>
-
+<!--<script ✂prettier:content✂="CglpbXBvcnQgTmF2IGZyb20gIi4uL2NvbXBvbmVudHMvTmF2LnN2ZWx0ZSI7CglleHBvcnQgbGV0IHNlZ21lbnQ7Cg==">{}</script>-->
 <style>
-	.canvas {
-		position: fixed;
-		width: 100vw;
-		height: 100vh;
-		background-color: green;
-	}
 	main {
 		position: relative;
 		background-color: black;
@@ -18,11 +7,7 @@
 	}
 </style>
 
-<Nav {segment} />
-<div class="canvas">
-	<Canvas bind:page={segment} />
-</div>
-
+<!-- <Nav {segment} /> -->
 <main>
 	<slot />
 </main>

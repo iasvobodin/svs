@@ -3,12 +3,13 @@
   "description": "TODO",
   "version": "0.0.1",
   "scripts": {
-    "dev": "sapper dev",
+    "dev": "PORT=4000 sapper dev",
     "build": "sapper build --legacy",
     "export": "sapper export --legacy",
     "start": "node __sapper__/build"
   },
   "dependencies": {
+    "@rollup/plugin-alias": "^3.1.1",
     "animejs": "^3.2.1",
     "axios": "^0.21.0",
     "compression": "^1.7.1",

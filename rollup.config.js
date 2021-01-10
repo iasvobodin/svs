@@ -10,6 +10,7 @@ import config from 'sapper/config/rollup.js';
 import pkg from './package.json';
 import json from '@rollup/plugin-json';
 import glslify from 'rollup-plugin-glslify';
+import alias from '@rollup/plugin-alias';
 
 const mode = process.env.NODE_ENV;
 const dev = mode === 'development';
@@ -25,6 +26,12 @@ export default {
 		input: config.client.input(),
 		output: config.client.output(),
 		plugins: [
+			alias({
+				resolve: ['.jsx', '.js', '.svelte'], // optional, by default this will just look for .js files or folders
+				entries: [
+				  { find: '@', replacement: path.resolve(__dirname, 'src') },
+				]
+			  }),
 			glslify(),
 			json(),
 			replace({
