@@ -14,6 +14,8 @@
   import { onMount, tick } from "svelte";
   import justifiedLayout from "justified-layout";
   import Spic from "../../components/spic.svelte";
+  import { leaveRoute } from "store.js";
+  import { fly } from "svelte/transition";
   // import IntersectionObserver from "../../components/IntersectionObserver.svelte";
 
   let width = 1500;
@@ -77,19 +79,41 @@
     return calcWidth;
   }
   onMount(() => {
+    // window.addEventListener("pagehide", function (event) {
+    //   if (event.persisted === true) {
+    //     console.log("This page *might* be entering the bfcache.");
+    //   } else {
+    //     console.log("This page will unload normally and be discarded.");
+    //   }
+    // });
+    // window.addEventListener("pageshow", function (event) {
+    //   if (event.persisted) {
+    //     console.log("This page was restored from the bfcache.");
+    //   } else {
+    //     console.log("This page was loaded normally.");
+    //   }
+    // });
     getJL(width, height, post);
   });
 </script>
+
+<style>
+  .gallery {
+    height: auto;
+  }
+</style>
 
 <svelte:head>
   <title>{post.Title}</title>
 </svelte:head>
 
-<h1>{post.Title}</h1>
 <svelte:window bind:innerWidth={width} bind:innerHeight={height} />
-
+<h1 transition:fly on:outrostart={() => leaveRoute.set(true)}>
+  {post.Title}
+  !!!!!!!!!
+</h1>
 {#if layout}
-  <div>
+  <div style="height: {layout.containerHeight}px" class="gallery">
     {#each layout.boxes as pos, index (index)}
       <div style={pos.style}>
         <Spic src={pos.src} wwidth={pos.imageWidth} />

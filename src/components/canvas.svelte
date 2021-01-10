@@ -646,7 +646,7 @@
                     type="image/webp" />
                 <a href="blog/{seriya.Route}">
                     <img
-                        ref="planePicture"
+                        data-sampler="planeTexture"
                         class="slider__img"
                         alt="SvobodinaPhoto"
                         crossorigin="anonimous"

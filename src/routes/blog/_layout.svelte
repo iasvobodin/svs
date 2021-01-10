@@ -1,18 +1,22 @@
+<!--<script context="module" ✂prettier:content✂="CiAgICBsZXQgcGxhbmVzID0gW107Cg==" ✂prettier:content✂="e30=" ✂prettier:content✂="e30=" ✂prettier:content✂="e30=" ✂prettier:content✂="e30=" ✂prettier:content✂="e30=">{}</script>-->
 <script>
+    import { setContext } from "svelte";
+
     import Canvas2 from "../../components/canvas2.svelte";
     export let segment;
+    setContext("planes", []);
+    setContext("curtains", {});
 </script>
 
 <style>
-    /* .canvas {
-        position: fixed;
-        width: 100vw;
+    .canvas {
         height: 100vh;
-        background-color: green;
-    } */
+    }
 </style>
 
 <div class="canvas">
-    <Canvas2 bind:page={segment} />
+    <Canvas2 bind:pageslug={segment} />
 </div>
-<slot />
+<div class="route">
+    <slot />
+</div>

@@ -1,20 +1,31 @@
-<script context="module">
-  export function preload() {
-    return this.fetch(`/db/Photoseries.json`)
-      .then((r) => r.json())
-      .then((photoseries) => {
-        return { photoseries };
-      });
-  }
-</script>
-
+<!--<script context="module" ✂prettier:content✂="CiAgZXhwb3J0IGZ1bmN0aW9uIHByZWxvYWQoKSB7CiAgICByZXR1cm4gdGhpcy5mZXRjaChgL2RiL1Bob3Rvc2VyaWVzLmpzb25gKQogICAgICAudGhlbigocikgPT4gci5qc29uKCkpCiAgICAgIC50aGVuKChwaG90b3NlcmllcykgPT4gewogICAgICAgIHJldHVybiB7IHBob3Rvc2VyaWVzIH07CiAgICAgIH0pOwogIH0K" ✂prettier:content✂="e30=" ✂prettier:content✂="e30=" ✂prettier:content✂="e30=" ✂prettier:content✂="e30=" ✂prettier:content✂="e30=" ✂prettier:content✂="e30=" ✂prettier:content✂="e30=" ✂prettier:content✂="e30=">{}</script>-->
 <script>
-  import photoseries from "../../../static/db/Photoseries.json";
+  import { fly } from "svelte/transition";
+  import { inrtoAnimationStart, leaveIndex } from "store.js";
+  import { afterUpdate, getContext, onMount, tick } from "svelte";
+  $: console.log("inrtoAnimationStart", $inrtoAnimationStart);
+  // const curtains = getContext("curtains");
+  // console.log(curtains.ccc, "from index");
   // export let photoseries;
+  // onMount(() => {
+  //   window.addEventListener("pagehide", function (event) {
+  //     console.log(event);
+  //     //   if (event.persisted === true) {
+  //     //    console.log('This page *might* be entering the bfcache.');
+  //     //   } else {
+  //     //     console.log('This page will unload normally and be discarded.');
+  //     //   }
+  //   });
+  // });
+
+  // afterUpdate(async () => {
+  //   await tick();
+  //   console.log("from index route", curtains.ccc);
+  // });
 </script>
 
 <style>
-  :root {
+  /* :root {
     --margin__wrapper: calc((100vh - var(--plane__height)) / 2);
     --title__height: calc(14px + 4vw);
     --translationSlide: 0;
@@ -31,19 +42,19 @@
       width: 100%;
       height: 100vh;
       /* left: var(--plane__shift);
-    top: var(--margin__wrapper); */
+    top: var(--margin__wrapper); 
       display: flex;
       position: absolute;
     }
     .plane {
       align-self: center;
       /* top: 0; */
-      /* left: 0; */
+  /* left: 0; 
       position: absolute;
       box-sizing: border-box;
       height: var(--plane__height);
       width: var(--plane__width);
-      /* margin: auto var(--plane__margin); */
+      /* margin: auto var(--plane__margin); 
     }
   }
   @media (orientation: portrait) {
@@ -56,31 +67,31 @@
       width: 100%;
       height: 100vh;
       /* left: var(--plane__shift);
-    top: var(--margin__wrapper); */
+    top: var(--margin__wrapper); 
       display: flex;
       position: absolute;
     }
     .plane {
       align-self: center;
       /* top: 0; */
-      /* left: 0; */
+  /* left: 0; 
       position: absolute;
       box-sizing: border-box;
       height: var(--plane__height);
       width: var(--plane__width);
-      /* margin: auto var(--plane__margin); */
+      /* margin: auto var(--plane__margin); 
     }
   }
   .slider__img {
-    /* display: none; */
+    /* display: none; 
     height: 100%;
     width: 100%;
     object-fit: cover;
     object-position: center;
-  }
+  } */
 </style>
 
-<div class="wrapper">
+<!-- <div class="wrapper">
   <div
     data-id="index"
     data-route="seriya.Route"
@@ -109,4 +120,10 @@
       </picture>
     {/each}
   </div>
-</div>
+</div> -->
+<p
+  style="height: 0px; margin: 0px"
+  transition:fly
+  on:outrostart={() => leaveIndex.set(true)}>
+  test
+</p>
