@@ -25,84 +25,6 @@
             ...n.slice(0, object.Id),
         ]);
     }
-    // let curtains = getContext('curtains')
-    // });
-    // ph => ph-route
-    // $: if (to.name === "photoseries-Route" && from.name === "photoseries") {
-    //     console.log("routCCCCCSSSSS");
-    //     this.onEvent = false;
-    //     if (!this.$planes.ctPlane) {
-    //         // debugger
-    //         this.$planes.ctPlane = this.$planes.plane.find(
-    //             (p) => p.userData.route === to.params.Route
-    //         );
-    //         // this.customCorrection(this.$planes.ctPlane.index - 3)
-    //         // this.getAnimUnifors(this.$planes.ctPlane, false)
-    //     }
-    //     this.$planes.trPlane.uniforms.uColor.value = this.hexToRGB(
-    //         this.$store.state.photoseries[this.$planes.ctPlane.index].Color
-    //     );
-    //     if (!this.$planes.ctPlane.isDrawn()) {
-    //         this.customCorrection(this.$planes.ctPlane.index - 3);
-    //         this.getAnimUnifors(this.$planes.ctPlane, false);
-    //     } else {
-    //         this.getAnimUnifors(this.$planes.ctPlane);
-    //     }
-    //     const tl = anime.timeline();
-    //     tl.add({
-    //         duration: 1400,
-    //         targets: [this.$planes.ctPlane.uniforms.uProgress],
-    //         value: 1,
-    //         easing: "easeOutQuad",
-    //         changeComplete: () => {
-    //             this.$curtains.disableDrawing();
-    //         },
-    //     }).add(
-    //         {
-    //             duration: 1400,
-    //             targets: [this.$planes.trPlane.uniforms.uProgress],
-    //             value: 1,
-    //             easing: "easeOutSine",
-    //         },
-    //         100
-    //     );
-    //     if (this.$store.state.seriyaAll.Title) {
-    //     }
-    // }
-    // // ph-route => ph
-    // if (to.name === "photoseries" && from.name === "photoseries-Route") {
-    //     this.getAnimUnifors(this.$planes.ctPlane);
-    //     this.onEvent = true;
-    //     this.routeExist = false;
-    //     this.$planes.plane.forEach((p, i) => {
-    //         if (p.textures.length === 0) {
-    //             p.loadImage(
-    //                 `/image/${this.$fileEx}/720/${this.$store.state.photoseries[i].FileName}.${this.$fileEx}`
-    //             );
-    //         }
-    //     });
-    //     anime
-    //         .timeline()
-    //         .add({
-    //             duration: 1400,
-    //             targets: [this.$planes.ctPlane.uniforms.uProgress],
-    //             value: 0,
-    //             easing: "easeInQuad",
-    //             changeComplete: () => {
-    //                 this.translateSlider();
-    //                 this.$curtains.needRender();
-    //             },
-    //         })
-    //         .add(
-    //             {
-    //                 duration: 1400,
-    //                 targets: [this.$planes.trPlane.uniforms.uProgress],
-    //                 value: 0,
-    //                 easing: "easeInSine",
-    //             },
-    //             100
-    //         );
-    // }
 
     let clickDown = "",
         clickUp = "",
@@ -140,10 +62,16 @@
     }
 
     $: if (pageslug) {
+        afterUpdate(() => {
+            if (!activePlane) {
+                activePlane = planes.find((p) => p.userData.route === pageslug);
+            }
+        });
         onMount(() => {
             if (!activePlane) {
                 activePlane = planes.find((p) => p.userData.route === pageslug);
             }
+            eventAnimation.set(false);
             activePlane.visible = 1;
             activePlane.uniforms.uProgress.value = 1;
             curtains.needRender();
@@ -328,26 +256,17 @@
     //AANIMATE
 
     function introActivePlane(activePlane) {
+        if (!activePlane) {
+            activePlane = planes.find((p) => p.userData.route === pageslug);
+        }
         if (!activePlane.isDrawn()) {
             customCorrection(activePlane.index);
-            getUnifors(activePlane, {
-                pCorr: true,
-                sCorr: true,
-                fCorr: true,
-                widthUn: 0.7,
-                heightUn: 0.8,
-            });
-        } else {
-            getUnifors(activePlane, {
-                pCorr: true,
-                sCorr: true,
-                fCorr: true,
-                widthUn: 0.7,
-                heightUn: 0.8,
-            });
         }
-        // eventAnimation.set(false);
         anime({
+            changeBegin: () => {
+                getUnifors(activePlane);
+                eventAnimation.set(false);
+            },
             duration: 1400,
             targets: activePlane.uniforms.uProgress,
             value: 1,
@@ -365,17 +284,14 @@
         });
         anime({
             duration: 1400,
-            targets: [activePlane.uniforms.uProgress],
+            targets: activePlane.uniforms.uProgress,
             value: 0,
             easing: "easeInSine",
             changeComplete: () => {
                 leaveRoute.set(false);
                 eventAnimation.set(true);
-                //   this.$planes.trPlane.visible = 0
-                //   this.$store.commit('TOGGLE__STATE', true)
-                //   this.startTransitionDone = true
-                //   this.currentPosition = this.endPosition = this.translation
-                //   done()
+                startTransitionDone = true;
+                currentPosition = endPosition = translation;
             },
         });
     }
@@ -525,6 +441,8 @@
         // }px)`
         // this.animation.tick(t)
     }
+
+    // EVENT CONTROLS
     function onPlaneClick(mouse) {
         planes.forEach((el) => {
             if (!el.isDrawn()) {
@@ -545,8 +463,6 @@
             goto(`blog/${el.userData.route}`);
         });
     }
-
-    // EVENT CONTROLS
     function onMouseDown(e) {
         if ($eventAnimation) {
             isMouseDown = true;
