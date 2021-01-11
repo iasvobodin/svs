@@ -3,4 +3,6 @@
 /src/node_modules/@sapper/
 yarn-error.log
 /__sapper__/
-/static/image/
+/static/image/jpg
+/static/image/webp
+/static/image/svg
