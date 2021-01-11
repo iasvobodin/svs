@@ -5,4 +5,4 @@ yarn-error.log
 /__sapper__/
 /static/image/jpg
 /static/image/webp
-/static/image/svg
+# /static/image/svg
