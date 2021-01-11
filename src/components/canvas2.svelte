@@ -789,8 +789,8 @@
         .photo {
             position: fixed;
             width: min(44vw, 888px);
-            left: 50vw;
-            top: 50vh;
+            left: 49.75vw;
+            top: 51.3vh;
             transform: translate(-52.5%, -70%);
         }
         .logo {
