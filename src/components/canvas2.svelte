@@ -401,16 +401,16 @@
         if (!pageslug) {
             // const angleStep = (Math.PI * 2) / $photoseries.length;
             // const step = Math.PI / 2 - angleStep;
-            const startTransition = {
-                opacityPlane: 1,
-                time: 0,
-                radiusAnimation: Math.min((width * 0.11) / 1.3882 / 2, 100),
-                scalePlane: 0.02,
-                yRoundDisable: 1,
-                zRoundEnable: 0,
-            };
+            // const startTransition = {
+            //     opacityPlane: 1,
+            //     time: 0,
+            //     radiusAnimation: Math.min((width * 0.11) / 1.3882 / 2, 100),
+            //     scalePlane: 0.02,
+            //     yRoundDisable: 1,
+            //     zRoundEnable: 0,
+            // };
             planes.forEach((pl, i) => {
-                const angle = angleStep * i;
+                // const angle = angleStep * i;
                 pl.setScale(
                     new Vec2(
                         startTransition.scalePlane,
@@ -419,55 +419,55 @@
                 );
                 startAnimation = anime
                     .timeline({
-                        // autoplay: false,
+                        autoplay: false,
                     })
                     .add({
                         targets: startTransition,
-                        duration: 4000,
+                        duration: 4500,
                         easing: "easeOutSine",
                         time: Math.PI * 4,
                         changeComplete: () => {
-                            if (pl.relativeTranslation.z < 0) {
-                                pl.visible = false;
-                            } else {
-                                pl.visible = true;
-                            }
+                            // if (pl.relativeTranslation.z < 0) {
+                            //     pl.visible = false;
+                            // } else {
+                            //     pl.visible = true;
+                            // }
                             startTransitionDone = true;
                         },
-                        update: () => {
-                            // pl.setRelativeTranslation(
-                            // new Vec3(
-                            // X
-                            (pl.relativeTranslation.x =
-                                Math.cos(
-                                    angle +
-                                        step +
-                                        angleStep -
-                                        customCorr -
-                                        translation / 1300 +
-                                        startTransition.time
-                                ) * startTransition.radiusAnimation),
-                                // Y
-                                (pl.relativeTranslation.y =
-                                    Math.cos(angle + startTransition.time) *
-                                    startTransition.radiusAnimation *
-                                    startTransition.yRoundDisable),
-                                // Z
+                        // update: () => {
+                        //     // pl.setRelativeTranslation(
+                        //     // new Vec3(
+                        //     // X
+                        //     (pl.relativeTranslation.x =
+                        //         Math.cos(
+                        //             angle +
+                        //                 step +
+                        //                 angleStep -
+                        //                 customCorr -
+                        //                 translation / 1300 +
+                        //                 startTransition.time
+                        //         ) * startTransition.radiusAnimation),
+                        //         // Y
+                        //         (pl.relativeTranslation.y =
+                        //             Math.cos(angle + startTransition.time) *
+                        //             startTransition.radiusAnimation *
+                        //             startTransition.yRoundDisable),
+                        //         // Z
 
-                                (pl.relativeTranslation.z =
-                                    Math.sin(
-                                        angle +
-                                            step +
-                                            angleStep -
-                                            customCorr -
-                                            translation / 1300 +
-                                            startTransition.time
-                                    ) *
-                                    startTransition.radiusAnimation *
-                                    startTransition.zRoundEnable);
-                            // )
-                            // );
-                        },
+                        //         (pl.relativeTranslation.z =
+                        //             Math.sin(
+                        //                 angle +
+                        //                     step +
+                        //                     angleStep -
+                        //                     customCorr -
+                        //                     translation / 1300 +
+                        //                     startTransition.time
+                        //             ) *
+                        //             startTransition.radiusAnimation *
+                        //             startTransition.zRoundEnable);
+                        //     // )
+                        //     // );
+                        // },
                     })
                     .add(
                         {
@@ -483,16 +483,9 @@
                             radiusAnimation: radius,
                             scalePlane: 1,
                             yRoundDisable: 0,
-                            time: 0,
+                            // time: 0,s
                             zRoundEnable: 1,
-                            update: () => {
-                                pl.setScale(
-                                    new Vec2(
-                                        startTransition.scalePlane,
-                                        startTransition.scalePlane
-                                    )
-                                );
-                            },
+                            update: () => {},
                             easing: "easeInOutSine",
                         },
                         2000
@@ -503,10 +496,10 @@
                             targets: startTransition,
                             opacityPlane: 0, // this.$planes.ctPlane.uniforms.uOpacity,
                             update: () => {
-                                if (pl.relativeTranslation.z < 0) {
-                                    pl.uniforms.uOpacity.value =
-                                        startTransition.opacityPlane;
-                                }
+                                // if (pl.relativeTranslation.z < 0) {
+                                //     pl.uniforms.uOpacity.value =
+                                //         startTransition.opacityPlane;
+                                // }
                             },
                             changeComplete: () => {},
                             easing: "linear",
@@ -528,26 +521,40 @@
         if ($eventAnimation) {
             translation += (currentPosition - translation) * 0.05;
             planes.forEach((plane, i) => {
-                // const angleStep = (Math.PI * 2) / $photoseries.length;
-                // const step = Math.PI / 2 - angleStep;
                 const angle = angleStep * i;
+                plane.setScale(
+                    new Vec2(
+                        startTransition.scalePlane,
+                        startTransition.scalePlane
+                    )
+                );
                 transVec.set(
                     Math.cos(
                         angle +
                             step +
                             angleStep -
                             customCorr -
-                            translation / 1300
-                    ) * radius,
-                    0,
+                            translation / 1300 +
+                            startTransition.time
+                    ) * startTransition.radiusAnimation,
+                    // Y
+                    Math.cos(angle + startTransition.time) *
+                        startTransition.radiusAnimation *
+                        startTransition.yRoundDisable,
+                    // Z
                     Math.sin(
                         angle +
                             step +
                             angleStep -
                             customCorr -
-                            translation / 1300
-                    ) * radius
+                            translation / 1300 +
+                            startTransition.time
+                    ) *
+                        startTransition.radiusAnimation *
+                        startTransition.zRoundEnable
                 );
+
+                plane.setRelativeTranslation(transVec);
                 if (startTransitionDone) {
                     if ($titlePlaneLoad) {
                         planesTitle[i].setRelativeTranslation(transVec);
@@ -557,18 +564,22 @@
                             planesTitle[i].visible = true;
                         }
                     }
-                    plane.setRelativeTranslation(transVec);
                     if (plane.relativeTranslation.z < 0) {
+                        plane.uniforms.uOpacity.value =
+                            startTransition.opacityPlane;
                         plane.visible = false;
                     } else {
                         plane.visible = true;
                     }
-                    if (plane.uniforms.uOpacity.value < 1) {
-                        plane.uniforms.uOpacity.value = 1;
-                    }
+                    // if (pl.relativeTranslation.z < 0) {
+                    //     pl.uniforms.uOpacity.value =
+                    //         startTransition.opacityPlane;
+                    // }
                 }
             });
         }
+        startAnimation.tick(t);
+
         animationFrame = requestAnimationFrame(translateSlider);
         // }
         // ANIMATION TITLE
@@ -672,6 +683,10 @@
     }
 
     onMount(() => {
+        startTransition.radiusAnimation = Math.min(
+            (window.innerWidth * 0.11) / 1.3882 / 2,
+            100
+        );
         curtains = new Curtains({
             container: webgl,
             pixelRatio: Math.min(1.5, window.devicePixelRatio),
