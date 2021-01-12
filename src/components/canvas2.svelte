@@ -90,6 +90,7 @@
                 activePlane = planes.find((p) => p.userData.route === pageslug);
             }
             startTransition = {
+                opacityHedline: 0,
                 opacityPlane: 1,
                 time: 0,
                 radiusAnimation: radius,
@@ -364,7 +365,7 @@
             duration: 1400,
             autoplay: false,
             value: 1,
-            clipPath: "circle(100.01%);",
+            clipPathCircle: "100.01%;",
             opacityPlane: [1, 0],
             easing: "easeOutQuad",
             changeComplete: () => {
@@ -444,7 +445,7 @@
                             ".photo",
                             ".logo",
                         ],
-                        opacity: 0,
+                        opacity: [1, 0],
                         radiusAnimation: radius,
                         scalePlane: 1,
                         yRoundDisable: 0,
@@ -760,6 +761,7 @@
             /* margin: auto var(--plane__margin); */
         }
         .svobodina {
+            opacity: 0;
             position: fixed;
             width: min(80vw, 1600px);
             left: 50vw;
@@ -768,6 +770,7 @@
         }
         /* 1.3882 */
         .photo {
+            opacity: 0;
             position: fixed;
             width: min(44vw, 888px);
             left: 49.75vw;
@@ -775,6 +778,7 @@
             transform: translate(-52.5%, -70%);
         }
         .logo {
+            opacity: 0;
             width: 10vw;
             height: auto;
             position: fixed;
@@ -816,6 +820,7 @@
             /* margin: auto var(--plane__margin); */
         }
         .svobodina {
+            opacity: 0;
             /* width: min(7vw, 100px); */
             height: 90vh;
             /* margin: auto; */
@@ -825,6 +830,7 @@
             transform: translateX(-250%);
         }
         .photo {
+            opacity: 0;
             position: fixed;
             top: 25vh;
             height: 50vh;
@@ -835,6 +841,7 @@
     ); */
         }
         .logo {
+            opacity: 0;
             width: 20vw;
             height: auto;
             position: fixed;
@@ -876,10 +883,10 @@
 </style>
 
 <!-- <h1 style="color: white">I'm LAYOUT Canvas2</h1> -->
-<!-- {#if !$page.params.Route} -->
 <svelte:window bind:innerWidth={width} bind:innerHeight={height} />
-<picture>
-    <!-- <source
+{#if !pageslug}
+    <picture>
+        <!-- <source
         media="(orientation: portrait)"
         srcset="image/svobodinaPortrait.svg"
         type="image/svg+xml" />
@@ -887,10 +894,10 @@
         media="(orientation: landscape)"
         srcset="image/svobodina.svg"
         type="image/svg+xml" /> -->
-    <img src="image/svobodina.svg" class="svobodina" alt="svobodina" />
-</picture>
-<picture>
-    <!-- <source
+        <img src="image/svobodina.svg" class="svobodina" alt="svobodina" />
+    </picture>
+    <picture>
+        <!-- <source
         media="(orientation: portrait)"
         srcset="image/photoPortrait.svg"
         type="image/svg+xml" />
@@ -898,10 +905,10 @@
         media="(orientation: landscape)"
         srcset="image/photo.svg"
         type="image/svg+xml" /> -->
-    <img class="photo" src="image/photo.svg" alt="ph" />
-</picture>
-<img src="image/logo.svg" class="logo" alt="logo" />
-<!-- {/if} -->
+        <img class="photo" src="image/photo.svg" alt="ph" />
+    </picture>
+    <img src="image/logo.svg" class="logo" alt="logo" />
+{/if}
 <div
     on:mousemove={onMouseMove}
     on:touchmove|passive={onMouseMove}
@@ -949,4 +956,4 @@
     {/each}
 </div>
 <div bind:this={webgl} id="curtains" />
-<div class="box" />
+<!-- <div class="box" /> -->
