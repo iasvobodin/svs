@@ -166,6 +166,9 @@
             plane.onLoading((texture) => {
                 console.log(load++);
             });
+            plane.setScale(
+                new Vec2(startTransition.scalePlane, startTransition.scalePlane)
+            );
             planes.push(plane);
         }
 
@@ -409,104 +412,99 @@
             //     yRoundDisable: 1,
             //     zRoundEnable: 0,
             // };
-            planes.forEach((pl, i) => {
-                // const angle = angleStep * i;
-                pl.setScale(
-                    new Vec2(
-                        startTransition.scalePlane,
-                        startTransition.scalePlane
-                    )
-                );
-                startAnimation = anime
-                    .timeline({
-                        autoplay: false,
-                    })
-                    .add({
-                        targets: startTransition,
-                        duration: 4500,
-                        easing: "easeOutSine",
-                        time: Math.PI * 4,
-                        changeComplete: () => {
-                            // if (pl.relativeTranslation.z < 0) {
-                            //     pl.visible = false;
-                            // } else {
-                            //     pl.visible = true;
-                            // }
-                            startTransitionDone = true;
-                        },
-                        // update: () => {
-                        //     // pl.setRelativeTranslation(
-                        //     // new Vec3(
-                        //     // X
-                        //     (pl.relativeTranslation.x =
-                        //         Math.cos(
-                        //             angle +
-                        //                 step +
-                        //                 angleStep -
-                        //                 customCorr -
-                        //                 translation / 1300 +
-                        //                 startTransition.time
-                        //         ) * startTransition.radiusAnimation),
-                        //         // Y
-                        //         (pl.relativeTranslation.y =
-                        //             Math.cos(angle + startTransition.time) *
-                        //             startTransition.radiusAnimation *
-                        //             startTransition.yRoundDisable),
-                        //         // Z
+            // planes.forEach((pl, i) => {
+            // const angle = angleStep * i;
 
-                        //         (pl.relativeTranslation.z =
-                        //             Math.sin(
-                        //                 angle +
-                        //                     step +
-                        //                     angleStep -
-                        //                     customCorr -
-                        //                     translation / 1300 +
-                        //                     startTransition.time
-                        //             ) *
-                        //             startTransition.radiusAnimation *
-                        //             startTransition.zRoundEnable);
-                        //     // )
-                        //     // );
-                        // },
-                    })
-                    .add(
-                        {
-                            duration: 2000,
-                            // delay: 2000,
-                            targets: [
-                                startTransition,
-                                ".svobodina",
-                                ".photo",
-                                ".logo",
-                            ],
-                            opacity: 0,
-                            radiusAnimation: radius,
-                            scalePlane: 1,
-                            yRoundDisable: 0,
-                            // time: 0,s
-                            zRoundEnable: 1,
-                            update: () => {},
-                            easing: "easeInOutSine",
+            startAnimation = anime
+                .timeline({
+                    autoplay: false,
+                })
+                .add({
+                    targets: startTransition,
+                    duration: 4500,
+                    easing: "easeOutSine",
+                    time: Math.PI * 4,
+                    changeComplete: () => {
+                        // if (pl.relativeTranslation.z < 0) {
+                        //     pl.visible = false;
+                        // } else {
+                        //     pl.visible = true;
+                        // }
+                        startTransitionDone = true;
+                    },
+                    // update: () => {
+                    //     // pl.setRelativeTranslation(
+                    //     // new Vec3(
+                    //     // X
+                    //     (pl.relativeTranslation.x =
+                    //         Math.cos(
+                    //             angle +
+                    //                 step +
+                    //                 angleStep -
+                    //                 customCorr -
+                    //                 translation / 1300 +
+                    //                 startTransition.time
+                    //         ) * startTransition.radiusAnimation),
+                    //         // Y
+                    //         (pl.relativeTranslation.y =
+                    //             Math.cos(angle + startTransition.time) *
+                    //             startTransition.radiusAnimation *
+                    //             startTransition.yRoundDisable),
+                    //         // Z
+
+                    //         (pl.relativeTranslation.z =
+                    //             Math.sin(
+                    //                 angle +
+                    //                     step +
+                    //                     angleStep -
+                    //                     customCorr -
+                    //                     translation / 1300 +
+                    //                     startTransition.time
+                    //             ) *
+                    //             startTransition.radiusAnimation *
+                    //             startTransition.zRoundEnable);
+                    //     // )
+                    //     // );
+                    // },
+                })
+                .add(
+                    {
+                        duration: 2000,
+                        // delay: 2000,
+                        targets: [
+                            startTransition,
+                            ".svobodina",
+                            ".photo",
+                            ".logo",
+                        ],
+                        opacity: 0,
+                        radiusAnimation: radius,
+                        scalePlane: 1,
+                        yRoundDisable: 0,
+                        // time: 0,s
+                        zRoundEnable: 1,
+                        update: () => {},
+                        easing: "easeInOutSine",
+                    },
+                    2000
+                )
+                .add(
+                    {
+                        duration: 500,
+                        targets: startTransition,
+                        opacityPlane: 0, // this.$planes.ctPlane.uniforms.uOpacity,
+                        update: () => {
+                            // if (pl.relativeTranslation.z < 0) {
+                            //     pl.uniforms.uOpacity.value =
+                            //         startTransition.opacityPlane;
+                            // }
                         },
-                        2000
-                    )
-                    .add(
-                        {
-                            duration: 500,
-                            targets: startTransition,
-                            opacityPlane: 0, // this.$planes.ctPlane.uniforms.uOpacity,
-                            update: () => {
-                                // if (pl.relativeTranslation.z < 0) {
-                                //     pl.uniforms.uOpacity.value =
-                                //         startTransition.opacityPlane;
-                                // }
-                            },
-                            changeComplete: () => {},
-                            easing: "linear",
-                        },
-                        3500
-                    );
-            });
+                        changeComplete: () => {},
+                        easing: "linear",
+                    },
+                    3500
+                );
+            // });
         }
     }
     function translateSlider(t) {
@@ -565,8 +563,6 @@
                         }
                     }
                     if (plane.relativeTranslation.z < 0) {
-                        plane.uniforms.uOpacity.value =
-                            startTransition.opacityPlane;
                         plane.visible = false;
                     } else {
                         plane.visible = true;
