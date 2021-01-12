@@ -9,6 +9,7 @@
     // import fragment from "assets/start.frag";
     // import vertex from "assets/start.vert";
     import {
+        startAnimationPage,
         eventAnimation,
         photoseries,
         leaveIndex,
@@ -19,7 +20,6 @@
     import { goto, stores } from "@sapper/app";
     const { preloading, page, session } = stores();
     export let pageslug;
-    console.log($page.params.Route, "pagggggggge");
     // SORT PHOTOSERIES
     $: if (pageslug) {
         const object = $photoseries.find((el) => el.Route === pageslug);
@@ -30,6 +30,8 @@
     }
     // VARIABLE DATA
     let clickDown = "",
+        outroActivePlaneAnime,
+        introActivePlaneAnime,
         clickUp = "",
         curtains,
         webgl,
@@ -39,6 +41,7 @@
         translation = 0,
         currentPosition = 0,
         animationFrame = null,
+        startAnimationOpacity = false,
         startPosition = 0,
         endPosition = 0,
         mousePosition = 0,
@@ -48,9 +51,7 @@
         elWidth,
         aspect = 0,
         startTransitionDone = false,
-        transitionVec = null,
         startAnimation = null,
-        textures = [],
         isTrackpad = true,
         isMouseDown = false,
         isTranslating = false,
@@ -60,15 +61,15 @@
         angleStep = (Math.PI * 2) / $photoseries.length,
         step = Math.PI / 2 - angleStep,
         width,
-        height;
-    const startTransition = {
-        opacityPlane: 1,
-        time: 0,
-        radiusAnimation: Math.min((width * 0.11) / 1.3882 / 2, 100),
-        scalePlane: 0.02,
-        yRoundDisable: 1,
-        zRoundEnable: 0,
-    };
+        height,
+        startTransition = {
+            opacityPlane: 1,
+            time: 0,
+            radiusAnimation: 0,
+            scalePlane: 0.015,
+            yRoundDisable: 1,
+            zRoundEnable: 0,
+        };
 
     $: if ($leaveIndex) {
         introActivePlane(activePlane);
@@ -76,6 +77,7 @@
     $: if ($leaveRoute) {
         outroActivePlane(activePlane);
     }
+    $: transitionPage = $leaveIndex || $leaveRoute;
 
     $: if (pageslug) {
         afterUpdate(() => {
@@ -87,6 +89,16 @@
             if (!activePlane) {
                 activePlane = planes.find((p) => p.userData.route === pageslug);
             }
+            startTransition = {
+                opacityHedline: 0,
+                opacityPlane: 1,
+                time: 0,
+                radiusAnimation: radius,
+                scalePlane: 1,
+                yRoundDisable: 0,
+                zRoundEnable: 1,
+            };
+
             eventAnimation.set(false);
             activePlane.visible = 1;
             activePlane.uniforms.uProgress.value = 1;
@@ -102,7 +114,9 @@
             fov: 1,
             alwaysDraw: false,
             visible: 0,
-            uOpacity: { name: "uOpacity", type: "1f", value: 1 },
+            uniforms: {
+                uOpacityTitle: { name: "uOpacityTitle", type: "1f", value: 1 },
+            },
         };
         document.fonts.load("1em Cormorant Infant").then(() => {
             titlePlaneLoad.set(true);
@@ -122,8 +136,8 @@
         let load = 0;
         let loadR = 0;
         const paramsPlane = {
-            widthSegments: 10,
-            heightSegments: 10,
+            widthSegments: 16,
+            heightSegments: 16,
             vertexShader: vertex,
             // fragmentShader: fragment,
             // visible: 0,
@@ -164,8 +178,11 @@
                 id: element.dataset.id,
             };
             plane.onLoading((texture) => {
-                console.log(load++);
+                // console.log(load++);
             });
+            plane.setScale(
+                new Vec2(startTransition.scalePlane, startTransition.scalePlane)
+            );
             planes.push(plane);
         }
 
@@ -341,252 +358,200 @@
         if (!activePlane.isDrawn()) {
             customCorrection(activePlane.index);
         }
-        anime({
-            changeBegin: () => {
-                getUnifors(activePlane);
-                eventAnimation.set(false);
-                activePlane.setRelativeTranslation(
-                    new Vec3(
-                        activePlane.relativeTranslation.x,
-                        activePlane.relativeTranslation.y,
-                        radius + 10
-                    )
-                );
-            },
+        activePlane.relativeTranslation.z = radius + 10;
+
+        introActivePlaneAnime = anime({
+            targets: [activePlane.uniforms.uProgress, startTransition, ".box"],
             duration: 1400,
-            update: () => {
-                planes.forEach((pl) => {
-                    if (
-                        pl.visible &&
-                        pl.isDrawn() &&
-                        pl.index !== activePlane.index
-                    ) {
-                        pl.uniforms.uOpacity.value =
-                            // planesTitle[
-                            //     pl.index
-                            // ].uniforms.uOpacity.value =
-                            1 - activePlane.uniforms.uProgress.value * 2;
-                    }
-                });
-            },
-            targets: activePlane.uniforms.uProgress,
+            autoplay: false,
             value: 1,
+            clipPathCircle: "100.01%;",
+            opacityPlane: [1, 0],
             easing: "easeOutQuad",
             changeComplete: () => {
                 leaveIndex.set(false);
             },
+            changeBegin: () => {
+                getUnifors(activePlane);
+                eventAnimation.set(false);
+            },
         });
     }
     function outroActivePlane(activePlane) {
+        const currentScroll = { value: window.pageYOffset };
         getUnifors(activePlane, {
             pCorr: true,
             sCorr: false,
             fCorr: false,
         });
-        anime({
-            duration: 1400,
-            targets: activePlane.uniforms.uProgress,
-            value: 0,
-            easing: "easeInSine",
-            changeComplete: () => {
-                leaveRoute.set(false);
-                eventAnimation.set(true);
-                startTransitionDone = true;
-                currentPosition = endPosition = translation;
-            },
-        });
+        outroActivePlaneAnime = anime
+            .timeline()
+            .add({
+                targets: currentScroll,
+                value: 0,
+                easing: "easeInSine",
+                duration: 350,
+                update: () => {
+                    window.scrollTo(0, currentScroll.value);
+                },
+            })
+            .add({
+                autoplay: false,
+                duration: 1400,
+                targets: [activePlane.uniforms.uProgress, startTransition],
+                value: 0,
+                opacityPlane: [0, 1],
+                easing: "easeInSine",
+                changeComplete: () => {
+                    leaveRoute.set(false);
+                    eventAnimation.set(true);
+                    startTransitionDone = true;
+                    currentPosition = endPosition = translation;
+                },
+            });
     }
 
     function startAnimate() {
         if (!pageslug) {
-            // const angleStep = (Math.PI * 2) / $photoseries.length;
-            // const step = Math.PI / 2 - angleStep;
-            // const startTransition = {
-            //     opacityPlane: 1,
-            //     time: 0,
-            //     radiusAnimation: Math.min((width * 0.11) / 1.3882 / 2, 100),
-            //     scalePlane: 0.02,
-            //     yRoundDisable: 1,
-            //     zRoundEnable: 0,
-            // };
-            planes.forEach((pl, i) => {
-                // const angle = angleStep * i;
-                pl.setScale(
-                    new Vec2(
-                        startTransition.scalePlane,
-                        startTransition.scalePlane
-                    )
-                );
-                startAnimation = anime
-                    .timeline({
-                        autoplay: false,
-                    })
-                    .add({
+            startAnimationPage.set(true);
+            startAnimation = anime
+                .timeline({
+                    autoplay: false,
+                })
+                .add({
+                    targets: startTransition,
+                    duration: 4500,
+                    easing: "easeOutSine",
+                    time: Math.PI * 4,
+                    changeComplete: () => {
+                        startAnimationPage.set(false);
+                        startTransitionDone = true;
+                        planes.forEach((plane) => {
+                            if (plane.relativeTranslation.z < 0) {
+                                plane.visible = 0;
+                            }
+                            if (plane.uniforms.uOpacity.value < 1) {
+                                plane.uniforms.uOpacity.value = 1;
+                            }
+                        });
+                    },
+                })
+                .add(
+                    {
+                        duration: 2000,
+                        targets: [
+                            startTransition,
+                            ".svobodina",
+                            ".photo",
+                            ".logo",
+                        ],
+                        opacity: [1, 0],
+                        radiusAnimation: radius,
+                        scalePlane: 1,
+                        yRoundDisable: 0,
+                        zRoundEnable: 1,
+                        easing: "easeInOutSine",
+                    },
+                    2000
+                )
+                .add(
+                    {
+                        duration: 500,
                         targets: startTransition,
-                        duration: 4500,
-                        easing: "easeOutSine",
-                        time: Math.PI * 4,
-                        changeComplete: () => {
-                            // if (pl.relativeTranslation.z < 0) {
-                            //     pl.visible = false;
-                            // } else {
-                            //     pl.visible = true;
-                            // }
-                            startTransitionDone = true;
+                        opacityPlane: 0,
+                        changeBegin: () => {},
+                        change: () => {
+                            planes.forEach((plane, i) => {
+                                if (plane.relativeTranslation.z < 0) {
+                                    plane.uniforms.uOpacity.value =
+                                        startTransition.opacityPlane;
+                                }
+                            });
                         },
-                        // update: () => {
-                        //     // pl.setRelativeTranslation(
-                        //     // new Vec3(
-                        //     // X
-                        //     (pl.relativeTranslation.x =
-                        //         Math.cos(
-                        //             angle +
-                        //                 step +
-                        //                 angleStep -
-                        //                 customCorr -
-                        //                 translation / 1300 +
-                        //                 startTransition.time
-                        //         ) * startTransition.radiusAnimation),
-                        //         // Y
-                        //         (pl.relativeTranslation.y =
-                        //             Math.cos(angle + startTransition.time) *
-                        //             startTransition.radiusAnimation *
-                        //             startTransition.yRoundDisable),
-                        //         // Z
-
-                        //         (pl.relativeTranslation.z =
-                        //             Math.sin(
-                        //                 angle +
-                        //                     step +
-                        //                     angleStep -
-                        //                     customCorr -
-                        //                     translation / 1300 +
-                        //                     startTransition.time
-                        //             ) *
-                        //             startTransition.radiusAnimation *
-                        //             startTransition.zRoundEnable);
-                        //     // )
-                        //     // );
-                        // },
-                    })
-                    .add(
-                        {
-                            duration: 2000,
-                            // delay: 2000,
-                            targets: [
-                                startTransition,
-                                ".svobodina",
-                                ".photo",
-                                ".logo",
-                            ],
-                            opacity: 0,
-                            radiusAnimation: radius,
-                            scalePlane: 1,
-                            yRoundDisable: 0,
-                            // time: 0,s
-                            zRoundEnable: 1,
-                            update: () => {},
-                            easing: "easeInOutSine",
-                        },
-                        2000
-                    )
-                    .add(
-                        {
-                            duration: 500,
-                            targets: startTransition,
-                            opacityPlane: 0, // this.$planes.ctPlane.uniforms.uOpacity,
-                            update: () => {
-                                // if (pl.relativeTranslation.z < 0) {
-                                //     pl.uniforms.uOpacity.value =
-                                //         startTransition.opacityPlane;
-                                // }
-                            },
-                            changeComplete: () => {},
-                            easing: "linear",
-                        },
-                        3500
-                    );
-            });
+                        changeComplete: () => {},
+                        easing: "linear",
+                    },
+                    3500
+                );
         }
     }
     function translateSlider(t) {
         curtains.render();
-        // this.$planes.plane.forEach((pl, i) => {
-        //   this.startAnimation.tick(t)
-        // })
-        // ANIMATION HTML SLIDER
-        // this.$refs.slider.style.transform = `translateX( ${this.translation}px)`
-        // } else {
-        // ANIMATION CANVAS SLIDER
         if ($eventAnimation) {
             translation += (currentPosition - translation) * 0.05;
-            planes.forEach((plane, i) => {
-                const angle = angleStep * i;
-                plane.setScale(
-                    new Vec2(
-                        startTransition.scalePlane,
-                        startTransition.scalePlane
-                    )
-                );
-                transVec.set(
-                    Math.cos(
-                        angle +
-                            step +
-                            angleStep -
-                            customCorr -
-                            translation / 1300 +
-                            startTransition.time
-                    ) * startTransition.radiusAnimation,
-                    // Y
-                    Math.cos(angle + startTransition.time) *
-                        startTransition.radiusAnimation *
-                        startTransition.yRoundDisable,
-                    // Z
-                    Math.sin(
-                        angle +
-                            step +
-                            angleStep -
-                            customCorr -
-                            translation / 1300 +
-                            startTransition.time
-                    ) *
-                        startTransition.radiusAnimation *
-                        startTransition.zRoundEnable
-                );
-
-                plane.setRelativeTranslation(transVec);
-                if (startTransitionDone) {
-                    if ($titlePlaneLoad) {
-                        planesTitle[i].setRelativeTranslation(transVec);
-                        if (planesTitle[i].relativeTranslation.z < 0) {
-                            planesTitle[i].visible = false;
-                        } else {
-                            planesTitle[i].visible = true;
-                        }
-                    }
-                    if (plane.relativeTranslation.z < 0) {
-                        plane.uniforms.uOpacity.value =
-                            startTransition.opacityPlane;
-                        plane.visible = false;
-                    } else {
-                        plane.visible = true;
-                    }
-                    // if (pl.relativeTranslation.z < 0) {
-                    //     pl.uniforms.uOpacity.value =
-                    //         startTransition.opacityPlane;
-                    // }
-                }
-            });
         }
-        startAnimation.tick(t);
+        planes.forEach((plane, i) => {
+            const angle = angleStep * i;
+
+            if (
+                plane.visible &&
+                transitionPage &&
+                plane.isDrawn() &&
+                plane.index !== activePlane.index
+            ) {
+                plane.uniforms.uOpacity.value = startTransition.opacityPlane;
+            }
+
+            plane.setScale(
+                new Vec2(startTransition.scalePlane, startTransition.scalePlane)
+            );
+            transVec.set(
+                Math.cos(
+                    angle +
+                        step +
+                        angleStep -
+                        customCorr -
+                        translation / 1300 +
+                        startTransition.time
+                ) * startTransition.radiusAnimation,
+                // Y
+                Math.cos(angle + startTransition.time) *
+                    startTransition.radiusAnimation *
+                    startTransition.yRoundDisable,
+                // Z
+                Math.sin(
+                    angle +
+                        step +
+                        angleStep -
+                        customCorr -
+                        translation / 1300 +
+                        startTransition.time
+                ) *
+                    startTransition.radiusAnimation *
+                    startTransition.zRoundEnable
+            );
+            if ($eventAnimation) {
+                plane.setRelativeTranslation(transVec);
+            }
+            if (startTransitionDone) {
+                if ($titlePlaneLoad) {
+                    planesTitle[i].setRelativeTranslation(transVec);
+                    if (plane.relativeTranslation.z < 0) {
+                        plane.visible = planesTitle[i].visible = false;
+                    } else {
+                        plane.visible = planesTitle[i].visible = true;
+                    }
+                    if (transitionPage) {
+                        planesTitle[i].uniforms.uOpacityTitle.value =
+                            startTransition.opacityPlane;
+                    }
+                }
+            }
+        });
+        // START ANIMATION
+        if ($startAnimationPage) {
+            startAnimation.tick(t);
+        }
+        // ENTER PAGE ANIMATION
+        if ($leaveIndex) {
+            introActivePlaneAnime.tick(t);
+        }
+        // LEAVE PAGE ANIMATION
+        if ($leaveRoute) {
+            outroActivePlaneAnime.tick(t);
+        }
 
         animationFrame = requestAnimationFrame(translateSlider);
-        // }
-        // ANIMATION TITLE
-        // this.$refs.titlePlane.style.transform = `translateY(${
-        //   (this.translation / this.elWidth) * (20 + innerWidth * 0.04)
-        // }px)`
-        // this.animation.tick(t)
     }
 
     // EVENT CONTROLS
@@ -683,10 +648,12 @@
     }
 
     onMount(() => {
-        startTransition.radiusAnimation = Math.min(
-            (window.innerWidth * 0.11) / 1.3882 / 2,
-            100
-        );
+        if (!pageslug) {
+            startTransition.radiusAnimation = Math.min(
+                (window.innerWidth * 0.11) / 1.3882 / 2,
+                100
+            );
+        }
         curtains = new Curtains({
             container: webgl,
             pixelRatio: Math.min(1.5, window.devicePixelRatio),
@@ -742,8 +709,8 @@
         height: clamp(18px, 3.5vw + 12px, 90px);
         width: var(--plane__width);
         position: absolute;
-        padding-top: 10px;
-        padding-bottom: 10px;
+        padding-top: 40px;
+        padding-bottom: 40px;
         left: 50vw;
         transform: translateX(-50%);
         pointer-events: none;
@@ -794,6 +761,7 @@
             /* margin: auto var(--plane__margin); */
         }
         .svobodina {
+            opacity: 0;
             position: fixed;
             width: min(80vw, 1600px);
             left: 50vw;
@@ -802,6 +770,7 @@
         }
         /* 1.3882 */
         .photo {
+            opacity: 0;
             position: fixed;
             width: min(44vw, 888px);
             left: 49.75vw;
@@ -809,6 +778,7 @@
             transform: translate(-52.5%, -70%);
         }
         .logo {
+            opacity: 0;
             width: 10vw;
             height: auto;
             position: fixed;
@@ -850,6 +820,7 @@
             /* margin: auto var(--plane__margin); */
         }
         .svobodina {
+            opacity: 0;
             /* width: min(7vw, 100px); */
             height: 90vh;
             /* margin: auto; */
@@ -859,6 +830,7 @@
             transform: translateX(-250%);
         }
         .photo {
+            opacity: 0;
             position: fixed;
             top: 25vh;
             height: 50vh;
@@ -869,6 +841,7 @@
     ); */
         }
         .logo {
+            opacity: 0;
             width: 20vw;
             height: auto;
             position: fixed;
@@ -887,6 +860,13 @@
     /* #curtains canvas {
         display: block;
     } */
+    .box {
+        background: orange;
+        clip-path: circle(30.01%);
+        transition: clip-path 1s;
+        width: 100%;
+        height: 100vh;
+    }
     #curtains {
         /* overflow: hidden; */
         pointer-events: none;
@@ -903,32 +883,32 @@
 </style>
 
 <!-- <h1 style="color: white">I'm LAYOUT Canvas2</h1> -->
-<!-- {#if !$page.params.Route} -->
 <svelte:window bind:innerWidth={width} bind:innerHeight={height} />
-<picture>
-    <source
+{#if !pageslug}
+    <picture>
+        <!-- <source
         media="(orientation: portrait)"
         srcset="image/svobodinaPortrait.svg"
         type="image/svg+xml" />
     <source
         media="(orientation: landscape)"
         srcset="image/svobodina.svg"
-        type="image/svg+xml" />
-    <img src="image/svobodina.svg" class="svobodina" alt="svobodina" />
-</picture>
-<picture>
-    <source
+        type="image/svg+xml" /> -->
+        <img src="image/svobodina.svg" class="svobodina" alt="svobodina" />
+    </picture>
+    <picture>
+        <!-- <source
         media="(orientation: portrait)"
         srcset="image/photoPortrait.svg"
         type="image/svg+xml" />
     <source
         media="(orientation: landscape)"
         srcset="image/photo.svg"
-        type="image/svg+xml" />
-    <img class="photo" src="image/photo.svg" alt="ph" />
-</picture>
-<img src="image/logo.svg" class="logo" alt="logo" />
-<!-- {/if} -->
+        type="image/svg+xml" /> -->
+        <img class="photo" src="image/photo.svg" alt="ph" />
+    </picture>
+    <img src="image/logo.svg" class="logo" alt="logo" />
+{/if}
 <div
     on:mousemove={onMouseMove}
     on:touchmove|passive={onMouseMove}
@@ -976,3 +956,4 @@
     {/each}
 </div>
 <div bind:this={webgl} id="curtains" />
+<!-- <div class="box" /> -->
