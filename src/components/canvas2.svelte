@@ -17,10 +17,18 @@
         titlePlaneLoad,
     } from "store.js";
     import { afterUpdate, getContext, onMount, setContext, tick } from "svelte";
-    import { goto, stores } from "@sapper/app";
-    const { preloading, page, session } = stores();
-    export let pageslug;
+    import { goto, stores, start } from "@sapper/app";
+    const { page } = stores();
+    console.log($page.params.Route);
+    $: pageslug = $page.params.Route;
     // SORT PHOTOSERIES
+    onMount(() => {
+        start({
+            target: document.querySelector("#sapper"),
+        }).then(() => {
+            console.log("клиентское приложение запустилось");
+        });
+    });
     $: if (pageslug) {
         const object = $photoseries.find((el) => el.Route === pageslug);
         photoseries.update((n) => [
@@ -38,6 +46,7 @@
         planesTitle = [],
         planes = [],
         activePlane,
+        activePlaneTitle,
         translation = 0,
         currentPosition = 0,
         animationFrame = null,
@@ -52,6 +61,7 @@
         aspect = 0,
         startTransitionDone = false,
         startAnimation = null,
+        startAnimationStage1,
         isTrackpad = true,
         isMouseDown = false,
         isTranslating = false,
@@ -62,6 +72,7 @@
         step = Math.PI / 2 - angleStep,
         width,
         height,
+        load = 0,
         startTransition = {
             opacityPlane: 1,
             time: 0,
@@ -83,11 +94,17 @@
         afterUpdate(() => {
             if (!activePlane) {
                 activePlane = planes.find((p) => p.userData.route === pageslug);
+                $titlePlaneLoad &&
+                    (activePlaneTitle =
+                        planesTitle[activePlane.index + photoseries.length]);
             }
         });
         onMount(() => {
             if (!activePlane) {
                 activePlane = planes.find((p) => p.userData.route === pageslug);
+                $titlePlaneLoad &&
+                    (activePlaneTitle =
+                        planesTitle[activePlane.index + photoseries.length]);
             }
             startTransition = {
                 opacityHedline: 0,
@@ -128,13 +145,12 @@
                     texture.shouldUpdate = false;
                     writeText(planeTitle, texture.source);
                 });
+                console.log(planeTitle.index, "planeTitle");
                 planesTitle.push(planeTitle);
             }
         });
     }
     function addPlane(planeElement, trPlane = false) {
-        let load = 0;
-        let loadR = 0;
         const paramsPlane = {
             widthSegments: 16,
             heightSegments: 16,
@@ -177,8 +193,15 @@
                 color: element.dataset.color,
                 id: element.dataset.id,
             };
-            plane.onLoading((texture) => {
-                // console.log(load++);
+            plane.onLoading(() => {
+                load++;
+                console.log(load);
+                if (load === 1) {
+                    startAnimation0();
+                }
+                if (load === $photoseries.length) {
+                    startAnimate();
+                }
             });
             plane.setScale(
                 new Vec2(startTransition.scalePlane, startTransition.scalePlane)
@@ -293,10 +316,14 @@
         }
     }
     function handlePortrait(e) {
-        console.log("from handlePortrait");
         if (e.matches) {
             // PORTAIT
-            console.log("from handlePortrait PORTAIT");
+            if (!pageslug) {
+                startTransition.radiusAnimation = Math.min(
+                    (window.innerHeight * 0.0725) / 1.3882 / 2,
+                    100
+                );
+            }
             aspect = 1.5;
             getElementWidth(0.65);
             planes.forEach((p, i) => {
@@ -317,6 +344,12 @@
             });
         } else {
             // LANDSCAPE
+            if (!pageslug) {
+                startTransition.radiusAnimation = Math.min(
+                    (window.innerWidth * 0.0755) / 1.3882 / 2,
+                    100
+                );
+            }
             console.log("from handlePortrait LANDSCAPE");
             aspect = 0.668;
             getElementWidth(0.52);
@@ -361,11 +394,10 @@
         activePlane.relativeTranslation.z = radius + 10;
 
         introActivePlaneAnime = anime({
-            targets: [activePlane.uniforms.uProgress, startTransition, ".box"],
+            targets: [activePlane.uniforms.uProgress, startTransition],
             duration: 1400,
             autoplay: false,
             value: 1,
-            clipPathCircle: "100.01%;",
             opacityPlane: [1, 0],
             easing: "easeOutQuad",
             changeComplete: () => {
@@ -386,19 +418,19 @@
         });
         outroActivePlaneAnime = anime
             .timeline()
+            // .add({
+            //     targets: currentScroll,
+            //     value: 0,
+            //     easing: "easeInSine",
+            //     duration: 350,
+            //     update: () => {
+            //         window.scrollTo(0, currentScroll.value);
+            //     },
+            // })
             .add({
-                targets: currentScroll,
-                value: 0,
-                easing: "easeInSine",
-                duration: 350,
-                update: () => {
-                    window.scrollTo(0, currentScroll.value);
-                },
-            })
-            .add({
-                autoplay: false,
-                duration: 1400,
                 targets: [activePlane.uniforms.uProgress, startTransition],
+                duration: 1400,
+                autoplay: false,
                 value: 0,
                 opacityPlane: [0, 1],
                 easing: "easeInSine",
@@ -410,7 +442,45 @@
                 },
             });
     }
-
+    function startAnimation0() {
+        anime({
+            targets: startTransition,
+            duration: 4000,
+            easing: "linear",
+            time: `+=${Math.PI * 4}`,
+            changeComplete: () => {
+                if (load < $photoseries.length) {
+                    startAnimation1();
+                }
+            },
+        });
+    }
+    function startAnimation1() {
+        startAnimationStage1 = anime({
+            targets: startTransition,
+            autoplay: false,
+            // loop: 2,
+            duration: 2000,
+            easing: "linear",
+            time: `+=${Math.PI * 2}`,
+            changeBegin: () => {
+                console.log("animStart");
+            },
+        });
+        if (startAnimationStage1) {
+            startAnimationStage1.play();
+            startAnimationStage1.finished.then(() => {
+                console.log(
+                    $photoseries.length,
+                    "ANIMATION NEEED PROMISE",
+                    load
+                );
+                if (load < $photoseries.length) {
+                    startAnimation1();
+                }
+            });
+        }
+    }
     function startAnimate() {
         if (!pageslug) {
             startAnimationPage.set(true);
@@ -418,33 +488,53 @@
                 .timeline({
                     autoplay: false,
                 })
-                .add({
-                    targets: startTransition,
-                    duration: 4500,
-                    easing: "easeOutSine",
-                    time: Math.PI * 4,
-                    changeComplete: () => {
-                        startAnimationPage.set(false);
-                        startTransitionDone = true;
-                        planes.forEach((plane) => {
-                            if (plane.relativeTranslation.z < 0) {
-                                plane.visible = 0;
-                            }
-                            if (plane.uniforms.uOpacity.value < 1) {
-                                plane.uniforms.uOpacity.value = 1;
-                            }
-                        });
-                    },
-                })
+                // .add({
+                //     targets: startTransition,
+                //     duration: 4500,
+                //     easing: "easeOutSine",
+                //     time: Math.PI * 4,
+                //     changeComplete: () => {
+                //         // startAnimationPage.set(false);
+                //         // startTransitionDone = true;
+                //         // planes.forEach((plane) => {
+                //         //     if (plane.relativeTranslation.z < 0) {
+                //         //         plane.visible = 0;
+                //         //     }
+                //         //     if (plane.uniforms.uOpacity.value < 1) {
+                //         //         plane.uniforms.uOpacity.value = 1;
+                //         //     }
+                //         // });
+                //     },
+                // })
                 .add(
                     {
-                        duration: 2000,
+                        changeBegin: () => {
+                            if (startAnimationStage1) {
+                                startAnimationStage1.pause();
+                            }
+                        },
+                        targets: startTransition,
+                        duration: 2500,
+                        time: `+=${
+                            Math.PI * 2 - (startTransition.time % (Math.PI * 2))
+                        }`,
+                        easing: "easeOutSine",
+                    },
+                    4000
+                )
+                .add(
+                    {
+                        // changeBegin: () => {
+                        //     startAnimationStage1.pause();
+                        // },
+                        duration: 2500,
                         targets: [
                             startTransition,
                             ".svobodina",
                             ".photo",
                             ".logo",
                         ],
+                        // time: `+=${Math.PI * 2}`,
                         opacity: [1, 0],
                         radiusAnimation: radius,
                         scalePlane: 1,
@@ -452,14 +542,13 @@
                         zRoundEnable: 1,
                         easing: "easeInOutSine",
                     },
-                    2000
+                    0
                 )
                 .add(
                     {
                         duration: 500,
                         targets: startTransition,
                         opacityPlane: 0,
-                        changeBegin: () => {},
                         change: () => {
                             planes.forEach((plane, i) => {
                                 if (plane.relativeTranslation.z < 0) {
@@ -468,10 +557,21 @@
                                 }
                             });
                         },
-                        changeComplete: () => {},
+                        changeComplete: () => {
+                            startAnimationPage.set(false);
+                            startTransitionDone = true;
+                            planes.forEach((plane) => {
+                                if (plane.relativeTranslation.z < 0) {
+                                    plane.visible = 0;
+                                }
+                                if (plane.uniforms.uOpacity.value < 1) {
+                                    plane.uniforms.uOpacity.value = 1;
+                                }
+                            });
+                        },
                         easing: "linear",
                     },
-                    3500
+                    2000
                 );
         }
     }
@@ -556,7 +656,7 @@
 
     // EVENT CONTROLS
     function onPlaneClick(mouse) {
-        planes.forEach((el) => {
+        planes.forEach((el, i) => {
             if (!el.isDrawn()) {
                 return;
             }
@@ -572,6 +672,8 @@
             // Clicked
             eventAnimation.set(false);
             activePlane = el;
+            activePlaneTitle = planesTitle[i];
+            console.log(activePlaneTitle.index, activePlane.index);
             goto(`blog/${el.userData.route}`);
         });
     }
@@ -648,12 +750,6 @@
     }
 
     onMount(() => {
-        if (!pageslug) {
-            startTransition.radiusAnimation = Math.min(
-                (window.innerWidth * 0.11) / 1.3882 / 2,
-                100
-            );
-        }
         curtains = new Curtains({
             container: webgl,
             pixelRatio: Math.min(1.5, window.devicePixelRatio),
@@ -667,28 +763,11 @@
         const portrait = window.matchMedia("(orientation: portrait)");
         handlePortrait(portrait);
         portrait.addEventListener("change", handlePortrait);
-
         radius =
             elWidth / Math.sin((Math.PI * 2) / $photoseries.length / 2) / 2;
         transVec = new Vec3();
-        startAnimate();
+        // startAnimate();
         translateSlider();
-        // const params = {
-        //     vertexShader: vertex,
-        //     fragmentShader: fragment,
-        //     widthSegments: 16,
-        //     heightSegments: 16,
-        //     uniforms: {
-        //         time: {
-        //             name: "uTime", // uniform name that will be passed to our shaders
-        //             type: "1f", // this means our uniform is a float
-        //             value: 0,
-        //         },
-        //     },
-        // };
-        // for (const iterator of planeElements) {
-        //     new Plane(curtains, iterator, params);
-        // }
     });
 </script>
 
@@ -706,13 +785,10 @@
     }
     .title__plane {
         opacity: 0;
-        height: clamp(18px, 3.5vw + 12px, 90px);
         width: var(--plane__width);
         position: absolute;
-        padding-top: 40px;
-        padding-bottom: 40px;
         left: 50vw;
-        transform: translateX(-50%);
+        transform: translate(-50%, 50%);
         pointer-events: none;
         overflow: hidden;
     }
@@ -735,9 +811,8 @@
             line-height: clamp(18px, 3.5vw + 12px, 90px);
         }
         .title__plane {
-            top: calc(
-                (100vh - var(--plane__height)) / 2 + var(--plane__height)
-            );
+            height: clamp(18px, 3.5vw + 12px, 90px);
+            bottom: calc((100vh - var(--plane__height)) / 4);
         }
         .wrapper {
             justify-content: center;
@@ -761,25 +836,25 @@
             /* margin: auto var(--plane__margin); */
         }
         .svobodina {
-            opacity: 0;
+            /* opacity: 0; */
             position: fixed;
-            width: min(80vw, 1600px);
+            width: min(60vw, 1600px);
             left: 50vw;
             top: 50vh;
             transform: translate(-50%, -200%);
         }
         /* 1.3882 */
         .photo {
-            opacity: 0;
+            /* opacity: 0; */
             position: fixed;
-            width: min(44vw, 888px);
-            left: 49.75vw;
-            top: 51.3vh;
-            transform: translate(-52.5%, -70%);
+            width: min(33.3vw, 889px);
+            left: 50vw;
+            top: 50vh;
+            transform: translate(-52.8%, -64%);
         }
         .logo {
-            opacity: 0;
-            width: 10vw;
+            /* opacity: 0; */
+            width: 6vw;
             height: auto;
             position: fixed;
             bottom: 50px;
@@ -792,13 +867,12 @@
             --plane__width: calc(var(--plane__height) * 0.66);
         }
         .title__plane {
-            top: calc(
-                (100vh - var(--plane__height)) / 2 + var(--plane__height)
-            );
+            height: 4vh;
+            bottom: calc((100vh - var(--plane__height)) / 4);
         }
         h3 {
-            font-size: clamp(14px, 3vh + 12px, 80px);
-            line-height: clamp(18px, 3.5vh + 12px, 90px);
+            font-size: 4vh;
+            /* line-height: clamp(18px, 3.5vh + 12px, 90px); */
         }
         .wrapper {
             justify-content: center;
@@ -820,33 +894,33 @@
             /* margin: auto var(--plane__margin); */
         }
         .svobodina {
-            opacity: 0;
+            /* opacity: 0; */
             /* width: min(7vw, 100px); */
             height: 90vh;
             /* margin: auto; */
-            top: 5vh;
+            top: 50vh;
             position: fixed;
             left: 50vw;
-            transform: translateX(-250%);
+            transform: translate(-220%, -51.45%);
         }
         .photo {
-            opacity: 0;
+            /* opacity: 0; */
             position: fixed;
-            top: 25vh;
+            top: 50vh;
             height: 50vh;
             left: 50vw;
-            transform: translateX(-50%);
+            transform: translate(-50%, -52.5%);
             /* right: calc(
       50vw + max(11vw, 100px) / 1.3882 / 2 + max(11vw, 100px) / 1.3882 / 10
     ); */
         }
         .logo {
-            opacity: 0;
-            width: 20vw;
+            /* opacity: 0; */
+            width: 15vw;
             height: auto;
             position: fixed;
-            bottom: 5vh;
-            right: 5vh;
+            bottom: 4vh;
+            right: 3vh;
         }
     }
     .slider__img {
@@ -860,13 +934,13 @@
     /* #curtains canvas {
         display: block;
     } */
-    .box {
+    /* .box {
         background: orange;
         clip-path: circle(30.01%);
         transition: clip-path 1s;
         width: 100%;
         height: 100vh;
-    }
+    } */
     #curtains {
         /* overflow: hidden; */
         pointer-events: none;
@@ -884,9 +958,9 @@
 
 <!-- <h1 style="color: white">I'm LAYOUT Canvas2</h1> -->
 <svelte:window bind:innerWidth={width} bind:innerHeight={height} />
-{#if !pageslug}
-    <picture>
-        <!-- <source
+<!-- {#if !pageslug} -->
+<picture>
+    <!-- <source
         media="(orientation: portrait)"
         srcset="image/svobodinaPortrait.svg"
         type="image/svg+xml" />
@@ -894,10 +968,10 @@
         media="(orientation: landscape)"
         srcset="image/svobodina.svg"
         type="image/svg+xml" /> -->
-        <img src="image/svobodina.svg" class="svobodina" alt="svobodina" />
-    </picture>
-    <picture>
-        <!-- <source
+    <img src="image/svobodina.svg" class="svobodina" alt="svobodina" />
+</picture>
+<picture>
+    <!-- <source
         media="(orientation: portrait)"
         srcset="image/photoPortrait.svg"
         type="image/svg+xml" />
@@ -905,10 +979,10 @@
         media="(orientation: landscape)"
         srcset="image/photo.svg"
         type="image/svg+xml" /> -->
-        <img class="photo" src="image/photo.svg" alt="ph" />
-    </picture>
-    <img src="image/logo.svg" class="logo" alt="logo" />
-{/if}
+    <img class="photo" src="image/photo.svg" alt="ph" />
+</picture>
+<img src="image/logo.svg" class="logo" alt="logo" />
+<!-- {/if} -->
 <div
     on:mousemove={onMouseMove}
     on:touchmove|passive={onMouseMove}

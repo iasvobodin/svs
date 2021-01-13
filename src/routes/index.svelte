@@ -54,4 +54,4 @@
 	<strong>Try editing this file (src/routes/index.svelte) to test live
 		reloading.</strong>
 </p>
-<a href="blog">blog</a>
+<a href="blog" sapper:noscroll>blog</a>

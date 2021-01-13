@@ -1,4 +1,9 @@
-<!--<script ✂prettier:content✂="CglpbXBvcnQgTmF2IGZyb20gIi4uL2NvbXBvbmVudHMvTmF2LnN2ZWx0ZSI7CglleHBvcnQgbGV0IHNlZ21lbnQ7Cg==">{}</script>-->
+<!--<script ✂prettier:content✂="CglpbXBvcnQgTmF2IGZyb20gIi4uL2NvbXBvbmVudHMvTmF2LnN2ZWx0ZSI7CglleHBvcnQgbGV0IHNlZ21lbnQ7Cg==" ✂prettier:content✂="e30=">{}</script>-->
+<script>
+	export let segment;
+	segment = !segment;
+</script>
+
 <style>
 	main {
 		position: relative;

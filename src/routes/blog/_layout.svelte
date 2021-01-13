@@ -1,11 +1,12 @@
-<!--<script context="module" ✂prettier:content✂="CiAgICBsZXQgcGxhbmVzID0gW107Cg==" ✂prettier:content✂="e30=" ✂prettier:content✂="e30=" ✂prettier:content✂="e30=" ✂prettier:content✂="e30=" ✂prettier:content✂="e30=" ✂prettier:content✂="e30=">{}</script>-->
+<!--<script context="module" ✂prettier:content✂="CiAgICBsZXQgcGxhbmVzID0gW107Cg==" ✂prettier:content✂="e30=" ✂prettier:content✂="e30=" ✂prettier:content✂="e30=" ✂prettier:content✂="e30=" ✂prettier:content✂="e30=" ✂prettier:content✂="e30=" ✂prettier:content✂="e30=" ✂prettier:content✂="e30=">{}</script>-->
 <script>
-    import { setContext } from "svelte";
+    // import { setContext } from "svelte";
 
     import Canvas2 from "../../components/canvas2.svelte";
     export let segment;
-    setContext("planes", []);
-    setContext("curtains", {});
+    segment = !segment;
+    // setContext("planes", []);
+    // setContext("curtains", {});
 </script>
 
 <style>
@@ -15,7 +16,7 @@
 </style>
 
 <div class="canvas">
-    <Canvas2 bind:pageslug={segment} />
+    <Canvas2 />
 </div>
 <div class="route">
     <slot />
