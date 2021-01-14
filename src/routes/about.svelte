@@ -1,98 +1,33 @@
 <style>
-  @media (orientation: landscape) {
-    .holder {
-      position: fixed;
-      width: min(60vw, 1600px);
-      left: 50vw;
-      top: 50vh;
-      transform: translate(-50%, -200%);
-    }
-    .aaaa {
-      clip-path: inset(50.8824% 0px 0px);
-    }
-    .svobodina {
-      position: absolute;
-      top: 0;
-    }
-    .photo {
-      box-sizing: border-box;
-      height: auto;
-      position: fixed;
-      width: min(33.3vw, 889px);
-      left: 50vw;
-      top: 50vh;
-      transform: translate(-52.8%, -64%);
-    }
-    .photo > picture {
-      width: 100%;
-      height: auto;
-    }
-    .photo > picture > img {
-      width: 100%;
-      object-fit: cover;
-    }
-    .logo {
-      /* opacity: 0; */
-      width: 6vw;
-      height: auto;
-      position: fixed;
-      bottom: 50px;
-      right: 50px;
-    }
+  .svobodina {
+    position: absolute;
+    top: 0;
+    width: inherit;
   }
-  @media (orientation: portrait) {
-    .svobodina {
-      /* opacity: 0; */
-      /* width: min(7vw, 100px); */
-      height: 90vh;
-      /* margin: auto; */
-      top: 50vh;
-      position: fixed;
-      left: 50vw;
-      transform: translate(-220%, -51.45%);
-    }
-    .photo {
-      /* opacity: 0; */
-      position: fixed;
-      top: 50vh;
-      height: 50vh;
-      left: 50vw;
-      transform: translate(-50%, -52.5%);
-      /* right: calc(
-    50vw + max(11vw, 100px) / 1.3882 / 2 + max(11vw, 100px) / 1.3882 / 10
-  ); */
-    }
-    .logo {
-      /* opacity: 0; */
-      width: 15vw;
-      height: auto;
-      position: fixed;
-      bottom: 4vh;
-      right: 3vh;
-    }
+  .holder {
+    position: fixed;
+    width: min(60vw, 1600px);
+    left: 50vw;
+    top: 50vh;
+    transform: translate(-50%, -200%);
   }
 </style>
 
 <div class="holder">
-  <div class="svobodina aaaa">
-    <!-- Generator: Adobe Illustrator 25.0.1, SVG Export Plug-In  -->
+  <div style="clip-path: inset(50% 0px 0px);" class="svobodina">
     <svg
       version="1.1"
       xmlns="http://www.w3.org/2000/svg"
       xmlns:xlink="http://www.w3.org/1999/xlink"
       x="0px"
       y="0px"
-      width="1101.81px"
-      height="161.2px"
+      width="100%"
       viewBox="0 0 1101.81 161.2"
       xml:space="preserve"><style type="text/css">
         .st0 {
-          fill: #ffffff;
-          stroke: #ffffff;
-          stroke-miterlimit: 10;
+          fill: violet;
         }
       </style>
-      <!-- <defs> -->
       <path
         class="st0"
         d="M58.73,69.9c-9.33-1.33-16.77-3.37-22.3-6.1c-5.53-2.73-9.5-6-11.9-9.8c-2.4-3.8-3.6-7.97-3.6-12.5
@@ -168,8 +103,7 @@
     xmlns:xlink="http://www.w3.org/1999/xlink"
     x="0px"
     y="0px"
-    width="1101.81px"
-    height="161.2px"
+    width="100%"
     viewBox="0 0 1101.81 161.2"
     xml:space="preserve"><style type="text/css">
       .st1 {
@@ -248,19 +182,3 @@
     <!-- </defs> -->
   </svg>
 </div>
-
-<div class="photo">
-  <picture>
-    <source
-      media="(orientation: portrait)"
-      srcset="image/photoPortrait.svg"
-      type="image/svg+xml" />
-    <source
-      media="(orientation: landscape)"
-      srcset="image/photo.svg"
-      type="image/svg+xml" />
-    <img src="image/photo.svg" alt="ph" />
-  </picture>
-</div>
-
-<img src="image/logo.svg" class="logo" alt="logo" />
