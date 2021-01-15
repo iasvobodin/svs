@@ -21,22 +21,24 @@
         photoseries,
         leaveIndex,
         leaveRoute,
+        progress,
         titlePlaneLoad,
     } from "store.js";
     import { afterUpdate, getContext, onMount, setContext, tick } from "svelte";
     import { goto, stores, start } from "@sapper/app";
     import { sineOut } from "svelte/easing";
 
-    const progress = tweened(0, {
-        duration: 500,
-        easing: sineOut,
-    });
+    // const progress = tweened(0, {
+    //     duration: 500,
+    //     easing: sineOut,
+    // });
 
     const { page } = stores();
     // console.log($page.params.Route);
     $: pageslug = $page.params.Route;
     // SORT PHOTOSERIES
     onMount(() => {
+        progress.update((n) => n + 25);
         curtains = new Curtains({
             container: webgl,
             pixelRatio: Math.min(1.5, window.devicePixelRatio),
@@ -71,7 +73,9 @@
                     texture.onSourceLoaded(() => {
                         planes[i].visible = 1;
                         texture.addParent(planes[i]);
-                        progress.update((n) => n + 1);
+                        progress.update(
+                            (n) => n + 100 / $photoseries.length / 2
+                        );
                         load++;
                         console.log($progress, "$progress");
                         if (load === 1) {
@@ -92,7 +96,7 @@
         start({
             target: document.querySelector("#sapper"),
         }).then(() => {
-            console.log("клиентское приложение запустилось");
+            console.log("клиентское приложение запустилось", load);
         });
     });
     $: if (pageslug) {
@@ -179,7 +183,9 @@
                 yRoundDisable: 0,
                 zRoundEnable: 1,
             };
-
+            activePlane.setScale(
+                new Vec2(startTransition.scalePlane, startTransition.scalePlane)
+            );
             eventAnimation.set(false);
             activePlane.visible = 1;
             activePlane.uniforms.uProgress.value = 1;
@@ -209,7 +215,6 @@
                     texture.shouldUpdate = false;
                     writeText(planeTitle, texture.source);
                 });
-                console.log(planeTitle.index, "planeTitle");
                 planesTitle.push(planeTitle);
             }
         });
@@ -498,45 +503,6 @@
                 },
             });
     }
-    // function startAnimation0() {
-    //     anime({
-    //         targets: startTransition,
-    //         duration: 4000,
-    //         easing: "linear",
-    //         time: `+=${Math.PI * 4}`,
-    //         changeComplete: () => {
-    //             if (load < $photoseries.length) {
-    //                 startAnimation1();
-    //             }
-    //         },
-    //     });
-    // }
-    // function startAnimation1() {
-    //     startAnimationStage1 = anime({
-    //         targets: startTransition,
-    //         autoplay: false,
-    //         // loop: 2,
-    //         duration: 4000,
-    //         easing: "linear",
-    //         time: `+=${Math.PI * 4}`,
-    //         changeBegin: () => {
-    //             console.log("animStart");
-    //         },
-    //     });
-    //     if (startAnimationStage1) {
-    //         startAnimationStage1.play();
-    //         startAnimationStage1.finished.then(() => {
-    //             console.log(
-    //                 $photoseries.length,
-    //                 "ANIMATION NEEED PROMISE",
-    //                 load
-    //             );
-    //             if (load < $photoseries.length) {
-    //                 startAnimation1();
-    //             }
-    //         });
-    //     }
-    // }
     function startAnimate() {
         if (!pageslug) {
             startAnimationPage.set(true);
@@ -648,9 +614,6 @@
                 plane.uniforms.uOpacity.value = startTransition.opacityPlane;
             }
 
-            plane.setScale(
-                new Vec2(startTransition.scalePlane, startTransition.scalePlane)
-            );
             transVec.set(
                 Math.cos(
                     angle +
@@ -678,6 +641,12 @@
             );
             if ($eventAnimation) {
                 plane.setRelativeTranslation(transVec);
+                plane.setScale(
+                    new Vec2(
+                        startTransition.scalePlane,
+                        startTransition.scalePlane
+                    )
+                );
             }
             if (startTransitionDone) {
                 if ($titlePlaneLoad) {
@@ -730,7 +699,7 @@
             activePlane = el;
             activePlaneTitle = planesTitle[i];
             console.log(activePlaneTitle.index, activePlane.index);
-            goto(`blog/${el.userData.route}`);
+            goto(`/${el.userData.route}`);
         });
     }
     function onMouseDown(e) {
@@ -951,34 +920,34 @@
 </style>
 
 <!-- {#if !pageslug} -->
-<div class="svobodina">
+<!-- <div class="svobodina">
     <div
         style="clip-path: inset(0% {100 - $progress * (100 / $photoseries.length)}% 0px 0px);"
         class="svobodina__holder">
         <picture>
-            <!-- <source
+            <source
                 media="(orientation: portrait)"
                 srcset="image/photoPortrait.svg"
-                type="image/svg+xml" /> -->
+                type="image/svg+xml" />
             <img src="image/svobodinaFill.svg" alt="ph" />
         </picture>
     </div>
     <picture class="svobodina__holder">
-        <!-- <source
+        <source
             media="(orientation: portrait)"
             srcset="image/photoPortrait.svg"
-            type="image/svg+xml" /> -->
+            type="image/svg+xml" />
         <img src="image/svobodinaPath.svg" alt="ph" />
     </picture>
 </div>
 <picture>
-    <!-- <source
+    <source
         media="(orientation: portrait)"
         srcset="image/photoPortrait.svg"
-        type="image/svg+xml" /> -->
+        type="image/svg+xml" />
     <img class="photo" src="image/photo.svg" alt="ph" />
 </picture>
-<img src="image/logo.svg" class="logo" alt="logo" />
+<img src="image/logo.svg" class="logo" alt="logo" /> -->
 <!-- {/if} -->
 <div
     on:mousemove={onMouseMove}
