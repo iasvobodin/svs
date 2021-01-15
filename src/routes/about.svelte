@@ -1,10 +1,14 @@
+<script>
+  import Svobodina from "svobodina.svelte";
+</script>
+
 <style>
-  .svobodina {
+  .holder {
     position: absolute;
     top: 0;
     width: inherit;
   }
-  .holder {
+  .svobodina {
     position: fixed;
     width: min(60vw, 1600px);
     left: 50vw;
@@ -13,8 +17,9 @@
   }
 </style>
 
-<div class="holder">
-  <div style="clip-path: inset(50% 0px 0px);" class="svobodina">
+<div class="svobodina">
+  <div style="clip-path: inset(50% 0px 0px);" class="holder">
+    <Svobodina />
     <svg
       version="1.1"
       xmlns="http://www.w3.org/2000/svg"
