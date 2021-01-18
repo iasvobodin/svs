@@ -13,7 +13,7 @@
 <script>
   import { onMount, tick } from "svelte";
   import justifiedLayout from "justified-layout";
-  import Spic from "../../components/spic.svelte";
+  import Spic from "../components/spic.svelte";
   import { leaveRoute } from "store.js";
   import { fly } from "svelte/transition";
   // import IntersectionObserver from "../../components/IntersectionObserver.svelte";

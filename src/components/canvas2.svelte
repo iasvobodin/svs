@@ -94,6 +94,8 @@
     $: $leaveRoute && toIndexAnim(activePlane);
     $: animationState = !!startAnimation || !!toRoute || !!toIndex;
     $: transitionPage = $leaveIndex || $leaveRoute;
+    $: toInvisibleState =
+        $homePageState && $titlePlaneOnLoad && !animationState;
 
     $: if (pageslug) {
         // SORT PHOTOSERIES
@@ -628,16 +630,6 @@
                 (sliderState.currentPosition - sliderState.translation) * 0.05);
         planes.forEach((plane, i) => {
             const angle = angleStep * i;
-
-            // if (
-            //     plane.visible &&
-            //     transitionPage &&
-            //     plane.isDrawn() &&
-            //     plane.index !== activePlane.index
-            // ) {
-            //     plane.uniforms.uOpacity.value = transitionState.opacityPlane;
-            // }
-
             transVec.set(
                 Math.cos(
                     angle +
@@ -675,19 +667,13 @@
             $titlePlaneOnLoad &&
                 planesTitle[i].setRelativeTranslation(transVec);
 
-            if ($homePageState && $titlePlaneOnLoad && !animationState) {
+            if (toInvisibleState) {
                 if (plane.relativeTranslation.z < 0) {
                     plane.visible = planesTitle[i].visible = false;
                 } else {
                     plane.visible = planesTitle[i].visible = true;
                 }
             }
-
-            // if (transitionPage) {
-            //     planesTitle[i].uniforms.uOpacityTitle.value =
-            //         transitionState.opacityPlane;
-            // }
-            // }
         });
         // START ANIMATION
 
