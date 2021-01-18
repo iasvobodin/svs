@@ -1,5 +1,14 @@
-<!--<script ✂prettier:content✂="CglpbXBvcnQgTmF2IGZyb20gIi4uL2NvbXBvbmVudHMvTmF2LnN2ZWx0ZSI7CglleHBvcnQgbGV0IHNlZ21lbnQ7Cg==" ✂prettier:content✂="e30=">{}</script>-->
 <script>
+	import Canvas2 from "../components/canvas2.svelte";
+	import Preloader from "../components/preloader.svelte";
+	import { stores } from "@sapper/app";
+	import { fade } from "svelte/transition";
+	import { onMount } from "svelte";
+	onMount(() => {
+		console.log("layout is mounted");
+	});
+	const { preloading } = stores();
+	$: console.log($preloading, "$preloading");
 	export let segment;
 	segment = !segment;
 </script>
@@ -10,9 +19,20 @@
 		background-color: black;
 		box-sizing: border-box;
 	}
+	.canvas {
+		height: 100vh;
+	}
 </style>
 
-<!-- <Nav {segment} /> -->
-<main>
-	<slot />
+<!-- {#if !$preloading} -->
+<main transition:fade>
+	<Preloader />
+	<div class="canvas">
+		<Canvas2 />
+	</div>
+	<!-- <section class="photoseries" /> -->
+	<section class="route">
+		<slot />
+	</section>
 </main>
+<!-- {/if} -->

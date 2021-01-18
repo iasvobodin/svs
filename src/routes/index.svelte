@@ -1,57 +1,10 @@
+<!--<script context="module" ✂prettier:content✂="CiAgZXhwb3J0IGZ1bmN0aW9uIHByZWxvYWQoKSB7CiAgICByZXR1cm4gdGhpcy5mZXRjaChgL2RiL1Bob3Rvc2VyaWVzLmpzb25gKQogICAgICAudGhlbigocikgPT4gci5qc29uKCkpCiAgICAgIC50aGVuKChwaG90b3NlcmllcykgPT4gewogICAgICAgIHJldHVybiB7IHBob3Rvc2VyaWVzIH07CiAgICAgIH0pOwogIH0K" ✂prettier:content✂="e30=" ✂prettier:content✂="e30=" ✂prettier:content✂="e30=" ✂prettier:content✂="e30=" ✂prettier:content✂="e30=" ✂prettier:content✂="e30=" ✂prettier:content✂="e30=" ✂prettier:content✂="e30=" ✂prettier:content✂="e30=" ✂prettier:content✂="e30=" ✂prettier:content✂="e30=" ✂prettier:content✂="e30=">{}</script>-->
 <script>
-	import successkid from "images/successkid.jpg";
+  import { fly } from "svelte/transition";
+  import { leaveIndex } from "store.js";
 </script>
 
-<style>
-	h1,
-	figure,
-	p {
-		text-align: center;
-		margin: 0 auto;
-	}
-
-	h1 {
-		font-size: 2.8em;
-		text-transform: uppercase;
-		font-weight: 700;
-		margin: 0 0 0.5em 0;
-	}
-
-	figure {
-		margin: 0 0 1em 0;
-	}
-
-	img {
-		width: 100%;
-		max-width: 400px;
-		margin: 0 0 1em 0;
-	}
-
-	p {
-		margin: 1em auto;
-	}
-
-	@media (min-width: 480px) {
-		h1 {
-			font-size: 4em;
-		}
-	}
-</style>
-
-<svelte:head>
-	<title>Sapper project template</title>
-</svelte:head>
-
-<h1>Great success!</h1>
-
-<figure>
-	<a href="blog"><img alt="Success Kid" src={successkid} /></a>
-
-	<figcaption>Have fun with Sapper!</figcaption>
-</figure>
-
-<p>
-	<strong>Try editing this file (src/routes/index.svelte) to test live
-		reloading.</strong>
-</p>
-<a href="blog" sapper:noscroll>blog</a>
+<p
+  style="height: 0px; margin: 0px"
+  transition:fly
+  on:outrostart={() => leaveIndex.set(true)} />
