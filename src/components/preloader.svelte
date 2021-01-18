@@ -1,17 +1,16 @@
 <script>
     import { progress, photoseries } from "store.js";
     import { onMount } from "svelte";
-    export let preloading;
-    onMount(() => {
-        progress.update((n) => n + 25);
-    });
-    $: style = `clip-path: inset(0% ${50 - $progress}% 0px 0px);`;
+    // onMount(() => {
+    //     progress.update((n) => n + 25);
+    // });
+    $: style = `clip-path: inset(0% ${100 - $progress}% 0px 0px);`;
 </script>
 
 <style>
-    .inset-leave-active {
+    /* .inset-leave-active {
         animation: 4s inset;
-    }
+    } */
 
     @keyframes inset {
         0% {
