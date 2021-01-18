@@ -7,6 +7,7 @@
         TextureLoader,
     } from "curtainsjs/src/index.mjs";
     import anime from "animejs";
+    import { tweened } from "svelte/motion";
     // import photoseries from "db/Photoseries.json";
     import fragment from "assets/photoseries.frag";
     import vertex from "assets/photoseries.vert";
@@ -15,123 +16,60 @@
     // import fragment from "assets/start.frag";
     // import vertex from "assets/start.vert";
     import {
-        startAnimationPage,
+        homePageState,
         eventAnimation,
         photoseries,
         leaveIndex,
         leaveRoute,
-        titlePlaneLoad,
+        titlePlaneOnLoad,
     } from "store.js";
     import { afterUpdate, getContext, onMount, setContext, tick } from "svelte";
     import { goto, stores, start } from "@sapper/app";
+    import { sineOut } from "svelte/easing";
+    //INIT BEFORE MOUNT
     const { page } = stores();
-    console.log($page.params.Route);
     $: pageslug = $page.params.Route;
-    // SORT PHOTOSERIES
-    onMount(() => {
-        curtains = new Curtains({
-            container: webgl,
-            pixelRatio: Math.min(1.5, window.devicePixelRatio),
-            production: process.env.NODE_ENV !== "development",
-            autoRender: false,
-        });
-        const planeElements = document.getElementsByClassName("plane");
-        const planeElementsTitle = document.getElementsByClassName("titleH3");
-        startAnimation1();
-        addPlane(planeElements);
-        addTitlePlane(planeElementsTitle);
-        const portrait = window.matchMedia("(orientation: portrait)");
-        handlePortrait(portrait);
-        portrait.addEventListener("change", handlePortrait);
-        radius =
-            elWidth / Math.sin((Math.PI * 2) / $photoseries.length / 2) / 2;
-        transVec = new Vec3();
-        // startAnimate();
-        translateSlider();
-        const loader = new TextureLoader(curtains);
-        // const images = [];
-        console.time("create texture");
-        $photoseries.forEach((el, i) => {
-            // images.push(`/image/jpg/720/${el.FileName}.jpg`);
-            loader.loadImage(
-                `/image/jpg/480/${el.FileName}.jpg`,
-                {
-                    // texture options (we're only setting its sampler name here)
-                    sampler: "planeTexture",
-                },
-                (texture) => {
-                    // texture has been successfully created, you can safely use it
-                    // console.log(texture);
-                    texture.onSourceLoaded(() => {
-                        texture.addParent(planes[i]);
-                        load++;
-                        console.log(load);
-                        if (load === 1) {
-                            // startAnimation1();
-                        }
-                        if (load === $photoseries.length) {
-                            startAnim();
-                        }
-                    });
-                },
-                (image, error) => {
-                    // there has been an error while loading the image
-                }
-            );
-        });
-        console.timeEnd("create texture");
+    const progress = tweened(0, {
+        duration: 500,
+        easing: sineOut,
     });
-    onMount(() => {
-        start({
-            target: document.querySelector("#sapper"),
-        }).then(() => {
-            console.log("клиентское приложение запустилось");
-        });
-    });
-    $: if (pageslug) {
-        const object = $photoseries.find((el) => el.Route === pageslug);
-        photoseries.update((n) => [
-            ...n.slice(object.Id),
-            ...n.slice(0, object.Id),
-        ]);
-    }
+
     // VARIABLE DATA
-    let clickDown = "",
-        toIndex,
-        toRoute,
-        clickUp = "",
-        curtains,
+
+    let curtains,
         webgl,
         planesTitle = [],
         planes = [],
         activePlane,
         activePlaneTitle,
-        translation = 0,
-        currentPosition = 0,
+        toIndex,
+        toRoute,
+        toInvisible,
         animationFrame = null,
-        startAnimationOpacity = false,
-        startPosition = 0,
-        endPosition = 0,
         changeOpacity,
-        mousePosition = 0,
-        moveSpeed = 3,
-        transVec,
+        transVec = new Vec3(),
         radius = null,
         elWidth,
         aspect = 0,
-        startTransitionDone = false,
         startAnimation = null,
-        startAnimationStage1,
         isTrackpad = true,
-        isMouseDown = false,
-        isTranslating = false,
-        previousTranslation = { x: 0 },
         calcCords = {},
-        customCorr = 0,
         angleStep = (Math.PI * 2) / $photoseries.length,
         step = Math.PI / 2 - angleStep,
         load = 0,
-        startTransition = {
+        sliderState = {
+            clickDown: "",
+            clickUp: "",
+            translation: 0,
+            currentPosition: 0,
+            planeCorrection: 0,
+            isMouseDown: false,
+            startPosition: 0,
+            endPosition: 0,
+            mousePosition: 0,
+            moveSpeed: 3,
+        },
+        transitionState = {
             opacityPlane: 1,
             time: 0,
             radiusAnimation: 0,
@@ -140,31 +78,40 @@
             zRoundEnable: 0,
         };
 
-    $: if ($leaveIndex) {
-        toRouteAnim(activePlane);
-    }
-    $: if ($leaveRoute) {
-        toIndexAnim(activePlane);
-    }
+    onMount(() => {
+        initCurtains();
+        addPlane();
+        addTexture();
+        addTitlePlane();
+        initMatchMedia();
+
+        radius =
+            elWidth / Math.sin((Math.PI * 2) / $photoseries.length / 2) / 2;
+        translateSlider();
+    });
+
+    $: $leaveIndex && toRouteAnim(activePlane);
+    $: $leaveRoute && toIndexAnim(activePlane);
+    $: animationState = !!startAnimation || !!toRoute || !!toIndex;
     $: transitionPage = $leaveIndex || $leaveRoute;
 
     $: if (pageslug) {
-        afterUpdate(() => {
-            if (!activePlane) {
-                activePlane = planes.find((p) => p.userData.route === pageslug);
-                $titlePlaneLoad &&
-                    (activePlaneTitle =
-                        planesTitle[activePlane.index + photoseries.length]);
-            }
-        });
+        // SORT PHOTOSERIES
+        const object = $photoseries.find((el) => el.Route === pageslug);
+        photoseries.update((n) => [
+            ...n.slice(object.Id),
+            ...n.slice(0, object.Id),
+        ]);
+        eventAnimation.set(false);
         onMount(() => {
             if (!activePlane) {
                 activePlane = planes.find((p) => p.userData.route === pageslug);
-                $titlePlaneLoad &&
+                console.log(activePlane);
+                $titlePlaneOnLoad &&
                     (activePlaneTitle =
                         planesTitle[activePlane.index + photoseries.length]);
             }
-            startTransition = {
+            transitionState = {
                 opacityHedline: 0,
                 opacityPlane: 1,
                 time: 0,
@@ -174,17 +121,49 @@
                 zRoundEnable: 1,
             };
             activePlane.setScale(
-                new Vec2(startTransition.scalePlane, startTransition.scalePlane)
+                new Vec2(transitionState.scalePlane, transitionState.scalePlane)
             );
-            eventAnimation.set(false);
+
             activePlane.visible = 1;
             activePlane.uniforms.uProgress.value = 1;
             curtains.needRender();
         });
     }
+    // else {
+    //     onMount(() => {
+    //     curtains = new Curtains({
+    //         container: webgl,
+    //         pixelRatio: Math.min(1.5, window.devicePixelRatio),
+    //         production: process.env.NODE_ENV !== "development",
+    //         autoRender: false,
+    //     });
+    //     const planeElements = document.getElementsByClassName("plane");
+    //     const planeElementsTitle = document.getElementsByClassName("titleH3");
+
+    //     addPlane(planeElements);
+    //     addTexture();
+    //     addTitlePlane(planeElementsTitle);
+    //     const portrait = window.matchMedia("(orientation: portrait)");
+    //     handlePortrait(portrait);
+    //     portrait.addEventListener("change", handlePortrait);
+    //     radius =
+    //         elWidth / Math.sin((Math.PI * 2) / $photoseries.length / 2) / 2;
+    //     transVec = new Vec3();
+    //     translateSlider();
+    // });
+    // }
 
     // INIT
-    function addTitlePlane(planeElementTitle) {
+    function initCurtains() {
+        curtains = new Curtains({
+            container: webgl,
+            pixelRatio: Math.min(1.5, window.devicePixelRatio),
+            production: process.env.NODE_ENV !== "development",
+            autoRender: false,
+        });
+    }
+    function addTitlePlane() {
+        const planeElementTitle = document.getElementsByClassName("titleH3");
         const paramsTitle = {
             vertexShader: vertexT,
             fragmentShader: fragmentT,
@@ -196,7 +175,7 @@
             },
         };
         document.fonts.load("1em Cormorant Infant").then(() => {
-            titlePlaneLoad.set(true);
+            titlePlaneOnLoad.set(true);
             for (const element of planeElementTitle) {
                 const planeTitle = new Plane(curtains, element, paramsTitle);
                 const canvas = document.createElement("canvas");
@@ -209,13 +188,14 @@
             }
         });
     }
-    function addPlane(planeElement, trPlane = false) {
+    function addPlane(trPlane = false) {
+        const planeElement = document.getElementsByClassName("plane");
         const paramsPlane = {
             widthSegments: 16,
             heightSegments: 16,
             vertexShader: vertex,
             // fragmentShader: fragment,
-            // visible: 0,
+            visible: 0,
             autoloadSources: false,
             // depthTest: false,
             fov: 1,
@@ -254,7 +234,7 @@
                 id: element.dataset.id,
             };
             plane.setScale(
-                new Vec2(startTransition.scalePlane, startTransition.scalePlane)
+                new Vec2(transitionState.scalePlane, transitionState.scalePlane)
             );
             planes.push(plane);
         });
@@ -268,6 +248,40 @@
 
             planes.trPlane.visible = 1;
         }
+    }
+    function addTexture() {
+        const loader = new TextureLoader(curtains);
+        console.time("create texture");
+        $photoseries.forEach((el, i) => {
+            // images.push(`/image/jpg/720/${el.FileName}.jpg`);
+            loader.loadImage(
+                `/image/jpg/480/${el.FileName}.jpg`,
+                {
+                    // texture options (we're only setting its sampler name here)
+                    sampler: "planeTexture",
+                },
+                (texture) => {
+                    // texture has been successfully created, you can safely use it
+                    // console.log(texture);
+                    texture.onSourceLoaded(() => {
+                        planes[i].visible = 1;
+                        texture.addParent(planes[i]);
+                        progress.update((n) => n + 1);
+                        load++;
+                        console.log($progress, "$progress");
+                        if (load === 1) {
+                        }
+                        if (load === $photoseries.length) {
+                            startAnim();
+                        }
+                    });
+                },
+                (image, error) => {
+                    // there has been an error while loading the image
+                }
+            );
+        });
+        console.timeEnd("create texture");
     }
     function writeText(plane, canvas) {
         const htmlPlane = plane.htmlElement;
@@ -304,12 +318,26 @@
             plane.textures[0].needUpdate();
         }
     }
+    function initMatchMedia() {
+        const portrait = window.matchMedia("(orientation: portrait)");
+        handlePortrait(portrait);
+        portrait.addEventListener("change", handlePortrait);
+    }
     function customCorrection(coef) {
         const angle = (Math.PI * 2) / $photoseries.length;
-        customCorr = angle * coef;
-        translation = 0;
-        currentPosition = 0;
-        endPosition = 0;
+        sliderState.planeCorrection = angleStep * coef;
+        sliderState.translation = 0;
+        sliderState.currentPosition = 0;
+        sliderState.endPosition = 0;
+        // anime({
+        //     targets: sliderState,
+        //     duration: 500,
+        //     planeCorrection: angleStep * coef,
+        //     translation: 0,
+        //     currentPosition: 0,
+        //     endPosition: 0,
+        //     easing: "linear",
+        // });
     }
     function getUnifors(
         plane,
@@ -370,7 +398,7 @@
         if (e.matches) {
             // PORTAIT
             if (!pageslug) {
-                startTransition.radiusAnimation = Math.min(
+                transitionState.radiusAnimation = Math.min(
                     (window.innerHeight * 0.0725) / 1.3882 / 2,
                     100
                 );
@@ -396,7 +424,7 @@
         } else {
             // LANDSCAPE
             if (!pageslug) {
-                startTransition.radiusAnimation = Math.min(
+                transitionState.radiusAnimation = Math.min(
                     (window.innerWidth * 0.0755) / 1.3882 / 2,
                     100
                 );
@@ -434,14 +462,62 @@
     }
 
     //AANIMATE
+    function startAnim() {
+        if (pageslug) return;
+        // homePageState.set(true);
+        startAnimation = anime
+            .timeline({
+                autoplay: false,
+            })
+            .add({
+                update: () => {
+                    console.log("startAnim()");
+                },
+                targets: transitionState,
+                duration: 4500,
+                easing: "easeOutSine",
+                time: Math.PI * 4,
+            })
+            .add(
+                {
+                    duration: 2000,
+                    targets: [transitionState, ".svobodina", ".photo", ".logo"],
+                    opacity: [1, 0],
+                    radiusAnimation: radius,
+                    scalePlane: 1,
+                    yRoundDisable: 0,
+                    zRoundEnable: 1,
+                    easing: "easeInOutSine",
+                },
+                2000
+            )
+            .add(
+                {
+                    duration: 500,
+                    targets: transitionState,
+                    opacityPlane: 0,
+                    change: () => {
+                        // planes.forEach((plane, i) => {
+                        //     if (plane.relativesliderState.Translation.z < 0) {
+                        //         plane.uniforms.uOpacity.value =
+                        //             transitionState.opacityPlane;
+                        //     }
+                        // });
+                    },
+                    easing: "linear",
+                },
+                4000
+            );
+        startAnimation &&
+            startAnimation.finished.then(() => {
+                homePageState.set(true);
+                startAnimation = null;
+            });
+    }
 
-    function toRouteAnim(activePlane) {
-        !activePlane &&
-            (activePlane = planes.find((p) => p.userData.route === pageslug));
-        !activePlane.isDrawn() && customCorrection(activePlane.index);
-
-        toRoute = anime({
-            targets: [activePlane.uniforms.uProgress, startTransition],
+    function toInvisibleAnim(target) {
+        toInvisible = anime({
+            targets: [activePlane.uniforms.uProgress, transitionState],
             duration: 1400,
             autoplay: false,
             value: 1,
@@ -482,7 +558,6 @@
             easing: "easeOutQuad",
             changeComplete: () => {},
             changeBegin: () => {
-                activePlane.relativeTranslation.z = radius + 10;
                 getUnifors(activePlane);
                 console.log("animation to route");
                 // eventAnimation.set(false);
@@ -495,6 +570,7 @@
         });
     }
     function toIndexAnim(activePlane) {
+        console.log(activePlane);
         // const currentScroll = { value: window.pageYOffset };
         getUnifors(activePlane, {
             pCorr: true,
@@ -513,244 +589,113 @@
             //     },
             // })
             .add({
-                targets: [activePlane.uniforms.uProgress, startTransition],
+                targets: [activePlane.uniforms.uProgress, transitionState],
                 duration: 1400,
                 autoplay: false,
                 value: 0,
                 opacityPlane: [0, 1],
                 easing: "easeInSine",
-                changeComplete: () => {
-                    leaveRoute.set(false);
-                    eventAnimation.set(true);
-                    startTransitionDone = true;
-                    currentPosition = endPosition = translation;
-                },
+                changeComplete: () => {},
             });
-        toIndex.finished.then(() => (toIndex = null));
-    }
-    function startAnimation0() {
-        anime({
-            targets: startTransition,
-            duration: 4000,
-            easing: "linear",
-            time: `+=${Math.PI * 4}`,
-            changeComplete: () => {
-                if (load < $photoseries.length) {
-                    startAnimation1();
-                }
-            },
+        toIndex.finished.then(() => {
+            toIndex = null;
+            leaveRoute.set(false);
+            eventAnimation.set(true);
+            sliderState.currentPosition = sliderState.endPosition =
+                sliderState.translation;
+            !$homePageState && homePageState.set(true);
         });
     }
-    function startAnimation1() {
-        startAnimationStage1 = anime({
-            targets: startTransition,
-            autoplay: false,
-            // loop: 2,
-            duration: 4000,
-            easing: "linear",
-            time: `+=${Math.PI * 4}`,
-            changeBegin: () => {
-                console.log("animStart");
-            },
-        });
-        if (startAnimationStage1) {
-            startAnimationStage1.play();
-            startAnimationStage1.finished.then(() => {
-                console.log(
-                    $photoseries.length,
-                    "ANIMATION NEEED PROMISE",
-                    load
-                );
-                if (load < $photoseries.length) {
-                    startAnimation1();
-                }
-            });
-        }
-    }
-    function startAnimate() {
-        if (!pageslug) {
-            startAnimationPage.set(true);
-            startAnimation = anime
-                .timeline({
-                    autoplay: false,
-                })
-                // .add({
-                //     targets: startTransition,
-                //     duration: 4500,
-                //     easing: "easeOutSine",
-                //     time: Math.PI * 4,
-                //     changeComplete: () => {
-                //         // startAnimationPage.set(false);
-                //         // startTransitionDone = true;
-                //         // planes.forEach((plane) => {
-                //         //     if (plane.relativeTranslation.z < 0) {
-                //         //         plane.visible = 0;
-                //         //     }
-                //         //     if (plane.uniforms.uOpacity.value < 1) {
-                //         //         plane.uniforms.uOpacity.value = 1;
-                //         //     }
-                //         // });
-                //     },
-                // })
-                .add(
-                    {
-                        changeBegin: () => {
-                            if (startAnimationStage1) {
-                                startAnimationStage1.pause();
-                            }
-                        },
-                        targets: startTransition,
-                        duration: 2500,
-                        time: `+=${
-                            Math.PI * 2 - (startTransition.time % (Math.PI * 2))
-                        }`,
-                        easing: "easeOutSine",
-                    },
-                    4000
-                )
-                .add(
-                    {
-                        duration: 2000,
-                        targets: [
-                            startTransition,
-                            ".svobodina",
-                            ".photo",
-                            ".logo",
-                        ],
-                        opacity: [1, 0],
-                        radiusAnimation: radius,
-                        scalePlane: 1,
-                        yRoundDisable: 0,
-                        zRoundEnable: 1,
-                        easing: "easeInOutSine",
-                    },
-                    0
-                )
-                .add(
-                    {
-                        duration: 500,
-                        targets: startTransition,
-                        opacityPlane: 0,
-                        change: () => {
-                            planes.forEach((plane, i) => {
-                                if (plane.relativeTranslation.z < 0) {
-                                    plane.uniforms.uOpacity.value =
-                                        startTransition.opacityPlane;
-                                }
-                            });
-                        },
-                        easing: "linear",
-                    },
-                    2000
-                );
-        }
-        startAnimation &&
-            startAnimation.finished.then(() => {
-                console.log("promis in start anim");
-                startAnimationPage.set(false);
-                startAnimation = null;
-                startTransitionDone = true;
-                planes.forEach((plane) => {
-                    if (plane.relativeTranslation.z < 0) {
-                        plane.visible = 0;
-                    }
-                    if (plane.uniforms.uOpacity.value < 1) {
-                        plane.uniforms.uOpacity.value = 1;
-                    }
-                });
-            });
-    }
-    function changeOpacityAnim(targetPlane, direction) {
-        changeOpacity = anime({
-            targets: targetPlane,
-            [uniforms]uOpacity.value: direction,
-            change: () => {
-                planes.forEach((plane, i) => {
-                    if (plane.relativeTranslation.z < 0) {
-                        plane.uniforms.uOpacity.value =
-                            startTransition.opacityPlane;
-                    }
-                });
-            },
-        });
-    }
+
+    // function changeOpacityAnim(targetPlane, direction) {
+    //     changeOpacity = anime({
+    //         targets: targetPlane,
+    //         [uniforms]uOpacity.value: direction,
+    //         change: () => {
+    //             planes.forEach((plane, i) => {
+    //                 if (plane.relativesliderState.Translation.z < 0) {
+    //                     plane.uniforms.uOpacity.value =
+    //                         transitionState.opacityPlane;
+    //                 }
+    //             });
+    //         },
+    //     });
+    // }
     function translateSlider(t) {
         curtains.render();
         $eventAnimation &&
-            (translation += (currentPosition - translation) * 0.05);
+            (sliderState.translation +=
+                (sliderState.currentPosition - sliderState.translation) * 0.05);
         planes.forEach((plane, i) => {
             const angle = angleStep * i;
 
-            if (
-                plane.visible &&
-                transitionPage &&
-                plane.isDrawn() &&
-                plane.index !== activePlane.index
-            ) {
-                plane.uniforms.uOpacity.value = startTransition.opacityPlane;
-            }
+            // if (
+            //     plane.visible &&
+            //     transitionPage &&
+            //     plane.isDrawn() &&
+            //     plane.index !== activePlane.index
+            // ) {
+            //     plane.uniforms.uOpacity.value = transitionState.opacityPlane;
+            // }
 
             transVec.set(
                 Math.cos(
                     angle +
                         step +
                         angleStep -
-                        customCorr -
-                        translation / 1300 +
-                        startTransition.time
-                ) * startTransition.radiusAnimation,
+                        sliderState.planeCorrection -
+                        sliderState.translation / 1300 +
+                        transitionState.time
+                ) * transitionState.radiusAnimation,
                 // Y
-                Math.cos(angle + startTransition.time) *
-                    startTransition.radiusAnimation *
-                    startTransition.yRoundDisable,
+                Math.cos(angle + transitionState.time) *
+                    transitionState.radiusAnimation *
+                    transitionState.yRoundDisable,
                 // Z
                 Math.sin(
                     angle +
                         step +
                         angleStep -
-                        customCorr -
-                        translation / 1300 +
-                        startTransition.time
+                        sliderState.planeCorrection -
+                        sliderState.translation / 1300 +
+                        transitionState.time
                 ) *
-                    startTransition.radiusAnimation *
-                    startTransition.zRoundEnable
+                    transitionState.radiusAnimation *
+                    transitionState.zRoundEnable
             );
             if ($eventAnimation) {
                 plane.setScale(
                     new Vec2(
-                        startTransition.scalePlane,
-                        startTransition.scalePlane
+                        transitionState.scalePlane,
+                        transitionState.scalePlane
                     )
                 );
                 plane.setRelativeTranslation(transVec);
             }
-            if (!$startAnimationPage) {
-                if ($titlePlaneLoad) {
-                    planesTitle[i].setRelativeTranslation(transVec);
-                    if (plane.relativeTranslation.z < 0) {
-                        plane.visible = planesTitle[i].visible = false;
-                    } else {
-                        plane.visible = planesTitle[i].visible = true;
-                    }
-                    if (transitionPage) {
-                        planesTitle[i].uniforms.uOpacityTitle.value =
-                            startTransition.opacityPlane;
-                    }
+            $titlePlaneOnLoad &&
+                planesTitle[i].setRelativeTranslation(transVec);
+
+            if ($homePageState && $titlePlaneOnLoad && !animationState) {
+                if (plane.relativeTranslation.z < 0) {
+                    plane.visible = planesTitle[i].visible = false;
+                } else {
+                    plane.visible = planesTitle[i].visible = true;
                 }
             }
+
+            // if (transitionPage) {
+            //     planesTitle[i].uniforms.uOpacityTitle.value =
+            //         transitionState.opacityPlane;
+            // }
+            // }
         });
         // START ANIMATION
-        // if ($startAnimationPage) {
+
         startAnimation && startAnimation.tick(t);
-        // }
-        // ENTER PAGE ANIMATION
-        // if ($leaveIndex) {
+
         toRoute && toRoute.tick(t);
-        // }
-        // LEAVE PAGE ANIMATION
-        // if ($leaveRoute) {
+
         toIndex && toIndex.tick(t);
-        // }
 
         animationFrame = requestAnimationFrame(translateSlider);
     }
@@ -773,48 +718,50 @@
             // Clicked
             activePlane = el;
             activePlaneTitle = planesTitle[i];
-            anime({
-                targets: [activePlane.uniforms.uProgress, startTransition],
-                duration: 1400,
-                value: 1,
-                opacityPlane: [1, 0],
-                easing: "easeOutQuad",
-                changeComplete: () => {
-                    leaveIndex.set(false);
-                },
-                changeBegin: () => {
-                    getUnifors(activePlane);
-                    eventAnimation.set(false);
-                },
-            });
+            // anime({
+            //     targets: [activePlane.uniforms.uProgress, transitionState],
+            //     duration: 1400,
+            //     value: 1,
+            //     opacityPlane: [1, 0],
+            //     easing: "easeOutQuad",
+            //     changeComplete: () => {
+            //         leaveIndex.set(false);
+            //     },
+            //     changeBegin: () => {
+            //         getUnifors(activePlane);
+            //         eventAnimation.set(false);
+            //     },
+            // });
 
-            goto(`blog/${el.userData.route}`);
+            goto(`/${el.userData.route}`);
         });
     }
     function onMouseDown(e) {
         if ($eventAnimation) {
-            isMouseDown = true;
-            clickDown = getMousePosition(e);
-            startPosition = clickDown[0];
+            sliderState.isMouseDown = true;
+            sliderState.clickDown = getMousePosition(e);
+            sliderState.startPosition = sliderState.clickDown[0];
         }
     }
     function onMouseMove(e) {
-        if (!isMouseDown) return;
-        mousePosition = getMousePosition(e);
-        currentPosition =
-            endPosition + (mousePosition[0] - startPosition) * moveSpeed;
+        if (!sliderState.isMouseDown) return;
+        sliderState.mousePosition = getMousePosition(e);
+        sliderState.currentPosition =
+            sliderState.endPosition +
+            (sliderState.mousePosition[0] - sliderState.startPosition) *
+                sliderState.moveSpeed;
     }
     function onMouseUp(e) {
         if ($eventAnimation) {
-            isMouseDown = false;
-            endPosition = currentPosition;
-            clickUp = getMousePosition(e);
+            sliderState.isMouseDown = false;
+            sliderState.endPosition = sliderState.currentPosition;
+            sliderState.clickUp = getMousePosition(e);
             if (
-                clickUp[0] === clickDown[0] &&
+                sliderState.clickUp[0] === sliderState.clickDown[0] &&
                 eventAnimation &&
-                clickUp[1] === clickDown[1]
+                sliderState.clickUp[1] === sliderState.clickDown[1]
             ) {
-                onPlaneClick(clickUp[0]);
+                onPlaneClick(sliderState.clickUp[0]);
             }
         }
     }
@@ -834,9 +781,9 @@
                 ? e.deltaY * 33
                 : e.deltaY;
             !isTrackpad
-                ? (currentPosition += e.deltaY * -1)
-                : (currentPosition += delta * -1);
-            endPosition = currentPosition;
+                ? (sliderState.currentPosition += e.deltaY * -1)
+                : (sliderState.currentPosition += delta * -1);
+            sliderState.endPosition = sliderState.currentPosition;
         }
     }
     function getMousePosition(e) {
@@ -972,10 +919,7 @@
         top: 0;
         font-family: Cormorant Infant, sans-serif;
         font-weight: 300;
-        /* font-style: italic; */
         color: rgb(255, 255, 255);
-        /* font-size: clamp(14px, 3vw + 12px, 80px);
-        line-height: clamp(18px, 3.5vw + 12px, 90px); */
         margin: 0;
     }
     @media (orientation: landscape) {
@@ -993,32 +937,31 @@
             height: var(--plane__height);
             top: 50vh;
             transform: translateY(-50%);
-            /* left: var(--plane__shift);
-      top: var(--margin__wrapper); */
             display: flex;
             position: absolute;
         }
         .plane {
             align-self: center;
-            /* top: 0; */
-            /* left: 0; */
             position: absolute;
             box-sizing: border-box;
             height: var(--plane__height);
             width: var(--plane__width);
-            /* margin: auto var(--plane__margin); */
         }
         .svobodina {
-            /* opacity: 0; */
             position: fixed;
             width: min(60vw, 1600px);
+            height: calc(min(60vw, 1600px) / 6.83);
             left: 50vw;
             top: 50vh;
             transform: translate(-50%, -200%);
         }
+        .svobodina__holder {
+            position: absolute;
+            top: 0;
+            width: inherit;
+        }
         /* 1.3882 */
         .photo {
-            /* opacity: 0; */
             position: fixed;
             width: min(33.3vw, 889px);
             left: 50vw;
@@ -1026,7 +969,6 @@
             transform: translate(-52.8%, -64%);
         }
         .logo {
-            /* opacity: 0; */
             width: 6vw;
             height: auto;
             position: fixed;
@@ -1045,50 +987,36 @@
         }
         h3 {
             font-size: 4vh;
-            /* line-height: clamp(18px, 3.5vh + 12px, 90px); */
         }
         .wrapper {
             justify-content: center;
             width: 100%;
             height: 100vh;
-            /* left: var(--plane__shift);
-      top: var(--margin__wrapper); */
             display: flex;
             position: absolute;
         }
         .plane {
             align-self: center;
-            /* top: 0; */
-            /* left: 0; */
             position: absolute;
             box-sizing: border-box;
             height: var(--plane__height);
             width: var(--plane__width);
-            /* margin: auto var(--plane__margin); */
         }
         .svobodina {
-            /* opacity: 0; */
-            /* width: min(7vw, 100px); */
             height: 90vh;
-            /* margin: auto; */
             top: 50vh;
             position: fixed;
             left: 50vw;
             transform: translate(-220%, -51.45%);
         }
         .photo {
-            /* opacity: 0; */
             position: fixed;
             top: 50vh;
             height: 50vh;
             left: 50vw;
             transform: translate(-50%, -52.5%);
-            /* right: calc(
-      50vw + max(11vw, 100px) / 1.3882 / 2 + max(11vw, 100px) / 1.3882 / 10
-    ); */
         }
         .logo {
-            /* opacity: 0; */
             width: 15vw;
             height: auto;
             position: fixed;
@@ -1096,26 +1024,7 @@
             right: 3vh;
         }
     }
-    .slider__img {
-        display: none;
-        opacity: 0;
-        height: 100%;
-        width: 100%;
-        object-fit: cover;
-        object-position: center;
-    }
-    /* #curtains canvas {
-        display: block;
-    } */
-    /* .box {
-        background: orange;
-        clip-path: circle(30.01%);
-        transition: clip-path 1s;
-        width: 100%;
-        height: 100vh;
-    } */
     #curtains {
-        /* overflow: hidden; */
         pointer-events: none;
         position: absolute;
         top: 0;
@@ -1123,18 +1032,5 @@
         width: 100%;
         overflow: hidden;
         height: 100vh;
-        /* bottom: 0;
-  right: 0; */
-        /* opacity: 0; */
-    }
-    .test__box {
-        clip-path: inset(50% 0% 0px 0px);
-        background: repeating-linear-gradient(red, orange 50px);
-        height: auto;
-        position: fixed;
-        width: min(60vw, 1600px);
-        left: 50vw;
-        top: 50vh;
-        transform: translate(-50%, -200%);
     }
 </style>
