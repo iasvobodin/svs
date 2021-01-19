@@ -252,6 +252,7 @@
                     sampler: "planeTexture",
                 },
                 (texture) => {
+                    texture.setMinFilter(curtains.gl.LINEAR_MIPMAP_NEAREST);
                     texture.onSourceLoaded(() => {
                         !pageslug && (planes[i].visible = 1);
                         texture.addParent(planes[i]);
@@ -517,19 +518,27 @@
             opacityPlane: direction,
             easing: "easeOutQuad",
             change: () => {
-                planes.forEach((e) => {
+                planes.forEach((e, i) => {
+                    if (!e.isDrawn()) {
+                        return;
+                    }
                     if (e.index === activePlane.index) {
                         return;
                     }
-                    e.uniforms.uOpacity.value = transitionState.opacityPlane;
+                    console.log(e.index);
+                    e.uniforms.uOpacity.value = planesTitle[
+                        i
+                    ].uniforms.uOpacityTitle.value =
+                        transitionState.opacityPlane;
                 });
             },
             changeComplete: () => {
-                planes.forEach((e) => {
+                planes.forEach((e, i) => {
                     if (e.index === activePlane.index) {
                         return;
                     }
-                    e.relativeTranslation.z > 0 && (e.visible = direction[1]);
+                    e.relativeTranslation.z > 0 &&
+                        (e.visible = planesTitle[i].visible = direction[1]);
                 });
             },
             changeBegin: () => {},
@@ -764,6 +773,56 @@
     }
 </script>
 
+<div
+    on:mousemove={onMouseMove}
+    on:touchmove|passive={onMouseMove}
+    on:mouseleave={onMouseUp}
+    on:mouseup={onMouseUp}
+    on:mousedown|preventDefault={onMouseDown}
+    on:touchstart|preventDefault={onMouseDown}
+    on:touchend={onMouseUp}
+    on:wheel={onWheel}
+    class="wrapper"
+>
+    {#each $photoseries as seriya, index (index)}
+        <a style="display: none;" href="/{seriya.Route}">r</a>
+        <div
+            data-id={index}
+            data-route={seriya.Route}
+            data-color={[seriya.ColorVector]}
+            class="plane"
+        >
+            <!-- <picture class="standart__picture">
+                <source
+                    media="(orientation: portrait)"
+                    srcset="/image/webp/720/{seriya.Portrait}.webp"
+                    type="image/webp" />
+                <source
+                    media="(orientation: landscape)"
+                    srcset="/image/webp/720/{seriya.FileName}.webp"
+                    type="image/webp" />
+
+                <img
+                    data-sampler="planeTexture"
+                    class="slider__img"
+                    alt="SvobodinaPhoto"
+                    crossorigin="anonimous"
+                    decoding="async"
+                    draggable="false"
+                    src="/image/jpg/720/{seriya.FileName}.jpg" />
+            </picture> -->
+        </div>
+    {/each}
+</div>
+<div class="title__plane">
+    {#each $photoseries as seriya, index (index)}
+        <div class="title">
+            <h3 class="titleH3">{seriya.Title}</h3>
+        </div>
+    {/each}
+</div>
+<div bind:this={webgl} id="curtains" />
+
 <!-- <div class="box" /> -->
 <style>
     :root {
@@ -859,51 +918,3 @@
         height: 100vh;
     }
 </style>
-
-<div
-    on:mousemove={onMouseMove}
-    on:touchmove|passive={onMouseMove}
-    on:mouseleave={onMouseUp}
-    on:mouseup={onMouseUp}
-    on:mousedown|preventDefault={onMouseDown}
-    on:touchstart|preventDefault={onMouseDown}
-    on:touchend={onMouseUp}
-    on:wheel={onWheel}
-    class="wrapper">
-    {#each $photoseries as seriya, index (index)}
-        <a style="display: none;" href="/{seriya.Route}">r</a>
-        <div
-            data-id={index}
-            data-route={seriya.Route}
-            data-color={[seriya.ColorVector]}
-            class="plane">
-            <!-- <picture class="standart__picture">
-                <source
-                    media="(orientation: portrait)"
-                    srcset="/image/webp/720/{seriya.Portrait}.webp"
-                    type="image/webp" />
-                <source
-                    media="(orientation: landscape)"
-                    srcset="/image/webp/720/{seriya.FileName}.webp"
-                    type="image/webp" />
-
-                <img
-                    data-sampler="planeTexture"
-                    class="slider__img"
-                    alt="SvobodinaPhoto"
-                    crossorigin="anonimous"
-                    decoding="async"
-                    draggable="false"
-                    src="/image/jpg/720/{seriya.FileName}.jpg" />
-            </picture> -->
-        </div>
-    {/each}
-</div>
-<div class="title__plane">
-    {#each $photoseries as seriya, index (index)}
-        <div class="title">
-            <h3 class="titleH3">{seriya.Title}</h3>
-        </div>
-    {/each}
-</div>
-<div bind:this={webgl} id="curtains" />
