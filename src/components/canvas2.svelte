@@ -16,7 +16,9 @@
     // import fragment from "assets/start.frag";
     // import vertex from "assets/start.vert";
     import {
+        globalPlanes,
         homePageState,
+        progress,
         eventAnimation,
         photoseries,
         leaveIndex,
@@ -29,10 +31,10 @@
     //INIT BEFORE MOUNT
     const { page } = stores();
     $: pageslug = $page.params.Route;
-    const progress = tweened(0, {
-        duration: 500,
-        easing: sineOut,
-    });
+    // const progress = tweened(0, {
+    //     duration: 500,
+    //     easing: sineOut,
+    // });
 
     // VARIABLE DATA
 
@@ -77,6 +79,12 @@
             yRoundDisable: 1,
             zRoundEnable: 0,
         };
+    $: $leaveIndex && toRouteAnim(activePlane);
+    $: $leaveRoute && toIndexAnim(activePlane);
+    $: animationState = !!startAnimation || !!toRoute || !!toIndex;
+    // $: transitionPage = $leaveIndex || $leaveRoute;
+    $: toInvisibleState =
+        $homePageState && $titlePlaneOnLoad && !animationState;
 
     onMount(() => {
         initCurtains();
@@ -90,13 +98,6 @@
         translateSlider();
     });
 
-    $: $leaveIndex && toRouteAnim(activePlane);
-    $: $leaveRoute && toIndexAnim(activePlane);
-    $: animationState = !!startAnimation || !!toRoute || !!toIndex;
-    $: transitionPage = $leaveIndex || $leaveRoute;
-    $: toInvisibleState =
-        $homePageState && $titlePlaneOnLoad && !animationState;
-
     $: if (pageslug) {
         // SORT PHOTOSERIES
         const object = $photoseries.find((el) => el.Route === pageslug);
@@ -108,27 +109,49 @@
         onMount(() => {
             if (!activePlane) {
                 activePlane = planes.find((p) => p.userData.route === pageslug);
-                console.log(activePlane);
+
+                let texture = $photoseries.find((t) => t.Route === pageslug);
+                transitionState = {
+                    opacityHedline: 0,
+                    opacityPlane: 1,
+                    time: 0,
+                    radiusAnimation: radius,
+                    scalePlane: 1,
+                    yRoundDisable: 0,
+                    zRoundEnable: 1,
+                };
+
+                activePlane.loadImage(
+                    `/image/jpg/480/${texture.FileName}.jpg`,
+                    {
+                        sampler: "planeTexture",
+                    },
+                    (texture) => {
+                        texture.onSourceLoaded(() => {
+                            activePlane.visible = 1;
+                            activePlane.uniforms.uProgress.value = 1;
+                            // activePlane.setScale(
+                            //     new Vec2(
+                            //         transitionState.scalePlane,
+                            //         transitionState.scalePlane
+                            //     )
+                            // );
+                            curtains.needRender();
+                        });
+                    }
+                    // (image, error) => {
+                    //     // there has been an error while loading the image
+                    // }
+                );
+                // console.log(activePlane);
                 $titlePlaneOnLoad &&
                     (activePlaneTitle =
                         planesTitle[activePlane.index + photoseries.length]);
             }
-            transitionState = {
-                opacityHedline: 0,
-                opacityPlane: 1,
-                time: 0,
-                radiusAnimation: radius,
-                scalePlane: 1,
-                yRoundDisable: 0,
-                zRoundEnable: 1,
-            };
-            activePlane.setScale(
-                new Vec2(transitionState.scalePlane, transitionState.scalePlane)
-            );
 
-            activePlane.visible = 1;
-            activePlane.uniforms.uProgress.value = 1;
-            curtains.needRender();
+            // activePlane.visible = 1;
+            // activePlane.uniforms.uProgress.value = 1;
+            // curtains.needRender();
         });
     }
     // else {
@@ -224,7 +247,7 @@
         };
 
         // if (Array.isArray(planeElement)) {
-        console.time("create Plane");
+        // console.time("create Plane");
         [...planeElement].forEach((element, i) => {
             const plane = new Plane(curtains, element, {
                 ...paramsPlane,
@@ -240,7 +263,7 @@
             );
             planes.push(plane);
         });
-        console.timeEnd("create Plane");
+        // console.timeEnd("create Plane");
 
         if (trPlane) {
             planes.trPlane = new Plane(curtains, trPlane, {
@@ -253,26 +276,20 @@
     }
     function addTexture() {
         const loader = new TextureLoader(curtains);
-        console.time("create texture");
+        // console.time("create texture");
         $photoseries.forEach((el, i) => {
             // images.push(`/image/jpg/720/${el.FileName}.jpg`);
             loader.loadImage(
                 `/image/jpg/480/${el.FileName}.jpg`,
                 {
-                    // texture options (we're only setting its sampler name here)
                     sampler: "planeTexture",
                 },
                 (texture) => {
-                    // texture has been successfully created, you can safely use it
-                    // console.log(texture);
                     texture.onSourceLoaded(() => {
                         planes[i].visible = 1;
                         texture.addParent(planes[i]);
-                        progress.update((n) => n + 1);
+                        progress.update((n) => n + 100 / $photoseries.length);
                         load++;
-                        console.log($progress, "$progress");
-                        if (load === 1) {
-                        }
                         if (load === $photoseries.length) {
                             startAnim();
                         }
@@ -283,7 +300,7 @@
                 }
             );
         });
-        console.timeEnd("create texture");
+        // console.timeEnd("create texture");
     }
     function writeText(plane, canvas) {
         const htmlPlane = plane.htmlElement;
@@ -469,12 +486,12 @@
         // homePageState.set(true);
         startAnimation = anime
             .timeline({
-                autoplay: false,
+                // autoplay: false,
             })
             .add({
-                update: () => {
-                    console.log("startAnim()");
-                },
+                // update: () => {
+                //     console.log("startAnim()");
+                // },
                 targets: transitionState,
                 duration: 4500,
                 easing: "easeOutSine",
@@ -483,7 +500,7 @@
             .add(
                 {
                     duration: 2000,
-                    targets: [transitionState, ".svobodina", ".photo", ".logo"],
+                    targets: [transitionState],
                     opacity: [1, 0],
                     radiusAnimation: radius,
                     scalePlane: 1,
@@ -496,20 +513,29 @@
             .add(
                 {
                     duration: 500,
-                    targets: transitionState,
-                    opacityPlane: 0,
-                    change: () => {
-                        // planes.forEach((plane, i) => {
-                        //     if (plane.relativesliderState.Translation.z < 0) {
-                        //         plane.uniforms.uOpacity.value =
-                        //             transitionState.opacityPlane;
-                        //     }
-                        // });
-                    },
+                    targets: [".preloader", ".logo"],
+                    opacity: 0,
                     easing: "linear",
                 },
-                4000
+                1800
             );
+        // .add(
+        //     {
+        //         duration: 500,
+        //         targets: transitionState,
+        //         opacityPlane: 0,
+        //         change: () => {
+        //             // planes.forEach((plane, i) => {
+        //             //     if (plane.relativesliderState.Translation.z < 0) {
+        //             //         plane.uniforms.uOpacity.value =
+        //             //             transitionState.opacityPlane;
+        //             //     }
+        //             // });
+        //         },
+        //         easing: "linear",
+        //     },
+        //     4000
+        // );
         startAnimation &&
             startAnimation.finished.then(() => {
                 homePageState.set(true);
@@ -625,9 +651,11 @@
     // }
     function translateSlider(t) {
         curtains.render();
-        $eventAnimation &&
-            (sliderState.translation +=
-                (sliderState.currentPosition - sliderState.translation) * 0.05);
+        // $eventAnimation &&
+        //     (
+        sliderState.translation +=
+            (sliderState.currentPosition - sliderState.translation) * 0.05;
+        // );
         planes.forEach((plane, i) => {
             const angle = angleStep * i;
             transVec.set(
@@ -677,11 +705,9 @@
         });
         // START ANIMATION
 
-        startAnimation && startAnimation.tick(t);
-
-        toRoute && toRoute.tick(t);
-
         toIndex && toIndex.tick(t);
+        toRoute && toRoute.tick(t);
+        // startAnimation && startAnimation.tick(t);
 
         animationFrame = requestAnimationFrame(translateSlider);
     }
@@ -719,7 +745,7 @@
             //     },
             // });
 
-            goto(`/${el.userData.route}`);
+            goto(`/${el.userData.route}`, { noscroll: false });
         });
     }
     function onMouseDown(e) {
@@ -797,35 +823,6 @@
     }
 </script>
 
-<!-- {#if !pageslug} -->
-<div class="svobodina">
-    <div
-        style="clip-path: inset(0% {100 -
-            $progress * (100 / $photoseries.length)}% 0px 0px);"
-        class="svobodina__holder"
-    >
-        <picture>
-            <!-- <source
-                media="(orientation: portrait)"
-                srcset="image/photoPortrait.svg"
-                type="image/svg+xml" /> -->
-            <img src="image/svobodinaFill.svg" alt="ph" />
-        </picture>
-    </div>
-    <picture class="svobodina__holder">
-        <!-- <source
-            media="(orientation: portrait)"
-            srcset="image/photoPortrait.svg"
-            type="image/svg+xml" /> -->
-        <img src="image/svobodinaPath.svg" alt="ph" />
-    </picture>
-</div>
-<picture>
-    <!-- <source media="(orientation: portrait)" srcset="image/photoPortrait.svg" type="image/svg+xml" /> -->
-    <img class="photo" src="image/photo.svg" alt="ph" />
-</picture>
-<img src="image/logo.svg" class="logo" alt="logo" />
-<!-- {/if} -->
 <div
     on:mousemove={onMouseMove}
     on:touchmove|passive={onMouseMove}
@@ -838,7 +835,7 @@
     class="wrapper"
 >
     {#each $photoseries as seriya, index (index)}
-        <a style="display: none;" href="blog/{seriya.Route}">ф</a>
+        <a style="display: none;" href="/{seriya.Route}">r</a>
         <div
             data-id={index}
             data-route={seriya.Route}
@@ -933,34 +930,6 @@
             height: var(--plane__height);
             width: var(--plane__width);
         }
-        .svobodina {
-            position: fixed;
-            width: min(60vw, 1600px);
-            height: calc(min(60vw, 1600px) / 6.83);
-            left: 50vw;
-            top: 50vh;
-            transform: translate(-50%, -200%);
-        }
-        .svobodina__holder {
-            position: absolute;
-            top: 0;
-            width: inherit;
-        }
-        /* 1.3882 */
-        .photo {
-            position: fixed;
-            width: min(33.3vw, 889px);
-            left: 50vw;
-            top: 50vh;
-            transform: translate(-52.8%, -64%);
-        }
-        .logo {
-            width: 6vw;
-            height: auto;
-            position: fixed;
-            bottom: 50px;
-            right: 50px;
-        }
     }
     @media (orientation: portrait) {
         :root {
@@ -987,27 +956,6 @@
             box-sizing: border-box;
             height: var(--plane__height);
             width: var(--plane__width);
-        }
-        .svobodina {
-            height: 90vh;
-            top: 50vh;
-            position: fixed;
-            left: 50vw;
-            transform: translate(-220%, -51.45%);
-        }
-        .photo {
-            position: fixed;
-            top: 50vh;
-            height: 50vh;
-            left: 50vw;
-            transform: translate(-50%, -52.5%);
-        }
-        .logo {
-            width: 15vw;
-            height: auto;
-            position: fixed;
-            bottom: 4vh;
-            right: 3vh;
         }
     }
     #curtains {

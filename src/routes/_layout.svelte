@@ -4,25 +4,14 @@
 	import { stores } from "@sapper/app";
 	import { fade } from "svelte/transition";
 	import { onMount } from "svelte";
-	onMount(() => {
-		console.log("layout is mounted");
-	});
-	const { preloading } = stores();
-	$: console.log($preloading, "$preloading");
+	// onMount(() => {
+	// 	console.log("layout is mounted");
+	// });
+	// const { preloading } = stores();
+	// $: console.log($preloading, "$preloading");
 	export let segment;
 	segment = !segment;
 </script>
-
-<style>
-	main {
-		position: relative;
-		background-color: black;
-		box-sizing: border-box;
-	}
-	.canvas {
-		height: 100vh;
-	}
-</style>
 
 <!-- {#if !$preloading} -->
 <main transition:fade>
@@ -36,3 +25,14 @@
 	</section>
 </main>
 <!-- {/if} -->
+
+<style>
+	main {
+		position: relative;
+		background-color: black;
+		box-sizing: border-box;
+	}
+	.canvas {
+		height: 100vh;
+	}
+</style>

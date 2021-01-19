@@ -2,11 +2,7 @@
   export async function preload({ params }) {
     const res = await this.fetch(`/db/${params.Route}.json`);
     const data = await res.json();
-    if (res.status === 200) {
-      return { post: data };
-    } else {
-      this.error(res.status, data.message);
-    }
+    return { data };
   }
 </script>
 
@@ -60,7 +56,8 @@
     });
     return layout;
   }
-  export let post;
+  export let data;
+  $: post = data;
 
   // let promise = getJL(width, height, post);
   function imageWidth(x) {
@@ -97,12 +94,6 @@
   });
 </script>
 
-<style>
-  .gallery {
-    height: auto;
-  }
-</style>
-
 <svelte:head>
   <title>{post.Title}</title>
 </svelte:head>
@@ -110,7 +101,6 @@
 <svelte:window bind:innerWidth={width} bind:innerHeight={height} />
 <h1 transition:fly on:outrostart={() => leaveRoute.set(true)}>
   {post.Title}
-  !!!!!!!!!
 </h1>
 {#if layout}
   <div style="height: {layout.containerHeight}px" class="gallery">
@@ -123,3 +113,9 @@
 {:else}
   <p>Loading...</p>
 {/if}
+
+<style>
+  .gallery {
+    height: 200vh;
+  }
+</style>

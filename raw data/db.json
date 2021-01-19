@@ -1,0 +1,105 @@
+{
+  "Series": [
+    
+    {
+      "id": "13",
+      "Name": "YulyaKirill",
+      "Title": "Юля и Кирилл",
+      "Descripion": "",
+      "EngDescription": ""
+    },
+    {
+      "id": "12",
+      "Name": "YulyaEvgeniy",
+      "Title": "Юля и Евгений",
+      "Descripion": "",
+      "EngDescription": ""
+    },
+    {
+      "id": "11",
+      "Name": "NastyaIgor",
+      "Title": "Анастасия и Игорь",
+      "Descripion": "",
+      "EngDescription": ""
+    },
+    {
+      "id": "10",
+      "Name": "Inna",
+      "Title": "Инна",
+      "Descripion": "",
+      "EngDescription": ""
+    },
+    {
+      "id": "9",
+      "Name": "bacheloretteParty",
+      "Title": "Девичник",
+      "Descripion": "",
+      "EngDescription": ""
+    },
+    {
+      "id": "8",
+      "Name": "EkaterinaPavel",
+      "Title": "Екатерина и Павел",
+      "Descripion": "",
+      "EngDescription": ""
+    },
+    {
+      "id": "7",
+      "Name": "AngelinaRoman",
+      "Title": "Ангелина и Роман",
+      "Descripion": "",
+      "EngDescription": ""
+    },
+    {
+      "id": "6",
+      "Name": "AlexandraVadim",
+      "Title": "Александра и Вадим",
+      "Descripion": "",
+      "EngDescription": ""
+    },
+    {
+      "id": "5",
+      "Name": "ElenaNikita",
+      "Title": "Лена и Никита",
+      "Descripion": "",
+      "EngDescription": ""
+    },
+    {
+      "id": "4",
+      "Name": "DashaMaksim",
+      "Title": "Даша и Максим",
+      "Descripion": "",
+      "EngDescription": ""
+    },
+    {
+      "id": "3",
+      "Name": "AlenaAlexei",
+      "Title": "Алёна и Алексей",
+      "Descripion": "",
+      "EngDescription": ""
+    },
+    {
+      "id": "2",
+      "Name": "RitaVlad",
+      "Title": "Рита и Влад",
+      "Descripion": "",
+      "EngDescription": ""
+    },
+    {
+      "id": "1",
+      "Name": "IrinaIvan",
+      "Title": "Ирина и Иван",
+      "Descripion": "",
+      "EngDescription": ""
+    }
+  ],
+  "Folio": [
+    {
+    "id": "27",
+    "Name": "Portfolio",
+    "Title": "Портфолио",
+    "Descripion": "",
+    "EngDescription": ""
+  }
+]
+}

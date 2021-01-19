@@ -1,26 +1,55 @@
 <script>
     import { progress, photoseries } from "store.js";
-    import { onMount } from "svelte";
-    export let preloading;
-    onMount(() => {
-        progress.update((n) => n + 25);
-    });
-    $: style = `clip-path: inset(0% ${50 - $progress}% 0px 0px);`;
+    $: style = `clip-path: inset(0% ${100 - $progress}% 0px 0px);`;
 </script>
 
-<style>
-    .inset-leave-active {
-        animation: 4s inset;
-    }
+<!-- {#if $preloading} -->
+<div class="preloader">
+    <div class="svobodina">
+        <div {style} class="svobodina__holder">
+            <picture>
+                <source
+                    media="(orientation: portrait)"
+                    srcset="image/photoPortrait.svg"
+                    type="image/svg+xml"
+                />
+                <img src="image/svobodinaFill.svg" alt="ph" />
+            </picture>
+        </div>
+        <picture class="svobodina__holder">
+            <source
+                media="(orientation: portrait)"
+                srcset="image/photoPortrait.svg"
+                type="image/svg+xml"
+            />
+            <img src="image/svobodinaPath.svg" alt="ph" />
+        </picture>
+    </div>
+    <picture>
+        <source
+            media="(orientation: portrait)"
+            srcset="image/photoPortrait.svg"
+            type="image/svg+xml"
+        />
+        <img class="photo" src="image/photo.svg" alt="ph" />
+    </picture>
+    <img src="image/logo.svg" class="logo" alt="logo" />
+</div>
 
-    @keyframes inset {
+<!-- {/if} -->
+<style>
+    /* .inset-leave-active {
+        animation: 4s inset;
+    } */
+
+    /* @keyframes inset {
         0% {
             clip-path: inset(0% 100% 0px 0px);
         }
         100% {
             clip-path: inset(0% 50% 0px 0px);
         }
-    }
+    } */
     .preloader {
         height: 100vh;
         position: absolute;
@@ -81,34 +110,3 @@
         }
     }
 </style>
-
-<!-- {#if $preloading} -->
-<div class="preloader">
-    <div class="svobodina">
-        <div {style} class="svobodina__holder inset-leave-active">
-            <picture>
-                <!-- <source
-                    media="(orientation: portrait)"
-                    srcset="image/photoPortrait.svg"
-                    type="image/svg+xml" /> -->
-                <img src="image/svobodinaFill.svg" alt="ph" />
-            </picture>
-        </div>
-        <picture class="svobodina__holder">
-            <!-- <source
-                media="(orientation: portrait)"
-                srcset="image/photoPortrait.svg"
-                type="image/svg+xml" /> -->
-            <img src="image/svobodinaPath.svg" alt="ph" />
-        </picture>
-    </div>
-    <picture>
-        <!-- <source
-            media="(orientation: portrait)"
-            srcset="image/photoPortrait.svg"
-            type="image/svg+xml" /> -->
-        <img class="photo" src="image/photo.svg" alt="ph" />
-    </picture>
-    <img src="image/logo.svg" class="logo" alt="logo" />
-</div>
-<!-- {/if} -->
