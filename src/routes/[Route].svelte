@@ -10,12 +10,12 @@
   import { onMount, tick } from "svelte";
   import justifiedLayout from "justified-layout";
   import Spic from "../components/spic.svelte";
-  import { leaveRoute } from "store.js";
+  import { leaveRoute, leaveIndex } from "store.js";
   import { fly } from "svelte/transition";
   // import IntersectionObserver from "../../components/IntersectionObserver.svelte";
 
-  let width = 1500;
-  let height = 1000;
+  let width;
+  let height;
   let layout,
     gallery = {},
     visible = false;
@@ -94,15 +94,19 @@
   });
 </script>
 
+<style>
+  h1 {
+    display: none;
+  }
+</style>
+
 <svelte:head>
   <title>{post.Title}</title>
 </svelte:head>
 
 <svelte:window bind:innerWidth={width} bind:innerHeight={height} />
-<h1 transition:fly on:outrostart={() => leaveRoute.set(true)}>
-  {post.Title}
-</h1>
-{#if layout}
+<h1 transition:fly on:outrostart={() => leaveRoute.set(true)}>{post.Title}</h1>
+{#if layout && !$leaveIndex}
   <div style="height: {layout.containerHeight}px" class="gallery">
     {#each layout.boxes as pos, index (index)}
       <div style={pos.style}>
@@ -110,12 +114,4 @@
       </div>
     {/each}
   </div>
-{:else}
-  <p>Loading...</p>
 {/if}
-
-<style>
-  .gallery {
-    height: 200vh;
-  }
-</style>

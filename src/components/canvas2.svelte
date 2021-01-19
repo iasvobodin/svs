@@ -31,10 +31,6 @@
     //INIT BEFORE MOUNT
     const { page } = stores();
     $: pageslug = $page.params.Route;
-    // const progress = tweened(0, {
-    //     duration: 500,
-    //     easing: sineOut,
-    // });
 
     // VARIABLE DATA
 
@@ -79,8 +75,8 @@
             yRoundDisable: 1,
             zRoundEnable: 0,
         };
-    $: $leaveIndex && toRouteAnim(activePlane);
-    $: $leaveRoute && toIndexAnim(activePlane);
+    $: $leaveIndex && !toRoute && toRouteAnim();
+    $: $leaveRoute && toIndexAnim();
     $: animationState = !!startAnimation || !!toRoute || !!toIndex;
     // $: transitionPage = $leaveIndex || $leaveRoute;
     $: toInvisibleState =
@@ -111,18 +107,18 @@
                 activePlane = planes.find((p) => p.userData.route === pageslug);
 
                 let texture = $photoseries.find((t) => t.Route === pageslug);
-                transitionState = {
-                    opacityHedline: 0,
-                    opacityPlane: 1,
-                    time: 0,
-                    radiusAnimation: radius,
-                    scalePlane: 1,
-                    yRoundDisable: 0,
-                    zRoundEnable: 1,
-                };
+                // transitionState = {
+                transitionState.opacityHedline = 0;
+                transitionState.opacityPlane = 1;
+                transitionState.time = 0;
+                transitionState.radiusAnimation = radius;
+                transitionState.scalePlane = 1;
+                transitionState.yRoundDisable = 0;
+                transitionState.zRoundEnable = 1;
+                // };
 
                 activePlane.loadImage(
-                    `/image/jpg/480/${texture.FileName}.jpg`,
+                    `/image/jpg/720/${texture.FileName}.jpg`,
                     {
                         sampler: "planeTexture",
                     },
@@ -130,12 +126,6 @@
                         texture.onSourceLoaded(() => {
                             activePlane.visible = 1;
                             activePlane.uniforms.uProgress.value = 1;
-                            // activePlane.setScale(
-                            //     new Vec2(
-                            //         transitionState.scalePlane,
-                            //         transitionState.scalePlane
-                            //     )
-                            // );
                             curtains.needRender();
                         });
                     }
@@ -154,29 +144,6 @@
             // curtains.needRender();
         });
     }
-    // else {
-    //     onMount(() => {
-    //     curtains = new Curtains({
-    //         container: webgl,
-    //         pixelRatio: Math.min(1.5, window.devicePixelRatio),
-    //         production: process.env.NODE_ENV !== "development",
-    //         autoRender: false,
-    //     });
-    //     const planeElements = document.getElementsByClassName("plane");
-    //     const planeElementsTitle = document.getElementsByClassName("titleH3");
-
-    //     addPlane(planeElements);
-    //     addTexture();
-    //     addTitlePlane(planeElementsTitle);
-    //     const portrait = window.matchMedia("(orientation: portrait)");
-    //     handlePortrait(portrait);
-    //     portrait.addEventListener("change", handlePortrait);
-    //     radius =
-    //         elWidth / Math.sin((Math.PI * 2) / $photoseries.length / 2) / 2;
-    //     transVec = new Vec3();
-    //     translateSlider();
-    // });
-    // }
 
     // INIT
     function initCurtains() {
@@ -258,9 +225,9 @@
                 color: element.dataset.color,
                 id: element.dataset.id,
             };
-            plane.setScale(
-                new Vec2(transitionState.scalePlane, transitionState.scalePlane)
-            );
+            // plane.setScale(
+            //     new Vec2(transitionState.scalePlane, transitionState.scalePlane)
+            // );
             planes.push(plane);
         });
         // console.timeEnd("create Plane");
@@ -280,13 +247,13 @@
         $photoseries.forEach((el, i) => {
             // images.push(`/image/jpg/720/${el.FileName}.jpg`);
             loader.loadImage(
-                `/image/jpg/480/${el.FileName}.jpg`,
+                `/image/jpg/720/${el.FileName}.jpg`,
                 {
                     sampler: "planeTexture",
                 },
                 (texture) => {
                     texture.onSourceLoaded(() => {
-                        planes[i].visible = 1;
+                        !pageslug && (planes[i].visible = 1);
                         texture.addParent(planes[i]);
                         progress.update((n) => n + 100 / $photoseries.length);
                         load++;
@@ -343,7 +310,6 @@
         portrait.addEventListener("change", handlePortrait);
     }
     function customCorrection(coef) {
-        const angle = (Math.PI * 2) / $photoseries.length;
         sliderState.planeCorrection = angleStep * coef;
         sliderState.translation = 0;
         sliderState.currentPosition = 0;
@@ -543,88 +509,90 @@
             });
     }
 
-    function toInvisibleAnim(target) {
+    function toInvisibleAnim(direction) {
         toInvisible = anime({
-            targets: [activePlane.uniforms.uProgress, transitionState],
-            duration: 1400,
-            autoplay: false,
-            value: 1,
-            opacityPlane: [1, 0],
+            targets: transitionState,
+            duration: 400,
+            // autoplay: false,
+            opacityPlane: direction,
             easing: "easeOutQuad",
+            change: () => {
+                planes.forEach((e) => {
+                    if (e.index === activePlane.index) {
+                        return;
+                    }
+                    e.uniforms.uOpacity.value = transitionState.opacityPlane;
+                });
+            },
             changeComplete: () => {
-                leaveIndex.set(false);
+                planes.forEach((e) => {
+                    if (e.index === activePlane.index) {
+                        return;
+                    }
+                    e.relativeTranslation.z > 0 && (e.visible = direction[1]);
+                });
             },
-            changeBegin: () => {
-                activePlane.relativeTranslation.z = radius + 10;
-                getUnifors(activePlane);
-                eventAnimation.set(false);
-            },
+            changeBegin: () => {},
         });
         toInvisible.finished.then(() => (toInvisible = null));
     }
 
-    function toRouteAnim(activePlane) {
-        // debugger;
-        console.log("animation to route init");
+    function toRouteAnim() {
+        toRoute = anime.timeline({
+            autoplay: false,
+        });
+        eventAnimation.set(false);
         if (!activePlane) {
             activePlane = planes.find((p) => p.userData.route === pageslug);
         }
         if (!activePlane.isDrawn()) {
-            customCorrection(activePlane.index);
+            activePlane.visible = 1;
+            toRoute.add({
+                targets: sliderState,
+                duration: 800,
+                planeCorrection: angleStep * activePlane.index,
+                translation: 0,
+                currentPosition: 0,
+                endPosition: 0,
+                easing: "linear",
+            });
         }
-        // !activePlane.isDrawn() && ;
-        // !activePlane &&
-        //     (activePlane = planes.find((p) => p.userData.route === pageslug));
-        activePlane.relativeTranslation.z = radius + 10;
+        getUnifors(activePlane);
+        toRoute.add(
+            {
+                targets: [activePlane.uniforms.uProgress, transitionState],
+                duration: 1400,
+                value: 1,
+                easing: "easeOutQuad",
+                changeComplete: () => {},
+                changeBegin: () => {
+                    homePageState.set(false);
+                    toInvisibleAnim([1, 0]);
+                    getUnifors(activePlane);
+                    activePlane.relativeTranslation.z = radius + 10;
+                },
+            },
+            "+=50"
+        );
 
-        toRoute = anime({
+        toRoute &&
+            toRoute.finished.then(() => {
+                toRoute = null;
+                leaveIndex.set(false);
+            });
+    }
+    function toIndexAnim() {
+        toIndex = anime.timeline().add({
             targets: [activePlane.uniforms.uProgress, transitionState],
             duration: 1400,
             autoplay: false,
-            value: 1,
-            opacityPlane: [1, 0],
-            easing: "easeOutQuad",
-            changeComplete: () => {},
-            changeBegin: () => {
-                getUnifors(activePlane);
-                console.log("animation to route");
-                // eventAnimation.set(false);
+            value: 0,
+            opacityPlane: [0, 1],
+            easing: "easeInSine",
+            changeComplete: () => {
+                toInvisibleAnim([0, 1]);
             },
         });
-        toRoute.finished.then(() => {
-            console.log("promise cancel leaveindex");
-            toRoute = null;
-            leaveIndex.set(false);
-        });
-    }
-    function toIndexAnim(activePlane) {
-        console.log(activePlane);
-        // const currentScroll = { value: window.pageYOffset };
-        getUnifors(activePlane, {
-            pCorr: true,
-            sCorr: false,
-            fCorr: false,
-        });
-        toIndex = anime
-            .timeline()
-            // .add({
-            //     targets: currentScroll,
-            //     value: 0,
-            //     easing: "easeInSine",
-            //     duration: 350,
-            //     update: () => {
-            //         window.scrollTo(0, currentScroll.value);
-            //     },
-            // })
-            .add({
-                targets: [activePlane.uniforms.uProgress, transitionState],
-                duration: 1400,
-                autoplay: false,
-                value: 0,
-                opacityPlane: [0, 1],
-                easing: "easeInSine",
-                changeComplete: () => {},
-            });
         toIndex.finished.then(() => {
             toIndex = null;
             leaveRoute.set(false);
@@ -634,27 +602,13 @@
             !$homePageState && homePageState.set(true);
         });
     }
-
-    // function changeOpacityAnim(targetPlane, direction) {
-    //     changeOpacity = anime({
-    //         targets: targetPlane,
-    //         [uniforms]uOpacity.value: direction,
-    //         change: () => {
-    //             planes.forEach((plane, i) => {
-    //                 if (plane.relativesliderState.Translation.z < 0) {
-    //                     plane.uniforms.uOpacity.value =
-    //                         transitionState.opacityPlane;
-    //                 }
-    //             });
-    //         },
-    //     });
-    // }
     function translateSlider(t) {
         curtains.render();
         // $eventAnimation &&
         //     (
-        sliderState.translation +=
-            (sliderState.currentPosition - sliderState.translation) * 0.05;
+        $eventAnimation &&
+            (sliderState.translation +=
+                (sliderState.currentPosition - sliderState.translation) * 0.05);
         // );
         planes.forEach((plane, i) => {
             const angle = angleStep * i;
@@ -690,12 +644,11 @@
                         transitionState.scalePlane
                     )
                 );
-                plane.setRelativeTranslation(transVec);
+                $titlePlaneOnLoad &&
+                    planesTitle[i].setRelativeTranslation(transVec);
             }
-            $titlePlaneOnLoad &&
-                planesTitle[i].setRelativeTranslation(transVec);
-
-            if (toInvisibleState) {
+            plane.setRelativeTranslation(transVec);
+            if ($homePageState) {
                 if (plane.relativeTranslation.z < 0) {
                     plane.visible = planesTitle[i].visible = false;
                 } else {
@@ -730,22 +683,10 @@
             // Clicked
             activePlane = el;
             activePlaneTitle = planesTitle[i];
-            // anime({
-            //     targets: [activePlane.uniforms.uProgress, transitionState],
-            //     duration: 1400,
-            //     value: 1,
-            //     opacityPlane: [1, 0],
-            //     easing: "easeOutQuad",
-            //     changeComplete: () => {
-            //         leaveIndex.set(false);
-            //     },
-            //     changeBegin: () => {
-            //         getUnifors(activePlane);
-            //         eventAnimation.set(false);
-            //     },
-            // });
+            eventAnimation.set(false);
+            toRouteAnim();
 
-            goto(`/${el.userData.route}`, { noscroll: false });
+            goto(`/${el.userData.route}`);
         });
     }
     function onMouseDown(e) {
@@ -822,56 +763,6 @@
         return mousePosition;
     }
 </script>
-
-<div
-    on:mousemove={onMouseMove}
-    on:touchmove|passive={onMouseMove}
-    on:mouseleave={onMouseUp}
-    on:mouseup={onMouseUp}
-    on:mousedown|preventDefault={onMouseDown}
-    on:touchstart|preventDefault={onMouseDown}
-    on:touchend={onMouseUp}
-    on:wheel={onWheel}
-    class="wrapper"
->
-    {#each $photoseries as seriya, index (index)}
-        <a style="display: none;" href="/{seriya.Route}">r</a>
-        <div
-            data-id={index}
-            data-route={seriya.Route}
-            data-color={[seriya.ColorVector]}
-            class="plane"
-        >
-            <!-- <picture class="standart__picture">
-                <source
-                    media="(orientation: portrait)"
-                    srcset="/image/webp/720/{seriya.Portrait}.webp"
-                    type="image/webp" />
-                <source
-                    media="(orientation: landscape)"
-                    srcset="/image/webp/720/{seriya.FileName}.webp"
-                    type="image/webp" />
-
-                <img
-                    data-sampler="planeTexture"
-                    class="slider__img"
-                    alt="SvobodinaPhoto"
-                    crossorigin="anonimous"
-                    decoding="async"
-                    draggable="false"
-                    src="/image/jpg/720/{seriya.FileName}.jpg" />
-            </picture> -->
-        </div>
-    {/each}
-</div>
-<div class="title__plane">
-    {#each $photoseries as seriya, index (index)}
-        <div class="title">
-            <h3 class="titleH3">{seriya.Title}</h3>
-        </div>
-    {/each}
-</div>
-<div bind:this={webgl} id="curtains" />
 
 <!-- <div class="box" /> -->
 <style>
@@ -968,3 +859,51 @@
         height: 100vh;
     }
 </style>
+
+<div
+    on:mousemove={onMouseMove}
+    on:touchmove|passive={onMouseMove}
+    on:mouseleave={onMouseUp}
+    on:mouseup={onMouseUp}
+    on:mousedown|preventDefault={onMouseDown}
+    on:touchstart|preventDefault={onMouseDown}
+    on:touchend={onMouseUp}
+    on:wheel={onWheel}
+    class="wrapper">
+    {#each $photoseries as seriya, index (index)}
+        <a style="display: none;" href="/{seriya.Route}">r</a>
+        <div
+            data-id={index}
+            data-route={seriya.Route}
+            data-color={[seriya.ColorVector]}
+            class="plane">
+            <!-- <picture class="standart__picture">
+                <source
+                    media="(orientation: portrait)"
+                    srcset="/image/webp/720/{seriya.Portrait}.webp"
+                    type="image/webp" />
+                <source
+                    media="(orientation: landscape)"
+                    srcset="/image/webp/720/{seriya.FileName}.webp"
+                    type="image/webp" />
+
+                <img
+                    data-sampler="planeTexture"
+                    class="slider__img"
+                    alt="SvobodinaPhoto"
+                    crossorigin="anonimous"
+                    decoding="async"
+                    draggable="false"
+                    src="/image/jpg/720/{seriya.FileName}.jpg" />
+            </picture> -->
+        </div>
+    {/each}
+</div>
+<div class="title__plane">
+    {#each $photoseries as seriya, index (index)}
+        <div class="title">
+            <h3 class="titleH3">{seriya.Title}</h3>
+        </div>
+    {/each}
+</div>
+<div bind:this={webgl} id="curtains" />
