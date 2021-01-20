@@ -63,10 +63,11 @@ db.Series.forEach((el) => {
   el.Spec = lightData
     .filter((image) => image.Keywords.includes(el.Name))
     .map((image) => image.Params)
-
   try {
+    let name = el.Name.toLowerCase()
+    console.log(name, 'NNNNNNAAAME');
     fs.writeFileSync(
-      `../static/db/${el.Name}.json`,
+      `../static/db/${name}.json`,
       JSON.stringify(el, null, 2)
     )
     console.log(`file ${el.Name} is redy`)
@@ -78,7 +79,7 @@ db.Series.forEach((el) => {
 
 try {
   fs.writeFileSync('../static/db/all.json', JSON.stringify(db.Series, null, 2))
-  console.log('file all is redy')
+  console.log('file ALLLL is redy')
 } catch (error) {
   console.log(error)
 }

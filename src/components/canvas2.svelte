@@ -885,7 +885,7 @@
     class="wrapper"
 >
     {#each $photoseries as seriya, index (index)}
-        <a style="display: none;" href="/{seriya.Route}">r</a>
+        <a style="display: none;" href="/{seriya.Route.toLowerCase()}">r</a>
         <div
             data-id={index}
             data-route={seriya.Route}
