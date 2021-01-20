@@ -128,7 +128,7 @@
                 // };
 
                 activePlane.loadImage(
-                    `/image/jpg/720/${texture.FileName}.jpg`,
+                    `https://raw.githubusercontent.com/iasvobodin/svs/images/static/image//jpg/720/${texture.FileName}.jpg`,
                     {
                         sampler: "planeTexture",
                     },
@@ -257,9 +257,9 @@
         const loader = new TextureLoader(curtains);
         // console.time("create texture");
         $photoseries.forEach((el, i) => {
-            // images.push(`/image/jpg/720/${el.FileName}.jpg`);
+            // images.push(`https://raw.githubusercontent.com/iasvobodin/svs/images/static/image//jpg/720/${el.FileName}.jpg`);
             loader.loadImage(
-                `/image/jpg/720/${el.FileName}.jpg`,
+                `https://raw.githubusercontent.com/iasvobodin/svs/images/static/image//jpg/720/${el.FileName}.jpg`,
                 {
                     sampler: "planeTexture",
                 },
@@ -303,7 +303,8 @@
 
         // we will need to load a new image
         const image = new Image();
-        image.src = "image/displacement.jpg";
+        image.src =
+            "https://raw.githubusercontent.com/iasvobodin/svs/images/static/image/displacement.jpg";
         // set its data-sampler attribute to use in fragment shader
         image.setAttribute("data-sampler", "displacementTexture");
 
@@ -463,7 +464,7 @@
                     });
                 });
                 // p.loadImage(
-                //   `/image/${$fileEx}/720/${$store.state.photoseries[i].Portrait}.${$fileEx}`
+                //   `https://raw.githubusercontent.com/iasvobodin/svs/images/static/image//${$fileEx}/720/${$store.state.photoseries[i].Portrait}.${$fileEx}`
                 // )
                 // p.textures[0].needUpdate()
                 // console.log(p)
@@ -960,12 +961,12 @@
             <!-- <picture class="standart__picture">
                 <source
                     media="(orientation: portrait)"
-                    srcset="/image/webp/720/{seriya.Portrait}.webp"
-                    type="image/webp" />
+                    srcset="https://raw.githubusercontent.com/iasvobodin/svs/images/static/image//webp/720/{seriya.Portrait}.webp"
+                    type="https://raw.githubusercontent.com/iasvobodin/svs/images/static/image/webp" />
                 <source
                     media="(orientation: landscape)"
-                    srcset="/image/webp/720/{seriya.FileName}.webp"
-                    type="image/webp" />
+                    srcset="https://raw.githubusercontent.com/iasvobodin/svs/images/static/image//webp/720/{seriya.FileName}.webp"
+                    type="https://raw.githubusercontent.com/iasvobodin/svs/images/static/image/webp" />
 
                 <img
                     data-sampler="planeTexture"
@@ -974,7 +975,7 @@
                     crossorigin="anonimous"
                     decoding="async"
                     draggable="false"
-                    src="/image/jpg/720/{seriya.FileName}.jpg" />
+                    src="https://raw.githubusercontent.com/iasvobodin/svs/images/static/image//jpg/720/{seriya.FileName}.jpg" />
             </picture> -->
         </div>
     {/each}

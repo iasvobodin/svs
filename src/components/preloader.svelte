@@ -98,25 +98,35 @@
             <picture>
                 <source
                     media="(orientation: portrait)"
-                    srcset="image/svobodinaFillPortrait.svg"
-                    type="image/svg+xml" />
-                <img src="image/svobodinaFill.svg" alt="ph" />
+                    srcset="https://raw.githubusercontent.com/iasvobodin/svs/images/static/image/svobodinaFillPortrait.svg"
+                    type="https://raw.githubusercontent.com/iasvobodin/svs/images/static/image/svg+xml" />
+                <img
+                    src="https://raw.githubusercontent.com/iasvobodin/svs/images/static/image/svobodinaFill.svg"
+                    alt="ph" />
             </picture>
         </div>
         <picture class="svobodina__holder">
             <source
                 media="(orientation: portrait)"
-                srcset="image/svobodinaPathPortrait.svg"
-                type="image/svg+xml" />
-            <img src="image/svobodinaPath.svg" alt="ph" />
+                srcset="https://raw.githubusercontent.com/iasvobodin/svs/images/static/image/svobodinaPathPortrait.svg"
+                type="https://raw.githubusercontent.com/iasvobodin/svs/images/static/image/svg+xml" />
+            <img
+                src="https://raw.githubusercontent.com/iasvobodin/svs/images/static/image/svobodinaPath.svg"
+                alt="ph" />
         </picture>
     </div>
     <picture>
         <source
             media="(orientation: portrait)"
-            srcset="image/photoPortrait.svg"
-            type="image/svg+xml" />
-        <img class="photo" src="image/photo.svg" alt="ph" />
+            srcset="https://raw.githubusercontent.com/iasvobodin/svs/images/static/image/photoPortrait.svg"
+            type="https://raw.githubusercontent.com/iasvobodin/svs/images/static/image/svg+xml" />
+        <img
+            class="photo"
+            src="https://raw.githubusercontent.com/iasvobodin/svs/images/static/image/photo.svg"
+            alt="ph" />
     </picture>
-    <img src="image/logo.svg" class="logo" alt="logo" />
+    <img
+        src="https://raw.githubusercontent.com/iasvobodin/svs/images/static/image/logo.svg"
+        class="logo"
+        alt="logo" />
 </div>
