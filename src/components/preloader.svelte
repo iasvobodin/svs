@@ -18,6 +18,7 @@
     } */
     .preloader {
         height: 100vh;
+        height: calc(var(--vh, 1vh) * 100);
         /* width: 100vw; */
         position: absolute;
         top: 0;
@@ -30,6 +31,7 @@
             height: calc(min(60vw, 1600px) / 6.83);
             left: 50vw;
             top: 50vh;
+            top: calc(var(--vh, 1vh) * 50);
             transform: translate(-50%, -200%);
         }
         .svobodina__holder {
@@ -43,6 +45,7 @@
             width: min(33.3vw, 889px);
             left: 50vw;
             top: 50vh;
+            top: calc(var(--vh, 1vh) * 50);
             transform: translate(-52.8%, -64%);
         }
         .logo {
@@ -57,6 +60,7 @@
         .svobodina {
             height: 90vh;
             top: 50vh;
+            top: calc(var(--vh, 1vh) * 50);
             position: fixed;
             left: 50vw;
             transform: translate(-220%, -51.45%);
@@ -70,7 +74,9 @@
         .photo {
             position: fixed;
             top: 50vh;
+            top: calc(var(--vh, 1vh) * 50);
             height: 50vh;
+            height: calc(var(--vh, 1vh) * 50);
             left: 50vw;
             transform: translate(-50%, -52.5%);
         }
@@ -79,7 +85,9 @@
             height: auto;
             position: fixed;
             bottom: 4vh;
+            bottom: calc(var(--vh, 1vh) * 4);
             right: 3vh;
+            right: calc(var(--vh, 1vh) * 3);
         }
     }
 </style>

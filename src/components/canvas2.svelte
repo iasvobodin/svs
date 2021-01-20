@@ -5,6 +5,8 @@
         Vec3,
         Vec2,
         TextureLoader,
+        ShaderPass,
+        RenderTarget,
     } from "curtainsjs/src/index.mjs";
     import anime from "animejs";
     import { tweened } from "svelte/motion";
@@ -13,10 +15,12 @@
     import vertex from "assets/photoseries.vert";
     import vertexT from "assets/start.vert";
     import fragmentT from "assets/start.frag";
+    import shaderPassFs from "assets/shaderPassFs.frag";
     // import fragment from "assets/start.frag";
     // import vertex from "assets/start.vert";
     import {
         globalPlanes,
+        showPrelader,
         homePageState,
         progress,
         eventAnimation,
@@ -36,6 +40,9 @@
 
     let curtains,
         webgl,
+        shaderPass,
+        disp = 0,
+        distortionTarget,
         planesTitle = [],
         planes = [],
         activePlane,
@@ -84,16 +91,18 @@
 
     onMount(() => {
         initCurtains();
+
         addPlane();
         addTexture();
         addTitlePlane();
         initMatchMedia();
+        addShaderPass();
 
         radius =
             elWidth / Math.sin((Math.PI * 2) / $photoseries.length / 2) / 2;
         translateSlider();
     });
-
+    pageslug && showPrelader.set(false);
     $: if (pageslug) {
         // SORT PHOTOSERIES
         const object = $photoseries.find((el) => el.Route === pageslug);
@@ -101,6 +110,7 @@
             ...n.slice(object.Id),
             ...n.slice(0, object.Id),
         ]);
+        showPrelader.set(false);
         eventAnimation.set(false);
         onMount(() => {
             if (!activePlane) {
@@ -153,6 +163,7 @@
             production: process.env.NODE_ENV !== "development",
             autoRender: false,
         });
+        distortionTarget = new RenderTarget(curtains);
     }
     function addTitlePlane() {
         const planeElementTitle = document.getElementsByClassName("titleH3");
@@ -228,6 +239,7 @@
             // plane.setScale(
             //     new Vec2(transitionState.scalePlane, transitionState.scalePlane)
             // );
+            plane.setRenderTarget(distortionTarget);
             planes.push(plane);
         });
         // console.timeEnd("create Plane");
@@ -269,6 +281,55 @@
             );
         });
         // console.timeEnd("create texture");
+    }
+    function addShaderPass() {
+        const shaderPassParams = {
+            fragmentShader: shaderPassFs,
+            renderTarget: distortionTarget, // we'll be using the lib default vertex shader
+            uniforms: {
+                displacement: {
+                    name: "uDisplacement",
+                    type: "1f",
+                    value: 0,
+                },
+            },
+
+            texturesOptions: {
+                anisotropy: 10,
+            },
+        };
+
+        shaderPass = new ShaderPass(curtains, shaderPassParams);
+
+        // we will need to load a new image
+        const image = new Image();
+        image.src = "image/displacement.jpg";
+        // set its data-sampler attribute to use in fragment shader
+        image.setAttribute("data-sampler", "displacementTexture");
+
+        // if our shader pass has been successfully created
+        if (shaderPass) {
+            // load our displacement image
+            shaderPass.loader.loadImage(image);
+            shaderPass
+                .onLoading((texture) => {
+                    console.log(
+                        "shader pass image has been loaded and texture has been created:",
+                        texture
+                    );
+                })
+                .onReady(() => {
+                    console.log("shader pass is ready");
+                })
+                .onRender(() => {
+                    // update the uniforms
+                    // shaderPass.uniforms.displacement.value =
+                    //     planesDeformations / 60;
+                })
+                .onError(() => {
+                    console.log("shader pass error");
+                });
+        }
     }
     function writeText(plane, canvas) {
         const htmlPlane = plane.htmlElement;
@@ -415,7 +476,6 @@
                     100
                 );
             }
-            console.log("from handlePortrait LANDSCAPE");
             aspect = 0.668;
             getElementWidth(0.52);
             planes.forEach((p, i) => {
@@ -558,12 +618,12 @@
             activePlane.visible = 1;
             toRoute.add({
                 targets: sliderState,
-                duration: 800,
+                duration: 1000,
                 planeCorrection: angleStep * activePlane.index,
                 translation: 0,
                 currentPosition: 0,
                 endPosition: 0,
-                easing: "linear",
+                easing: "easeOutQuad",
             });
         }
         getUnifors(activePlane);
@@ -615,9 +675,13 @@
         curtains.render();
         // $eventAnimation &&
         //     (
-        $eventAnimation &&
-            (sliderState.translation +=
-                (sliderState.currentPosition - sliderState.translation) * 0.05);
+        if ($eventAnimation) {
+            sliderState.translation +=
+                (sliderState.currentPosition - sliderState.translation) * 0.05;
+            disp = sliderState.currentPosition - sliderState.translation;
+            shaderPass.uniforms.displacement.value = disp / 1500;
+            // console.log(disp);
+        }
         // );
         planes.forEach((plane, i) => {
             const angle = angleStep * i;
@@ -773,6 +837,109 @@
     }
 </script>
 
+<!-- <div class="box" /> -->
+<style>
+    :root {
+        --margin__wrapper: calc((100vh - var(--plane__height)) / 2);
+        --title__height: calc(14px + 3.2vw);
+        --translationSlide: 0;
+        --plane__height: 52vh;
+        --plane__width: calc(var(--plane__height) * 1.5);
+        --plane__margin: 5vw;
+        --plane__shift: calc(
+            50vw - ((var(--plane__width) + var(--plane__margin) * 2) * 3.5)
+        );
+    }
+    .title__plane {
+        opacity: 0;
+        width: var(--plane__width);
+        position: absolute;
+        left: 50vw;
+        transform: translate(-50%, 50%);
+        pointer-events: none;
+        overflow: hidden;
+    }
+    h3 {
+        /* display: none; */
+        text-align: center;
+        width: 100%;
+        position: absolute;
+        top: 0;
+        font-family: Cormorant Infant, sans-serif;
+        font-weight: 300;
+        color: rgb(255, 255, 255);
+        margin: 0;
+    }
+    @media (orientation: landscape) {
+        h3 {
+            font-size: clamp(14px, 3vw + 12px, 80px);
+            line-height: clamp(18px, 3.5vw + 12px, 90px);
+        }
+        .title__plane {
+            height: clamp(18px, 3.5vw + 12px, 90px);
+            bottom: calc((100vh - var(--plane__height)) / 4);
+        }
+        .wrapper {
+            justify-content: center;
+            width: 100%;
+            height: var(--plane__height);
+            top: 50vh;
+            top: calc(var(--vh, 1vh) * 50);
+            transform: translateY(-50%);
+            display: flex;
+            position: absolute;
+        }
+        .plane {
+            align-self: center;
+            position: absolute;
+            box-sizing: border-box;
+            height: var(--plane__height);
+            width: var(--plane__width);
+        }
+    }
+    @media (orientation: portrait) {
+        :root {
+            --plane__height: 65vh;
+            --plane__width: calc(var(--plane__height) * 0.66);
+        }
+        .title__plane {
+            height: 4vh;
+            height: calc(var(--vh, 1vh) * 4);
+
+            bottom: calc((100vh - var(--plane__height)) / 4);
+        }
+        h3 {
+            font-size: 4vh;
+            font-size: calc(var(--vh, 1vh) * 4);
+        }
+        .wrapper {
+            justify-content: center;
+            width: 100%;
+            height: 100vh;
+            height: calc(var(--vh, 1vh) * 100);
+            display: flex;
+            position: absolute;
+        }
+        .plane {
+            align-self: center;
+            position: absolute;
+            box-sizing: border-box;
+            height: var(--plane__height);
+            width: var(--plane__width);
+        }
+    }
+    #curtains {
+        pointer-events: none;
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        overflow: hidden;
+        height: 100vh;
+        height: calc(var(--vh, 1vh) * 100);
+    }
+</style>
+
 <div
     on:mousemove={onMouseMove}
     on:touchmove|passive={onMouseMove}
@@ -782,16 +949,14 @@
     on:touchstart|preventDefault={onMouseDown}
     on:touchend={onMouseUp}
     on:wheel={onWheel}
-    class="wrapper"
->
+    class="wrapper">
     {#each $photoseries as seriya, index (index)}
         <a style="display: none;" href="/{seriya.Route}">r</a>
         <div
             data-id={index}
             data-route={seriya.Route}
             data-color={[seriya.ColorVector]}
-            class="plane"
-        >
+            class="plane">
             <!-- <picture class="standart__picture">
                 <source
                     media="(orientation: portrait)"
@@ -822,99 +987,3 @@
     {/each}
 </div>
 <div bind:this={webgl} id="curtains" />
-
-<!-- <div class="box" /> -->
-<style>
-    :root {
-        --margin__wrapper: calc((100vh - var(--plane__height)) / 2);
-        --title__height: calc(14px + 3.2vw);
-        --translationSlide: 0;
-        --plane__height: 52vh;
-        --plane__width: calc(var(--plane__height) * 1.5);
-        --plane__margin: 5vw;
-        --plane__shift: calc(
-            50vw - ((var(--plane__width) + var(--plane__margin) * 2) * 3.5)
-        );
-    }
-    .title__plane {
-        opacity: 0;
-        width: var(--plane__width);
-        position: absolute;
-        left: 50vw;
-        transform: translate(-50%, 50%);
-        pointer-events: none;
-        overflow: hidden;
-    }
-    h3 {
-        text-align: center;
-        width: 100%;
-        position: absolute;
-        top: 0;
-        font-family: Cormorant Infant, sans-serif;
-        font-weight: 300;
-        color: rgb(255, 255, 255);
-        margin: 0;
-    }
-    @media (orientation: landscape) {
-        h3 {
-            font-size: clamp(14px, 3vw + 12px, 80px);
-            line-height: clamp(18px, 3.5vw + 12px, 90px);
-        }
-        .title__plane {
-            height: clamp(18px, 3.5vw + 12px, 90px);
-            bottom: calc((100vh - var(--plane__height)) / 4);
-        }
-        .wrapper {
-            justify-content: center;
-            width: 100%;
-            height: var(--plane__height);
-            top: 50vh;
-            transform: translateY(-50%);
-            display: flex;
-            position: absolute;
-        }
-        .plane {
-            align-self: center;
-            position: absolute;
-            box-sizing: border-box;
-            height: var(--plane__height);
-            width: var(--plane__width);
-        }
-    }
-    @media (orientation: portrait) {
-        :root {
-            --plane__height: 65vh;
-            --plane__width: calc(var(--plane__height) * 0.66);
-        }
-        .title__plane {
-            height: 4vh;
-            bottom: calc((100vh - var(--plane__height)) / 4);
-        }
-        h3 {
-            font-size: 4vh;
-        }
-        .wrapper {
-            justify-content: center;
-            width: 100%;
-            height: 100vh;
-            display: flex;
-            position: absolute;
-        }
-        .plane {
-            align-self: center;
-            position: absolute;
-            box-sizing: border-box;
-            height: var(--plane__height);
-            width: var(--plane__width);
-        }
-    }
-    #curtains {
-        pointer-events: none;
-        position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        overflow: hidden;
-        height: 100vh;
-    }
-</style>
