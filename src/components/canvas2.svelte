@@ -337,7 +337,7 @@
         // we will need to load a new image
         const image = new Image();
         image.src =
-            "https://raw.githubusercontent.com/iasvobodin/svs/images/static/image/displacement.jpg";
+            "https://raw.githubusercontent.com/iasvobodin/svs/gitImage/static/image/displacement4.jpg";
         // set its data-sampler attribute to use in fragment shader
         image.setAttribute("data-sampler", "displacementTexture");
         if (shaderPass) {
@@ -922,7 +922,6 @@
     {/each}
 </div>
 <div bind:this={webgl} id="curtains" />
-
 
 <div
     on:mousemove={onMouseMove}
