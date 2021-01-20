@@ -1,6 +1,6 @@
 <script context="module">
   export async function preload({ params }) {
-    const res = await this.fetch(`/db/${params.Route}.json`);
+    const res = await this.fetch(`/db/${params.Route.toLowerCase()}.json`);
     const data = await res.json();
     return { data };
   }
@@ -10,13 +10,15 @@
   import { onMount, tick } from "svelte";
   import justifiedLayout from "justified-layout";
   import Spic from "../components/spic.svelte";
-  import { leaveRoute, leaveIndex } from "store.js";
+  import { leaveRoute, leaveIndex, paddingCoef, photoseries } from "store.js";
   import { fly } from "svelte/transition";
   // import IntersectionObserver from "../../components/IntersectionObserver.svelte";
 
-  let width;
-  let height;
-  let layout,
+  // const object = $photoseries.find((el) => el.Route === pageslug);
+  // photoseries.update((n) => [...n.slice(object.Id), ...n.slice(0, object.Id)]);
+  let width,
+    height,
+    layout,
     gallery = {},
     visible = false;
   function getJL(w, h, text) {
@@ -26,9 +28,9 @@
       containerWidth: w,
       containerPadding: {
         top: 50,
-        right: w * 0.05,
+        right: w * $paddingCoef,
         bottom: 50,
-        left: w * 0.05,
+        left: w * $paddingCoef,
       },
       boxSpacing: {
         horizontal: w * 0.04,
@@ -94,12 +96,6 @@
   });
 </script>
 
-<style>
-  h1 {
-    display: none;
-  }
-</style>
-
 <svelte:head>
   <title>{post.Title}</title>
 </svelte:head>
@@ -115,3 +111,9 @@
     {/each}
   </div>
 {/if}
+
+<style>
+  h1 {
+    display: none;
+  }
+</style>
