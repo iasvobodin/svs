@@ -106,6 +106,8 @@
             elWidth / Math.sin((Math.PI * 2) / $photoseries.length / 2) / 2;
         translateSlider();
     });
+    console.log(pageslug, "pageslug");
+
     pageslug && showPrelader.set(false);
     $: if (pageslug) {
         // SORT PHOTOSERIES
@@ -120,15 +122,9 @@
         eventAnimation.set(false);
         onMount(() => {
             if (!activePlane) {
-                activePlane = planes.find(
-                    (p) =>
-                        p.userData.route.toLowerCase() ===
-                        pageslug.toLowerCase()
-                );
+                activePlane = planes.find((p) => p.userData.route === pageslug);
 
-                let texture = $photoseries.find(
-                    (t) => t.Route.toLowerCase() === pageslug.toLowerCase()
-                );
+                let texture = $photoseries.find((t) => t.Route === pageslug);
                 // transitionState = {
                 transitionState.opacityHedline = 0;
                 transitionState.opacityPlane = 1;
@@ -140,7 +136,7 @@
                 // };
 
                 activePlane.loadImage(
-                    `https://raw.githubusercontent.com/iasvobodin/svs/images/static/image//jpg/720/${texture.FileName}.jpg`,
+                    `https://raw.githubusercontent.com/iasvobodin/svs/images/static/image/jpg/720/${texture.FileName}.jpg`,
                     {
                         sampler: "planeTexture",
                     },
@@ -795,7 +791,7 @@
             eventAnimation.set(false);
             toRouteAnim();
 
-            goto(`/${el.userData.route.toLowerCase()}`);
+            goto(`/${el.userData.route}`);
         });
     }
     function onMouseDown(e) {

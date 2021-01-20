@@ -27,9 +27,9 @@ const lightData = data.map((el) => {
   return {
     Name: el.FileName.slice(0, -4),
     Params: {
-      // Colors: color
-      //   .find((e) => e.Name === el.FileName)
-      //   .color.map((e) => hex2rgb(e)),
+      Colors: color
+        .find((e) => e.Name === el.FileName)
+        .color.map((e) => hex2rgb(e)),
       Color: color.find((e) => e.Name === el.FileName).color[0],
       Sh: el.ShutterSpeedValue,
       F: el.ApertureValue,
@@ -110,7 +110,7 @@ function hexToRGB(h, isPct) {
 const photoseries = db.Series.map((el, index) => {
   return {
     Id: index,
-    Route: el.Name,
+    Route: el.Name.toLowerCase(),
     Title: el.Title,
     LandscapeFileName: el.Cover.Name,
     PortraitFileName: el.Portrait,
