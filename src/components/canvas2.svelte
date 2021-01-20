@@ -110,7 +110,7 @@
     $: if (pageslug) {
         // SORT PHOTOSERIES
         const object = $photoseries.find(
-            (el) => el.Route.toLowerCase() === pageslug.toLowerCase()
+            (el) => el.Route.toLowerCase() === pageslug
         );
         photoseries.update((n) => [
             ...n.slice(object.Id),
@@ -120,14 +120,13 @@
         eventAnimation.set(false);
         onMount(() => {
             if (!activePlane) {
+                // debugger;
                 activePlane = planes.find(
-                    (p) =>
-                        p.userData.route.toLowerCase() ===
-                        pageslug.toLowerCase()
+                    (p) => p.userData.route.toLowerCase() === pageslug
                 );
 
                 let texture = $photoseries.find(
-                    (t) => t.Route.toLowerCase() === pageslug.toLowerCase()
+                    (t) => t.Route.toLowerCase() === pageslug
                 );
                 // transitionState = {
                 transitionState.opacityHedline = 0;
@@ -884,7 +883,7 @@
     class="wrapper"
 >
     {#each $photoseries as seriya, index (index)}
-        <a style="display: none;" href="/{seriya.Route}">r</a>
+        <a style="display: none;" href="/{seriya.Route.toLowerCase()}">r</a>
         <div
             data-id={index}
             data-route={seriya.Route}

@@ -1,6 +1,6 @@
 <script context="module">
   export async function preload({ params }) {
-    const res = await this.fetch(`/db/${params.Route.toLowerCase()}.json`);
+    const res = await this.fetch(`/db/${params.Route}.json`);
     const data = await res.json();
     return { data };
   }

@@ -27,9 +27,9 @@ const lightData = data.map((el) => {
   return {
     Name: el.FileName.slice(0, -4),
     Params: {
-      // Colors: color
-      //   .find((e) => e.Name === el.FileName)
-      //   .color.map((e) => hex2rgb(e)),
+      Colors: color
+        .find((e) => e.Name === el.FileName)
+        .color.map((e) => hex2rgb(e)),
       Color: color.find((e) => e.Name === el.FileName).color[0],
       Sh: el.ShutterSpeedValue,
       F: el.ApertureValue,
@@ -65,11 +65,12 @@ db.Series.forEach((el) => {
     .map((image) => image.Params)
 
   try {
+    let name = el.Name.toLowerCase()
     fs.writeFileSync(
-      `../static/db/${el.Name}.json`,
+      `../static/db/${name}.json`,
       JSON.stringify(el, null, 2)
     )
-    console.log(`file ${el.Name} is redy`)
+    console.log(`file ${name} is redy`)
   } catch (error) {
     console.log(error)
   }
