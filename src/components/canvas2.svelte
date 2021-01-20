@@ -16,6 +16,7 @@
     import vertexT from "assets/start.vert";
     import fragmentT from "assets/start.frag";
     import shaderPassFs from "assets/shaderPassFs.frag";
+    import rgbFs from "assets/rgbPass.frag";
     // import fragment from "assets/start.frag";
     // import vertex from "assets/start.vert";
     import {
@@ -44,6 +45,8 @@
         shaderPass,
         disp = 0,
         distortionTarget,
+        rgbPass,
+        rgbTarget,
         planesTitle = [],
         planes = [],
         activePlane,
@@ -106,7 +109,9 @@
     pageslug && showPrelader.set(false);
     $: if (pageslug) {
         // SORT PHOTOSERIES
-        const object = $photoseries.find((el) => el.Route === pageslug);
+        const object = $photoseries.find(
+            (el) => el.Route.toLowerCase() === pageslug.toLowerCase()
+        );
         photoseries.update((n) => [
             ...n.slice(object.Id),
             ...n.slice(0, object.Id),
@@ -115,9 +120,15 @@
         eventAnimation.set(false);
         onMount(() => {
             if (!activePlane) {
-                activePlane = planes.find((p) => p.userData.route === pageslug);
+                activePlane = planes.find(
+                    (p) =>
+                        p.userData.route.toLowerCase() ===
+                        pageslug.toLowerCase()
+                );
 
-                let texture = $photoseries.find((t) => t.Route === pageslug);
+                let texture = $photoseries.find(
+                    (t) => t.Route.toLowerCase() === pageslug.toLowerCase()
+                );
                 // transitionState = {
                 transitionState.opacityHedline = 0;
                 transitionState.opacityPlane = 1;
@@ -165,6 +176,7 @@
             autoRender: false,
         });
         distortionTarget = new RenderTarget(curtains);
+        rgbTarget = new RenderTarget(curtains);
     }
     function addTitlePlane() {
         const planeElementTitle = document.getElementsByClassName("titleH3");
@@ -188,8 +200,27 @@
                     texture.shouldUpdate = false;
                     writeText(planeTitle, texture.source);
                 });
+                planeTitle.setRenderTarget(rgbTarget);
                 planesTitle.push(planeTitle);
             }
+
+            rgbPass = new ShaderPass(curtains, {
+                fragmentShader: rgbFs,
+                renderTarget: rgbTarget,
+                depthTest: false, // we need to disable the depth test to display that shader pass on top of the first one
+                uniforms: {
+                    scrollEffect: {
+                        name: "uScrollEffect",
+                        type: "1f",
+                        value: 0,
+                    },
+                },
+            });
+
+            // rgbPass.onRender(() => {
+            //     // update the uniform
+            //     rgbPass.uniforms.scrollEffect.value = scrollEffect;
+            // });
         });
     }
     function addPlane(trPlane = false) {
@@ -286,6 +317,7 @@
     function addShaderPass() {
         const shaderPassParams = {
             fragmentShader: shaderPassFs,
+            // vertexShader: shaderPassVs,
             renderTarget: distortionTarget, // we'll be using the lib default vertex shader
             uniforms: {
                 displacement: {
@@ -301,19 +333,17 @@
         };
 
         shaderPass = new ShaderPass(curtains, shaderPassParams);
-
+        console.log(shaderPass.textures);
         // we will need to load a new image
         const image = new Image();
-        image.src = "image/displacement.jpg";
+        image.src = "image/displacement4.jpg";
         // set its data-sampler attribute to use in fragment shader
         image.setAttribute("data-sampler", "displacementTexture");
-
-        // if our shader pass has been successfully created
         if (shaderPass) {
-            // load our displacement image
             shaderPass.loader.loadImage(image);
             shaderPass
                 .onLoading((texture) => {
+                    texture.setScale(new Vec2(2, 0.5));
                     console.log(
                         "shader pass image has been loaded and texture has been created:",
                         texture
@@ -720,8 +750,10 @@
                         transitionState.scalePlane
                     )
                 );
-                $titlePlaneOnLoad &&
+                if ($titlePlaneOnLoad) {
+                    rgbPass.uniforms.scrollEffect.value = disp / 20;
                     planesTitle[i].setRelativeTranslation(transVec);
+                }
             }
             plane.setRelativeTranslation(transVec);
             if ($homePageState) {
@@ -762,7 +794,7 @@
             eventAnimation.set(false);
             toRouteAnim();
 
-            goto(`/${el.userData.route}`);
+            goto(`/${el.userData.route.toLowerCase()}`);
         });
     }
     function onMouseDown(e) {
@@ -839,6 +871,56 @@
         return mousePosition;
     }
 </script>
+
+<div
+    on:mousemove={onMouseMove}
+    on:touchmove|passive={onMouseMove}
+    on:mouseleave={onMouseUp}
+    on:mouseup={onMouseUp}
+    on:mousedown|preventDefault={onMouseDown}
+    on:touchstart|preventDefault={onMouseDown}
+    on:touchend={onMouseUp}
+    on:wheel={onWheel}
+    class="wrapper"
+>
+    {#each $photoseries as seriya, index (index)}
+        <a style="display: none;" href="/{seriya.Route}">r</a>
+        <div
+            data-id={index}
+            data-route={seriya.Route}
+            data-color={[seriya.ColorVector]}
+            class="plane"
+        >
+            <!-- <picture class="standart__picture">
+                <source
+                    media="(orientation: portrait)"
+                    srcset="/image/webp/720/{seriya.Portrait}.webp"
+                    type="image/webp" />
+                <source
+                    media="(orientation: landscape)"
+                    srcset="/image/webp/720/{seriya.FileName}.webp"
+                    type="image/webp" />
+
+                <img
+                    data-sampler="planeTexture"
+                    class="slider__img"
+                    alt="SvobodinaPhoto"
+                    crossorigin="anonimous"
+                    decoding="async"
+                    draggable="false"
+                    src="/image/jpg/720/{seriya.FileName}.jpg" />
+            </picture> -->
+        </div>
+    {/each}
+</div>
+<div class="title__plane">
+    {#each $photoseries as seriya, index (index)}
+        <div class="title">
+            <h3 class="titleH3">{seriya.Title}</h3>
+        </div>
+    {/each}
+</div>
+<div bind:this={webgl} id="curtains" />
 
 <!-- <div class="box" /> -->
 <style>
@@ -942,51 +1024,3 @@
         height: calc(var(--vh, 1vh) * 100);
     }
 </style>
-
-<div
-    on:mousemove={onMouseMove}
-    on:touchmove|passive={onMouseMove}
-    on:mouseleave={onMouseUp}
-    on:mouseup={onMouseUp}
-    on:mousedown|preventDefault={onMouseDown}
-    on:touchstart|preventDefault={onMouseDown}
-    on:touchend={onMouseUp}
-    on:wheel={onWheel}
-    class="wrapper">
-    {#each $photoseries as seriya, index (index)}
-        <a style="display: none;" href="/{seriya.Route}">r</a>
-        <div
-            data-id={index}
-            data-route={seriya.Route}
-            data-color={[seriya.ColorVector]}
-            class="plane">
-            <!-- <picture class="standart__picture">
-                <source
-                    media="(orientation: portrait)"
-                    srcset="/image/webp/720/{seriya.Portrait}.webp"
-                    type="image/webp" />
-                <source
-                    media="(orientation: landscape)"
-                    srcset="/image/webp/720/{seriya.FileName}.webp"
-                    type="image/webp" />
-
-                <img
-                    data-sampler="planeTexture"
-                    class="slider__img"
-                    alt="SvobodinaPhoto"
-                    crossorigin="anonimous"
-                    decoding="async"
-                    draggable="false"
-                    src="/image/jpg/720/{seriya.FileName}.jpg" />
-            </picture> -->
-        </div>
-    {/each}
-</div>
-<div class="title__plane">
-    {#each $photoseries as seriya, index (index)}
-        <div class="title">
-            <h3 class="titleH3">{seriya.Title}</h3>
-        </div>
-    {/each}
-</div>
-<div bind:this={webgl} id="curtains" />
