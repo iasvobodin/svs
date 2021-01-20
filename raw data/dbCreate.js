@@ -65,12 +65,11 @@ db.Series.forEach((el) => {
     .map((image) => image.Params)
   try {
     let name = el.Name.toLowerCase()
-    console.log(name, 'NNNNNNAAAME');
     fs.writeFileSync(
       `../static/db/${name}.json`,
       JSON.stringify(el, null, 2)
     )
-    console.log(`file ${el.Name} is redy`)
+    console.log(`file ${name} is redy`)
   } catch (error) {
     console.log(error)
   }

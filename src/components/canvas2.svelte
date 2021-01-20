@@ -112,7 +112,7 @@
     $: if (pageslug) {
         // SORT PHOTOSERIES
         const object = $photoseries.find(
-            (el) => el.Route.toLowerCase() === pageslug.toLowerCase()
+            (el) => el.Route.toLowerCase() === pageslug
         );
         photoseries.update((n) => [
             ...n.slice(object.Id),
@@ -122,9 +122,14 @@
         eventAnimation.set(false);
         onMount(() => {
             if (!activePlane) {
-                activePlane = planes.find((p) => p.userData.route === pageslug);
+                // debugger;
+                activePlane = planes.find(
+                    (p) => p.userData.route.toLowerCase() === pageslug
+                );
 
-                let texture = $photoseries.find((t) => t.Route === pageslug);
+                let texture = $photoseries.find(
+                    (t) => t.Route.toLowerCase() === pageslug
+                );
                 // transitionState = {
                 transitionState.opacityHedline = 0;
                 transitionState.opacityPlane = 1;
