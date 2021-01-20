@@ -19,6 +19,7 @@
     // import fragment from "assets/start.frag";
     // import vertex from "assets/start.vert";
     import {
+        paddingCoef,
         globalPlanes,
         showPrelader,
         homePageState,
@@ -444,6 +445,7 @@
     function handlePortrait(e) {
         if (e.matches) {
             // PORTAIT
+            paddingCoef.set(0.03);
             if (!pageslug) {
                 transitionState.radiusAnimation = Math.min(
                     (window.innerHeight * 0.0725) / 1.3882 / 2,
@@ -470,6 +472,7 @@
             });
         } else {
             // LANDSCAPE
+            paddingCoef.set(0.12);
             if (!pageslug) {
                 transitionState.radiusAnimation = Math.min(
                     (window.innerWidth * 0.0755) / 1.3882 / 2,

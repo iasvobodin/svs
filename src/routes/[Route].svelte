@@ -10,13 +10,13 @@
   import { onMount, tick } from "svelte";
   import justifiedLayout from "justified-layout";
   import Spic from "../components/spic.svelte";
-  import { leaveRoute, leaveIndex } from "store.js";
+  import { leaveRoute, leaveIndex, paddingCoef } from "store.js";
   import { fly } from "svelte/transition";
   // import IntersectionObserver from "../../components/IntersectionObserver.svelte";
 
-  let width;
-  let height;
-  let layout,
+  let width,
+    height,
+    layout,
     gallery = {},
     visible = false;
   function getJL(w, h, text) {
@@ -26,9 +26,9 @@
       containerWidth: w,
       containerPadding: {
         top: 50,
-        right: w * 0.05,
+        right: w * $paddingCoef,
         bottom: 50,
-        left: w * 0.05,
+        left: w * $paddingCoef,
       },
       boxSpacing: {
         horizontal: w * 0.04,
