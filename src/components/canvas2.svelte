@@ -141,7 +141,7 @@
                 // };
 
                 activePlane.loadImage(
-                    `/image/jpg/720/${texture.FileName}.jpg`,
+                    `https://raw.githubusercontent.com/iasvobodin/svs/images/static/image/jpg/720/${texture.FileName}.jpg`,
                     {
                         sampler: "planeTexture",
                     },
@@ -292,7 +292,7 @@
         $photoseries.forEach((el, i) => {
             // images.push(`/image/jpg/720/${el.FileName}.jpg`);
             loader.loadImage(
-                `/image/jpg/720/${el.FileName}.jpg`,
+                `https://raw.githubusercontent.com/iasvobodin/svs/images/static/image/jpg/720/${el.FileName}.jpg`,
                 {
                     sampler: "planeTexture",
                 },

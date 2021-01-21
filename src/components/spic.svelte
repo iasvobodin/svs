@@ -53,14 +53,16 @@
 <div class="holder" bind:this={gallery}>
   {#if visible}
     <picture>
-      <source srcset="/image/webp/{wwidth}/{src}.webp" type="image/webp" />
+      <source
+        srcset="https://raw.githubusercontent.com/iasvobodin/svs/images/static/image/webp/{wwidth}/{src}.webp"
+        type="image/webp" />
       <img
         class="gallery__img"
         alt="SvobodinaPhoto"
         crossorigin="anonimous"
         decoding="async"
         draggable="false"
-        src="/image/jpg/{wwidth}/{src}.jpg" />
+        src="https://raw.githubusercontent.com/iasvobodin/svs/images/static/image/jpg/{wwidth}/{src}.jpg" />
     </picture>
   {/if}
 </div>
