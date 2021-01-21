@@ -491,8 +491,8 @@
                         pCorr: false,
                         sCorr: true,
                         fCorr: true,
-                        widthUn: 1,
-                        heightUn: 1,
+                        widthUn: 0.96,
+                        heightUn: 0.7,
                     });
                 });
                 // p.loadImage(
@@ -619,7 +619,7 @@
                     if (e.index === activePlane.index) {
                         return;
                     }
-                    console.log(e.index);
+                    // console.log(e.index);
                     e.uniforms.uOpacity.value = planesTitle[
                         i
                     ].uniforms.uOpacityTitle.value =
@@ -671,7 +671,18 @@
                 changeBegin: () => {
                     homePageState.set(false);
                     toInvisibleAnim([1, 0]);
-                    getUnifors(activePlane);
+                    if (aspect === 1.5) {
+                        console.log("aspect", aspect);
+                        getUnifors(activePlane, {
+                            pCorr: true,
+                            sCorr: true,
+                            fCorr: true,
+                            widthUn: 0.96,
+                            heightUn: 0.7,
+                        });
+                    } else {
+                        getUnifors(activePlane);
+                    }
                     activePlane.relativeTranslation.z = radius + 10;
                 },
             },
@@ -712,11 +723,12 @@
         if ($eventAnimation) {
             sliderState.translation +=
                 (sliderState.currentPosition - sliderState.translation) * 0.05;
-            disp +=
-                (sliderState.currentPosition - sliderState.translation - disp) *
-                0.3;
+
             // console.log(disp);
         }
+        disp +=
+            (sliderState.currentPosition - sliderState.translation - disp) *
+            0.3;
         shaderPass.uniforms.displacement.value = disp / 2500;
         // );
         planes.forEach((plane, i) => {
@@ -801,11 +813,9 @@
         });
     }
     function onMouseDown(e) {
-        if ($eventAnimation) {
-            sliderState.isMouseDown = true;
-            sliderState.clickDown = getMousePosition(e);
-            sliderState.startPosition = sliderState.clickDown[0];
-        }
+        sliderState.isMouseDown = true;
+        sliderState.clickDown = getMousePosition(e);
+        sliderState.startPosition = sliderState.clickDown[0];
     }
     function onMouseMove(e) {
         if (!sliderState.isMouseDown) return;
@@ -816,22 +826,19 @@
                 sliderState.moveSpeed;
     }
     function onMouseUp(e) {
-        if ($eventAnimation) {
-            sliderState.isMouseDown = false;
-            sliderState.endPosition = sliderState.currentPosition;
-            sliderState.clickUp = getMousePosition(e);
-            if (
-                sliderState.clickUp[0] === sliderState.clickDown[0] &&
-                eventAnimation &&
-                sliderState.clickUp[1] === sliderState.clickDown[1]
-            ) {
-                onPlaneClick(sliderState.clickUp[0]);
-            }
+        sliderState.isMouseDown = false;
+        sliderState.endPosition = sliderState.currentPosition;
+        sliderState.clickUp = getMousePosition(e);
+        if (
+            sliderState.clickUp[0] === sliderState.clickDown[0] &&
+            $eventAnimation &&
+            sliderState.clickUp[1] === sliderState.clickDown[1]
+        ) {
+            onPlaneClick(sliderState.clickUp[0]);
         }
     }
     function onWheel(e) {
         if ($eventAnimation) {
-            console.log(isTrackpad);
             e.preventDefault();
             if (isTrackpad) {
                 if (e.wheelDeltaY) {
@@ -876,8 +883,62 @@
     }
 </script>
 
+<div
+    class:event={!$eventAnimation}
+    on:mousemove={onMouseMove}
+    on:touchmove|passive={onMouseMove}
+    on:mouseleave={onMouseUp}
+    on:mouseup={onMouseUp}
+    on:mousedown|preventDefault={onMouseDown}
+    on:touchstart|preventDefault={onMouseDown}
+    on:touchend={onMouseUp}
+    on:wheel={onWheel}
+    class="wrapper"
+>
+    {#each $photoseries as seriya, index (index)}
+        <a style="display: none;" href="/{seriya.Route.toLowerCase()}">r</a>
+        <div
+            data-id={index}
+            data-route={seriya.Route}
+            data-color={[seriya.ColorVector]}
+            class="plane"
+        >
+            <!-- <picture class="standart__picture">
+                <source
+                    media="(orientation: portrait)"
+                    srcset="/image/webp/720/{seriya.Portrait}.webp"
+                    type="image/webp" />
+                <source
+                    media="(orientation: landscape)"
+                    srcset="/image/webp/720/{seriya.FileName}.webp"
+                    type="image/webp" />
+
+                <img
+                    data-sampler="planeTexture"
+                    class="slider__img"
+                    alt="SvobodinaPhoto"
+                    crossorigin="anonimous"
+                    decoding="async"
+                    draggable="false"
+                    src="/image/jpg/720/{seriya.FileName}.jpg" />
+            </picture> -->
+        </div>
+    {/each}
+</div>
+<div class="title__plane">
+    {#each $photoseries as seriya, index (index)}
+        <div class="title">
+            <h3 class="titleH3">{seriya.Title}</h3>
+        </div>
+    {/each}
+</div>
+<div bind:this={webgl} id="curtains" />
+
 <!-- <div class="box" /> -->
 <style>
+    .event {
+        pointer-events: none;
+    }
     :root {
         --margin__wrapper: calc((100vh - var(--plane__height)) / 2);
         --title__height: calc(14px + 3.2vw);
@@ -978,51 +1039,3 @@
         height: calc(var(--vh, 1vh) * 100);
     }
 </style>
-
-<div
-    on:mousemove={onMouseMove}
-    on:touchmove|passive={onMouseMove}
-    on:mouseleave={onMouseUp}
-    on:mouseup={onMouseUp}
-    on:mousedown|preventDefault={onMouseDown}
-    on:touchstart|preventDefault={onMouseDown}
-    on:touchend={onMouseUp}
-    on:wheel={onWheel}
-    class="wrapper">
-    {#each $photoseries as seriya, index (index)}
-        <a style="display: none;" href="/{seriya.Route.toLowerCase()}">r</a>
-        <div
-            data-id={index}
-            data-route={seriya.Route}
-            data-color={[seriya.ColorVector]}
-            class="plane">
-            <!-- <picture class="standart__picture">
-                <source
-                    media="(orientation: portrait)"
-                    srcset="/image/webp/720/{seriya.Portrait}.webp"
-                    type="image/webp" />
-                <source
-                    media="(orientation: landscape)"
-                    srcset="/image/webp/720/{seriya.FileName}.webp"
-                    type="image/webp" />
-
-                <img
-                    data-sampler="planeTexture"
-                    class="slider__img"
-                    alt="SvobodinaPhoto"
-                    crossorigin="anonimous"
-                    decoding="async"
-                    draggable="false"
-                    src="/image/jpg/720/{seriya.FileName}.jpg" />
-            </picture> -->
-        </div>
-    {/each}
-</div>
-<div class="title__plane">
-    {#each $photoseries as seriya, index (index)}
-        <div class="title">
-            <h3 class="titleH3">{seriya.Title}</h3>
-        </div>
-    {/each}
-</div>
-<div bind:this={webgl} id="curtains" />
