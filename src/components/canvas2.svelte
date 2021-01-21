@@ -16,6 +16,7 @@
     import vertexT from "assets/start.vert";
     import fragmentT from "assets/start.frag";
     import shaderPassFs from "assets/shaderPassFs.frag";
+    import shaderPassVs from "assets/shaderPassFs.vert";
     import rgbFs from "assets/rgbPass.frag";
     // import fragment from "assets/start.frag";
     // import vertex from "assets/start.vert";
@@ -23,6 +24,7 @@
         paddingCoef,
         globalPlanes,
         showPrelader,
+        wheelProgress,
         homePageState,
         progress,
         eventAnimation,
@@ -710,10 +712,12 @@
         if ($eventAnimation) {
             sliderState.translation +=
                 (sliderState.currentPosition - sliderState.translation) * 0.05;
-            disp = sliderState.currentPosition - sliderState.translation;
-            shaderPass.uniforms.displacement.value = disp / 1500;
+            disp +=
+                (sliderState.currentPosition - sliderState.translation - disp) *
+                0.3;
             // console.log(disp);
         }
+        shaderPass.uniforms.displacement.value = disp / 2500;
         // );
         planes.forEach((plane, i) => {
             const angle = angleStep * i;
@@ -750,7 +754,7 @@
                     )
                 );
                 if ($titlePlaneOnLoad) {
-                    rgbPass.uniforms.scrollEffect.value = disp / 20;
+                    rgbPass.uniforms.scrollEffect.value = disp;
                     planesTitle[i].setRelativeTranslation(transVec);
                 }
             }
@@ -827,6 +831,7 @@
     }
     function onWheel(e) {
         if ($eventAnimation) {
+            console.log(isTrackpad);
             e.preventDefault();
             if (isTrackpad) {
                 if (e.wheelDeltaY) {
@@ -870,56 +875,6 @@
         return mousePosition;
     }
 </script>
-
-<div
-    on:mousemove={onMouseMove}
-    on:touchmove|passive={onMouseMove}
-    on:mouseleave={onMouseUp}
-    on:mouseup={onMouseUp}
-    on:mousedown|preventDefault={onMouseDown}
-    on:touchstart|preventDefault={onMouseDown}
-    on:touchend={onMouseUp}
-    on:wheel={onWheel}
-    class="wrapper"
->
-    {#each $photoseries as seriya, index (index)}
-        <a style="display: none;" href="/{seriya.Route.toLowerCase()}">r</a>
-        <div
-            data-id={index}
-            data-route={seriya.Route}
-            data-color={[seriya.ColorVector]}
-            class="plane"
-        >
-            <!-- <picture class="standart__picture">
-                <source
-                    media="(orientation: portrait)"
-                    srcset="/image/webp/720/{seriya.Portrait}.webp"
-                    type="image/webp" />
-                <source
-                    media="(orientation: landscape)"
-                    srcset="/image/webp/720/{seriya.FileName}.webp"
-                    type="image/webp" />
-
-                <img
-                    data-sampler="planeTexture"
-                    class="slider__img"
-                    alt="SvobodinaPhoto"
-                    crossorigin="anonimous"
-                    decoding="async"
-                    draggable="false"
-                    src="/image/jpg/720/{seriya.FileName}.jpg" />
-            </picture> -->
-        </div>
-    {/each}
-</div>
-<div class="title__plane">
-    {#each $photoseries as seriya, index (index)}
-        <div class="title">
-            <h3 class="titleH3">{seriya.Title}</h3>
-        </div>
-    {/each}
-</div>
-<div bind:this={webgl} id="curtains" />
 
 <!-- <div class="box" /> -->
 <style>
@@ -1023,3 +978,51 @@
         height: calc(var(--vh, 1vh) * 100);
     }
 </style>
+
+<div
+    on:mousemove={onMouseMove}
+    on:touchmove|passive={onMouseMove}
+    on:mouseleave={onMouseUp}
+    on:mouseup={onMouseUp}
+    on:mousedown|preventDefault={onMouseDown}
+    on:touchstart|preventDefault={onMouseDown}
+    on:touchend={onMouseUp}
+    on:wheel={onWheel}
+    class="wrapper">
+    {#each $photoseries as seriya, index (index)}
+        <a style="display: none;" href="/{seriya.Route.toLowerCase()}">r</a>
+        <div
+            data-id={index}
+            data-route={seriya.Route}
+            data-color={[seriya.ColorVector]}
+            class="plane">
+            <!-- <picture class="standart__picture">
+                <source
+                    media="(orientation: portrait)"
+                    srcset="/image/webp/720/{seriya.Portrait}.webp"
+                    type="image/webp" />
+                <source
+                    media="(orientation: landscape)"
+                    srcset="/image/webp/720/{seriya.FileName}.webp"
+                    type="image/webp" />
+
+                <img
+                    data-sampler="planeTexture"
+                    class="slider__img"
+                    alt="SvobodinaPhoto"
+                    crossorigin="anonimous"
+                    decoding="async"
+                    draggable="false"
+                    src="/image/jpg/720/{seriya.FileName}.jpg" />
+            </picture> -->
+        </div>
+    {/each}
+</div>
+<div class="title__plane">
+    {#each $photoseries as seriya, index (index)}
+        <div class="title">
+            <h3 class="titleH3">{seriya.Title}</h3>
+        </div>
+    {/each}
+</div>
+<div bind:this={webgl} id="curtains" />

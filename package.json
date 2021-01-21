@@ -17,6 +17,7 @@
     "compression": "^1.7.1",
     "curtainsjs": "^8.0.0",
     "justified-layout": "^4.0.0",
+    "lethargy": "^1.0.9",
     "node-fetch": "^2.6.1",
     "polka": "next",
     "sirv": "^1.0.0"
