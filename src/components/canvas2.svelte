@@ -797,7 +797,7 @@
             eventAnimation.set(false);
             toRouteAnim();
 
-            goto(`/${el.userData.route.toLowerCase()}`);
+            goto(`/${el.userData.route.toLowerCase()}/`);
         });
     }
     function onMouseDown(e) {

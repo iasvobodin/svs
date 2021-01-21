@@ -1,5 +1,6 @@
 <script context="module">
   export async function preload({ params }) {
+    console.log("console log from preload PARAMS ", params);
     const res = await this.fetch(`/db/${params.Route}.json`);
     const data = await res.json();
     return { data };
@@ -96,6 +97,12 @@
   });
 </script>
 
+<style>
+  h1 {
+    display: none;
+  }
+</style>
+
 <svelte:head>
   <title>{post.Title}</title>
 </svelte:head>
@@ -111,9 +118,3 @@
     {/each}
   </div>
 {/if}
-
-<style>
-  h1 {
-    display: none;
-  }
-</style>
