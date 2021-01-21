@@ -100,7 +100,9 @@
             .querySelector(":root")
             .style.setProperty("--vh", window.innerHeight / 100 + "px");
         window.addEventListener("resize", () => {
-            curtains.resize();
+            // debugger;
+            // curtains.resize();
+            // curtains.needRender();
             document
                 .querySelector(":root")
                 .style.setProperty("--vh", window.innerHeight / 100 + "px");
@@ -184,7 +186,8 @@
             pixelRatio: Math.min(1.5, window.devicePixelRatio),
             production: process.env.NODE_ENV !== "development",
             autoRender: false,
-            // watchScroll: false,
+            autoResize: false,
+            watchScroll: false,
         });
         // curtains.canvas.height = window.innerHeight;
         // curtains.canvas.width = window.innerWidth;
