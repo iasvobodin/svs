@@ -96,6 +96,15 @@
         $homePageState && $titlePlaneOnLoad && !animationState;
 
     onMount(() => {
+        document
+            .querySelector(":root")
+            .style.setProperty("--vh", window.innerHeight / 100 + "px");
+        window.addEventListener("resize", () => {
+            curtains.resize();
+            document
+                .querySelector(":root")
+                .style.setProperty("--vh", window.innerHeight / 100 + "px");
+        });
         initCurtains();
 
         addPlane();
@@ -175,7 +184,10 @@
             pixelRatio: Math.min(1.5, window.devicePixelRatio),
             production: process.env.NODE_ENV !== "development",
             autoRender: false,
+            // watchScroll: false,
         });
+        // curtains.canvas.height = window.innerHeight;
+        // curtains.canvas.width = window.innerWidth;
         distortionTarget = new RenderTarget(curtains);
         rgbTarget = new RenderTarget(curtains);
     }
@@ -972,8 +984,8 @@
     }
     @media (orientation: landscape) {
         h3 {
-            font-size: clamp(14px, 3vw + 12px, 80px);
-            line-height: clamp(18px, 3.5vw + 12px, 90px);
+            font-size: clamp(14px, 2vw + 12px, 80px);
+            line-height: clamp(18px, 2.5vw + 12px, 90px);
         }
         .title__plane {
             height: clamp(18px, 3.5vw + 12px, 90px);
@@ -984,7 +996,7 @@
             width: 100%;
             height: var(--plane__height);
             top: 50vh;
-            top: calc(var(--vh, 1vh) * 50);
+            top: calc(var(--vh) * 50);
             transform: translateY(-50%);
             display: flex;
             position: absolute;
@@ -1004,19 +1016,19 @@
         }
         .title__plane {
             height: 4vh;
-            height: calc(var(--vh, 1vh) * 4);
+            /* height: calc(var(--vh, 1vh) * 4); */
 
             bottom: calc((100vh - var(--plane__height)) / 4);
         }
         h3 {
             font-size: 4vh;
-            font-size: calc(var(--vh, 1vh) * 4);
+            /* font-size: calc(var(--vh, 1vh) * 4); */
         }
         .wrapper {
             justify-content: center;
             width: 100%;
-            height: 100vh;
-            height: calc(var(--vh, 1vh) * 100);
+            height: 100%;
+            /* height: calc(var(--vh, 1vh) * 100); */
             display: flex;
             position: absolute;
         }
@@ -1031,11 +1043,14 @@
     #curtains {
         pointer-events: none;
         position: absolute;
+        /* bottom: 0; */
         top: 0;
         left: 0;
-        width: 100%;
+        /* right: 0; */
         overflow: hidden;
-        height: 100vh;
+        width: 100%;
+        /* height: 100vh; */
+        /* max-height: calc(var(--vh, 1vh) * 100); */
         height: calc(var(--vh, 1vh) * 100);
     }
 </style>

@@ -3,6 +3,38 @@
     $: style = `clip-path: inset(0% ${100 - $progress}% 0px 0px);`;
 </script>
 
+<div class="preloader">
+    <div class="svobodina">
+        <div {style} class="svobodina__holder">
+            <picture>
+                <source
+                    media="(orientation: portrait)"
+                    srcset="image/svobodinaFillPortrait.svg"
+                    type="image/svg+xml"
+                />
+                <img src="image/svobodinaFill.svg" alt="ph" />
+            </picture>
+        </div>
+        <picture class="svobodina__holder">
+            <source
+                media="(orientation: portrait)"
+                srcset="image/svobodinaPathPortrait.svg"
+                type="image/svg+xml"
+            />
+            <img src="image/svobodinaPath.svg" alt="ph" />
+        </picture>
+    </div>
+    <picture>
+        <source
+            media="(orientation: portrait)"
+            srcset="image/photoPortrait.svg"
+            type="image/svg+xml"
+        />
+        <img class="photo" src="image/photo.svg" alt="ph" />
+    </picture>
+    <img src="image/logo.svg" class="logo" alt="logo" />
+</div>
+
 <style>
     /* .inset-leave-active {
         animation: 4s inset;
@@ -18,8 +50,8 @@
     } */
     .preloader {
         height: 100vh;
-        height: calc(var(--vh, 1vh) * 100);
-        /* width: 100vw; */
+        /* height: calc(var(--vh, 1vh) * 100); */
+        width: 100vw;
         position: absolute;
         top: 0;
         bottom: 0;
@@ -31,7 +63,7 @@
             height: calc(min(60vw, 1600px) / 6.83);
             left: 50vw;
             top: 50vh;
-            top: calc(var(--vh, 1vh) * 50);
+            top: calc(var(--vh) * 50);
             transform: translate(-50%, -200%);
         }
         .svobodina__holder {
@@ -45,7 +77,7 @@
             width: min(33.3vw, 889px);
             left: 50vw;
             top: 50vh;
-            top: calc(var(--vh, 1vh) * 50);
+            top: calc(var(--vh) * 50);
             transform: translate(-52.8%, -64%);
         }
         .logo {
@@ -59,24 +91,30 @@
     @media (orientation: portrait) {
         .svobodina {
             height: 90vh;
+            height: calc(var(--vh) * 90);
             top: 50vh;
-            top: calc(var(--vh, 1vh) * 50);
+            top: calc(var(--vh) * 50);
+            width: 6vh;
+            /* top: calc(var(--vh, 1vh) * 50); */
             position: fixed;
             left: 50vw;
-            transform: translate(-220%, -51.45%);
+            transform: translate(-220%, -47.45%);
         }
         .svobodina__holder {
             position: absolute;
             /* top: 0; */
             height: inherit;
-            width: inherit;
+            width: auto;
+        }
+        .svobodina__holder > picture {
+            width: auto;
         }
         .photo {
             position: fixed;
-            top: 50vh;
-            top: calc(var(--vh, 1vh) * 50);
-            height: 50vh;
-            height: calc(var(--vh, 1vh) * 50);
+            /* top: 50vh; */
+            top: calc(var(--vh) * 50);
+            /* height: 50vh; */
+            height: calc(var(--vh) * 50);
             left: 50vw;
             transform: translate(-50%, -52.5%);
         }
@@ -85,38 +123,9 @@
             height: auto;
             position: fixed;
             bottom: 4vh;
-            bottom: calc(var(--vh, 1vh) * 4);
+            /* bottom: calc(var(--vh, 1vh) * 4); */
             right: 3vh;
-            right: calc(var(--vh, 1vh) * 3);
+            /* right: calc(var(--vh, 1vh) * 3); */
         }
     }
 </style>
-
-<div class="preloader">
-    <div class="svobodina">
-        <div {style} class="svobodina__holder">
-            <picture>
-                <source
-                    media="(orientation: portrait)"
-                    srcset="image/svobodinaFillPortrait.svg"
-                    type="image/svg+xml" />
-                <img src="image/svobodinaFill.svg" alt="ph" />
-            </picture>
-        </div>
-        <picture class="svobodina__holder">
-            <source
-                media="(orientation: portrait)"
-                srcset="image/svobodinaPathPortrait.svg"
-                type="image/svg+xml" />
-            <img src="image/svobodinaPath.svg" alt="ph" />
-        </picture>
-    </div>
-    <picture>
-        <source
-            media="(orientation: portrait)"
-            srcset="image/photoPortrait.svg"
-            type="image/svg+xml" />
-        <img class="photo" src="image/photo.svg" alt="ph" />
-    </picture>
-    <img src="image/logo.svg" class="logo" alt="logo" />
-</div>

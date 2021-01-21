@@ -8,10 +8,10 @@
 	onMount(() => {
 		let vh = window.innerHeight * 0.01;
 		document.documentElement.style.setProperty("--vh", `${vh}px`);
-		window.addEventListener("resize", () => {
-			let vh = window.innerHeight * 0.01;
-			document.documentElement.style.setProperty("--vh", `${vh}px`);
-		});
+		// window.addEventListener("resize", () => {
+		// 	let vh = window.innerHeight * 0.01;
+		// 	document.documentElement.style.setProperty("--vh", `${vh}px`);
+		// });
 	});
 	// const { preloading } = stores();
 	// $: console.log($preloading, "$preloading");
@@ -42,6 +42,6 @@
 	}
 	.canvas {
 		height: calc(var(--vh, 1vh) * 100);
-		height: 100vh;
+		/* height: 100vh; */
 	}
 </style>
