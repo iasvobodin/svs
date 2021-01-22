@@ -22,23 +22,19 @@
     // import vertex from "assets/start.vert";
     import {
         paddingCoef,
-        globalPlanes,
         showPrelader,
-        wheelProgress,
         homePageState,
         progress,
         eventAnimation,
         photoseries,
         leaveIndex,
         leaveRoute,
-        titlePlaneOnLoad,
+        // titlePlaneOnLoad,
     } from "store.js";
     import { afterUpdate, getContext, onMount, setContext, tick } from "svelte";
     import { goto, stores, start } from "@sapper/app";
     import { sineOut } from "svelte/easing";
     //INIT BEFORE MOUNT
-    const { page } = stores();
-    $: pageslug = $page.params.Route;
 
     // VARIABLE DATA
 
@@ -49,6 +45,7 @@
         distortionTarget,
         rgbPass,
         rgbTarget,
+        loader,
         planesTitle = [],
         planes = [],
         activePlane,
@@ -59,9 +56,8 @@
         animationFrame = null,
         changeOpacity,
         transVec = new Vec3(),
-        radius = null,
-        elWidth,
-        aspect = 0,
+        widthUn = 0.7,
+        heightUn = 0.8,
         startAnimation = null,
         isTrackpad = true,
         calcCords = {},
@@ -80,6 +76,7 @@
             mousePosition: 0,
             moveSpeed: 3,
         },
+        images = {},
         transitionState = {
             opacityPlane: 1,
             time: 0,
@@ -88,35 +85,42 @@
             yRoundDisable: 1,
             zRoundEnable: 0,
         };
+    const { page } = stores();
+    $: pageslug = $page.params.Route;
+    $: titlePlaneOnLoad = false;
+    $: aspect = 0;
+    $: radius = 0;
+    $: radiusCoef = 0;
+    $: elWidth = 0;
     $: $leaveIndex && !toRoute && toRouteAnim();
     $: $leaveRoute && toIndexAnim();
-    $: animationState = !!startAnimation || !!toRoute || !!toIndex;
-    // $: transitionPage = $leaveIndex || $leaveRoute;
-    $: toInvisibleState =
-        $homePageState && $titlePlaneOnLoad && !animationState;
+    //ORIENTATION
+    // $: if (aspect === 1.5) {
+    //     widthUn = 1;
+    //     heightUn = 0.72;
+    // } else {
+    //     widthUn = 0.7;
+    //     heightUn = 0.8;
+    // }
 
     onMount(() => {
-        document
-            .querySelector(":root")
-            .style.setProperty("--vh", window.innerHeight / 100 + "px");
-        window.addEventListener("resize", () => {
-            // debugger;
-            // curtains.resize();
-            // curtains.needRender();
-            document
-                .querySelector(":root")
-                .style.setProperty("--vh", window.innerHeight / 100 + "px");
-        });
+        document.documentElement.style.setProperty(
+            "--vh",
+            window.innerHeight / 100 + "px"
+        );
+
         initCurtains();
 
-        addPlane();
-        addTexture();
-        addTitlePlane();
         initMatchMedia();
+
+        addPlane();
+
+        addTexture();
+
+        addTitlePlane();
+
         addShaderPass();
 
-        radius =
-            elWidth / Math.sin((Math.PI * 2) / $photoseries.length / 2) / 2;
         translateSlider();
     });
     pageslug && showPrelader.set(false);
@@ -132,6 +136,14 @@
         showPrelader.set(false);
         eventAnimation.set(false);
         onMount(() => {
+            transitionState.opacityHedline = 0;
+            transitionState.opacityPlane = 1;
+            transitionState.time = 0;
+            transitionState.radiusAnimation = radius;
+            transitionState.scalePlane = 1;
+            transitionState.yRoundDisable = 0;
+            transitionState.zRoundEnable = 1;
+
             if (!activePlane) {
                 // debugger;
                 activePlane = planes.find(
@@ -141,41 +153,40 @@
                 let texture = $photoseries.find(
                     (t) => t.Route.toLowerCase() === pageslug
                 );
-                // transitionState = {
-                transitionState.opacityHedline = 0;
-                transitionState.opacityPlane = 1;
-                transitionState.time = 0;
-                transitionState.radiusAnimation = radius;
-                transitionState.scalePlane = 1;
-                transitionState.yRoundDisable = 0;
-                transitionState.zRoundEnable = 1;
-                // };
 
-                activePlane.loadImage(
-                    `https://raw.githubusercontent.com/iasvobodin/svs/images/static/image/jpg/720/${texture.FileName}.jpg`,
-                    {
-                        sampler: "planeTexture",
-                    },
-                    (texture) => {
-                        texture.onSourceLoaded(() => {
-                            activePlane.visible = 1;
-                            activePlane.uniforms.uProgress.value = 1;
-                            curtains.needRender();
-                        });
-                    }
-                    // (image, error) => {
-                    //     // there has been an error while loading the image
-                    // }
-                );
-                // console.log(activePlane);
-                $titlePlaneOnLoad &&
+                if (aspect === 1.5) {
+                    activePlane.loadImage(
+                        `https://raw.githubusercontent.com/iasvobodin/svs/images/static/image/jpg/720/${texture.Portrait}.jpg`,
+                        {
+                            sampler: "texturePortrait",
+                        },
+                        (texture) => {
+                            texture.onSourceLoaded(() => {
+                                activePlane.visible = 1;
+                                activePlane.uniforms.uProgress.value = 1;
+                                curtains.needRender();
+                            });
+                        }
+                    );
+                } else {
+                    activePlane.loadImage(
+                        `https://raw.githubusercontent.com/iasvobodin/svs/images/static/image/jpg/720/${texture.FileName}.jpg`,
+                        {
+                            sampler: "textureLandscape",
+                        },
+                        (texture) => {
+                            texture.onSourceLoaded(() => {
+                                activePlane.visible = 1;
+                                activePlane.uniforms.uProgress.value = 1;
+                                curtains.needRender();
+                            });
+                        }
+                    );
+                }
+                titlePlaneOnLoad &&
                     (activePlaneTitle =
                         planesTitle[activePlane.index + photoseries.length]);
             }
-
-            // activePlane.visible = 1;
-            // activePlane.uniforms.uProgress.value = 1;
-            // curtains.needRender();
         });
     }
 
@@ -186,13 +197,17 @@
             pixelRatio: Math.min(1.5, window.devicePixelRatio),
             production: process.env.NODE_ENV !== "development",
             autoRender: false,
-            autoResize: false,
+            antialias: false,
+            // preserveDrawingBuffer: true,
+            // depth: false,
+            // autoResize: false,
             watchScroll: false,
         });
         // curtains.canvas.height = window.innerHeight;
         // curtains.canvas.width = window.innerWidth;
         distortionTarget = new RenderTarget(curtains);
         rgbTarget = new RenderTarget(curtains);
+        loader = new TextureLoader(curtains);
     }
     function addTitlePlane() {
         const planeElementTitle = document.getElementsByClassName("titleH3");
@@ -206,8 +221,20 @@
                 uOpacityTitle: { name: "uOpacityTitle", type: "1f", value: 1 },
             },
         };
+        const rgbPassParams = {
+            fragmentShader: rgbFs,
+            renderTarget: rgbTarget,
+            depthTest: false, // we need to disable the depth test to display that shader pass on top of the first one
+            uniforms: {
+                scrollEffect: {
+                    name: "uScrollEffect",
+                    type: "1f",
+                    value: 0,
+                },
+            },
+        };
         document.fonts.load("1em Cormorant Infant").then(() => {
-            titlePlaneOnLoad.set(true);
+            titlePlaneOnLoad = true;
             for (const element of planeElementTitle) {
                 const planeTitle = new Plane(curtains, element, paramsTitle);
                 const canvas = document.createElement("canvas");
@@ -220,23 +247,7 @@
                 planesTitle.push(planeTitle);
             }
 
-            rgbPass = new ShaderPass(curtains, {
-                fragmentShader: rgbFs,
-                renderTarget: rgbTarget,
-                depthTest: false, // we need to disable the depth test to display that shader pass on top of the first one
-                uniforms: {
-                    scrollEffect: {
-                        name: "uScrollEffect",
-                        type: "1f",
-                        value: 0,
-                    },
-                },
-            });
-
-            // rgbPass.onRender(() => {
-            //     // update the uniform
-            //     rgbPass.uniforms.scrollEffect.value = scrollEffect;
-            // });
+            rgbPass = new ShaderPass(curtains, rgbPassParams);
         });
     }
     function addPlane(trPlane = false) {
@@ -284,11 +295,18 @@
                 color: element.dataset.color,
                 id: element.dataset.id,
             };
-            // plane.setScale(
-            //     new Vec2(transitionState.scalePlane, transitionState.scalePlane)
-            // );
+            getUnifors(plane, {
+                pCorr: false,
+                sCorr: true,
+                fCorr: true,
+            });
             plane.setRenderTarget(distortionTarget);
-            planes.push(plane);
+
+            // CREATE TEXTURE
+            plane.createTexture({
+                sampler: "planeTexture",
+            }),
+                planes.push(plane);
         });
         // console.timeEnd("create Plane");
 
@@ -301,34 +319,65 @@
             planes.trPlane.visible = 1;
         }
     }
-    function addTexture() {
-        const loader = new TextureLoader(curtains);
-        // console.time("create texture");
-        $photoseries.forEach((el, i) => {
-            // images.push(`/image/jpg/720/${el.FileName}.jpg`);
-            loader.loadImage(
-                `https://raw.githubusercontent.com/iasvobodin/svs/images/static/image/jpg/720/${el.FileName}.jpg`,
-                {
-                    sampler: "planeTexture",
-                },
-                (texture) => {
-                    texture.setMinFilter(curtains.gl.LINEAR_MIPMAP_NEAREST);
-                    texture.onSourceLoaded(() => {
-                        !pageslug && (planes[i].visible = 1);
-                        texture.addParent(planes[i]);
-                        progress.update((n) => n + 100 / $photoseries.length);
-                        load++;
-                        if (load === $photoseries.length) {
-                            startAnim();
-                        }
-                    });
-                },
-                (image, error) => {
-                    // there has been an error while loading the image
-                }
+    const createImage = () => {
+        images.smallPortrait = [];
+        images.largePortrait = [];
+        images.smallLandscape = [];
+        images.largeLandscape = [];
+
+        $photoseries.forEach((el) => {
+            images.smallPortrait.push(
+                `https://raw.githubusercontent.com/iasvobodin/svs/images/static/image/jpg/480/${el.Portrait}.jpg`
+            );
+            images.largePortrait.push(
+                `https://raw.githubusercontent.com/iasvobodin/svs/images/static/image/jpg/720/${el.Portrait}.jpg`
+            );
+            images.smallLandscape.push(
+                `https://raw.githubusercontent.com/iasvobodin/svs/images/static/image/jpg/480/${el.FileName}.jpg`
+            );
+            images.largeLandscape.push(
+                `https://raw.githubusercontent.com/iasvobodin/svs/images/static/image/jpg/720/${el.FileName}.jpg`
             );
         });
-        // console.timeEnd("create texture");
+    };
+    createImage();
+    // console.log(images);
+    function addTexture() {
+        let image;
+
+        // console.time("create texture");
+        let src;
+        aspect === 1.5
+            ? (src = images.smallPortrait)
+            : (src = images.smallLandscape);
+        const setTexture = () => {
+            planes.forEach((el, i) => {
+                loader.loadImage(
+                    src[i],
+                    {},
+                    (texture) => {
+                        texture.userData.route = el.Route;
+                        texture.setMinFilter(curtains.gl.LINEAR_MIPMAP_NEAREST);
+                        texture.onSourceLoaded(() => {
+                            !pageslug && (el.visible = 1);
+
+                            el.textures[0].copy(texture);
+
+                            progress.update(
+                                (n) => n + 100 / $photoseries.length
+                            );
+                            load++;
+                            if (load === $photoseries.length) {
+                                startAnim();
+                            }
+                            // texture.needUpdate();
+                        });
+                    },
+                    (image, error) => {}
+                );
+            });
+        };
+        setTexture();
     }
     function addShaderPass() {
         const shaderPassParams = {
@@ -347,36 +396,7 @@
                 anisotropy: 10,
             },
         };
-
         shaderPass = new ShaderPass(curtains, shaderPassParams);
-        console.log(shaderPass.textures);
-        // we will need to load a new image
-        const image = new Image();
-        image.src = "image/displacement4.jpg";
-        // set its data-sampler attribute to use in fragment shader
-        image.setAttribute("data-sampler", "displacementTexture");
-        if (shaderPass) {
-            shaderPass.loader.loadImage(image);
-            shaderPass
-                .onLoading((texture) => {
-                    texture.setScale(new Vec2(2, 0.5));
-                    console.log(
-                        "shader pass image has been loaded and texture has been created:",
-                        texture
-                    );
-                })
-                .onReady(() => {
-                    console.log("shader pass is ready");
-                })
-                .onRender(() => {
-                    // update the uniforms
-                    // shaderPass.uniforms.displacement.value =
-                    //     planesDeformations / 60;
-                })
-                .onError(() => {
-                    console.log("shader pass error");
-                });
-        }
     }
     function writeText(plane, canvas) {
         const htmlPlane = plane.htmlElement;
@@ -435,13 +455,7 @@
     }
     function getUnifors(
         plane,
-        opt = {
-            pCorr: true,
-            sCorr: true,
-            fCorr: true,
-            widthUn: 0.7,
-            heightUn: 0.8,
-        }
+        opt = { pCorr: true, sCorr: true, fCorr: true }
     ) {
         // GET BOUND
         const { width, height, left, top } = plane.getWebGLBoundingRect();
@@ -453,8 +467,8 @@
 
         // SET CORRECTION FRAGMENT SHADER NEED TO START AND RESIZE
         if (opt.fCorr) {
-            const scaleWidth = window.innerWidth * opt.widthUn;
-            const scaleHeight = window.innerHeight * opt.heightUn;
+            const scaleWidth = window.innerWidth * widthUn;
+            const scaleHeight = window.innerHeight * heightUn;
             if (scaleHeight / scaleWidth > aspect) {
                 calcCords.xNorm = (scaleWidth / scaleHeight) * aspect;
                 calcCords.yNorm = 1;
@@ -471,8 +485,8 @@
         // SET SCALE VECTOR NEED TO START AND RESIZE
         if (opt.sCorr) {
             plane.uniforms.uScaleVector.value = [
-                (curtainsWidth * opt.widthUn) / width - 1, // * 0.5,
-                (curtainsHeight * opt.heightUn) / height - 1, //* 0.7
+                (curtainsWidth * widthUn) / width - 1, // * 0.5,
+                (curtainsHeight * heightUn) / height - 1, //* 0.7
             ];
         }
         // PLANE SIZE
@@ -489,61 +503,59 @@
         }
     }
     function handlePortrait(e) {
+        console.log("handlePortrait activation");
         if (e.matches) {
             // PORTAIT
+            aspect = 1.5;
+            widthUn = 1;
+            heightUn = 0.72;
+            radiusCoef = 0.0725;
+            setElementSize(0.62, 0.12);
+            // curtains.resize();
             paddingCoef.set(0.03);
-            if (!pageslug) {
+
+            if ($homePageState) {
+                transitionState.radiusAnimation =
+                    elWidth /
+                    Math.sin((Math.PI * 2) / $photoseries.length / 2) /
+                    2;
+            } else {
                 transitionState.radiusAnimation = Math.min(
-                    (window.innerHeight * 0.0725) / 1.3882 / 2,
+                    (window.innerHeight * radiusCoef) / 1.3882 / 2,
                     100
                 );
             }
-            aspect = 1.5;
-            getElementWidth(0.65);
-            planes.forEach((p, i) => {
-                p.onReady(() => {
-                    getUnifors(p, {
-                        pCorr: false,
-                        sCorr: true,
-                        fCorr: true,
-                        widthUn: 0.96,
-                        heightUn: 0.7,
-                    });
-                });
-                // p.loadImage(
-                //   `/image/${$fileEx}/720/${$store.state.photoseries[i].Portrait}.${$fileEx}`
-                // )
-                // p.textures[0].needUpdate()
-                // console.log(p)
-            });
+            // curtains.resize();
         } else {
             // LANDSCAPE
+            aspect = 0.668;
+            widthUn = 0.7;
+            heightUn = 0.8;
+            radiusCoef = 0.0755;
+            setElementSize(0.54);
             paddingCoef.set(0.12);
-            if (!pageslug) {
+
+            if ($homePageState) {
+                transitionState.radiusAnimation =
+                    elWidth /
+                    Math.sin((Math.PI * 2) / $photoseries.length / 2) /
+                    2;
+            } else {
                 transitionState.radiusAnimation = Math.min(
-                    (window.innerWidth * 0.0755) / 1.3882 / 2,
+                    (window.innerWidth * radiusCoef) / 1.3882 / 2,
                     100
                 );
             }
-            aspect = 0.668;
-            getElementWidth(0.52);
-            planes.forEach((p, i) => {
-                p.onReady(() => {
-                    getUnifors(p, {
-                        pCorr: false,
-                        sCorr: true,
-                        fCorr: true,
-                        widthUn: 0.7,
-                        heightUn: 0.8,
-                    });
-                });
-            });
+            // curtains.resize();
         }
     }
-    function getElementWidth(height, margin = 0.06) {
+    function setElementSize(height, margin = 0.06) {
         elWidth =
             (window.innerHeight * height) / aspect +
             window.innerWidth * margin * 2;
+
+        radius =
+            elWidth / Math.sin((Math.PI * 2) / $photoseries.length / 2) / 2;
 
         document.documentElement.style.setProperty(
             "--plane__width",
@@ -553,9 +565,41 @@
             "--plane__height",
             `${window.innerHeight * height}px`
         );
-        console.log("from getElementWidth", elWidth);
     }
+    function resize() {
+        activePlane && getUnifors(activePlane);
+        document.documentElement.style.setProperty(
+            "--vh",
+            window.innerHeight / 100 + "px"
+        );
+        console.log("1", activePlane.uniforms);
+        // curtains.resize();
+        // debugger;
 
+        activePlane &&
+            activePlane.onAfterResize(() => {
+                // getUnifors(activePlane, {
+                //     pCorr: false,
+                //     sCorr: true,
+                //     fCorr: true,
+                // });
+                // curtains.needRender();
+                // getUnifors(activePlane);
+                console.log("2", activePlane.uniforms);
+                // curtains.restoreContext();
+                // curtains.needRender();
+            });
+        // curtains.onAfterResize(() => {
+        //     document.documentElement.style.setProperty(
+        //         "--vh",
+        //         window.innerHeight / 100 + "px"
+        //     );
+        //     console.log("afterresize", activePlane);
+        //     getUnifors(activePlane);
+        //     // curtains.restoreContext();
+        //     // curtains.needRender();
+        // });
+    }
     //AANIMATE
     function startAnim() {
         if (pageslug) return;
@@ -687,13 +731,13 @@
                     homePageState.set(false);
                     toInvisibleAnim([1, 0]);
                     if (aspect === 1.5) {
-                        console.log("aspect", aspect);
+                        // console.log("aspect", aspect);
                         getUnifors(activePlane, {
                             pCorr: true,
                             sCorr: true,
                             fCorr: true,
-                            widthUn: 0.96,
-                            heightUn: 0.7,
+                            // widthUn: 0.96,
+                            // heightUn: 0.7,
                         });
                     } else {
                         getUnifors(activePlane);
@@ -780,7 +824,7 @@
                         transitionState.scalePlane
                     )
                 );
-                if ($titlePlaneOnLoad) {
+                if (titlePlaneOnLoad) {
                     rgbPass.uniforms.scrollEffect.value = disp;
                     planesTitle[i].setRelativeTranslation(transVec);
                 }
@@ -898,63 +942,12 @@
     }
 </script>
 
-<div
-    class:event={!$eventAnimation}
-    on:mousemove={onMouseMove}
-    on:touchmove|passive={onMouseMove}
-    on:mouseleave={onMouseUp}
-    on:mouseup={onMouseUp}
-    on:mousedown|preventDefault={onMouseDown}
-    on:touchstart|preventDefault={onMouseDown}
-    on:touchend={onMouseUp}
-    on:wheel={onWheel}
-    class="wrapper"
->
-    {#each $photoseries as seriya, index (index)}
-        <a style="display: none;" href="/{seriya.Route.toLowerCase()}">r</a>
-        <div
-            data-id={index}
-            data-route={seriya.Route}
-            data-color={[seriya.ColorVector]}
-            class="plane"
-        >
-            <!-- <picture class="standart__picture">
-                <source
-                    media="(orientation: portrait)"
-                    srcset="/image/webp/720/{seriya.Portrait}.webp"
-                    type="image/webp" />
-                <source
-                    media="(orientation: landscape)"
-                    srcset="/image/webp/720/{seriya.FileName}.webp"
-                    type="image/webp" />
-
-                <img
-                    data-sampler="planeTexture"
-                    class="slider__img"
-                    alt="SvobodinaPhoto"
-                    crossorigin="anonimous"
-                    decoding="async"
-                    draggable="false"
-                    src="/image/jpg/720/{seriya.FileName}.jpg" />
-            </picture> -->
-        </div>
-    {/each}
-</div>
-<div class="title__plane">
-    {#each $photoseries as seriya, index (index)}
-        <div class="title">
-            <h3 class="titleH3">{seriya.Title}</h3>
-        </div>
-    {/each}
-</div>
-<div bind:this={webgl} id="curtains" />
-
 <!-- <div class="box" /> -->
 <style>
     .event {
         pointer-events: none;
     }
-    :root {
+    /* :root {
         --margin__wrapper: calc((100vh - var(--plane__height)) / 2);
         --title__height: calc(14px + 3.2vw);
         --translationSlide: 0;
@@ -964,7 +957,7 @@
         --plane__shift: calc(
             50vw - ((var(--plane__width) + var(--plane__margin) * 2) * 3.5)
         );
-    }
+    } */
     .title__plane {
         opacity: 0;
         width: var(--plane__width);
@@ -1057,3 +1050,53 @@
         height: calc(var(--vh, 1vh) * 100);
     }
 </style>
+
+<svelte:window on:resize={resize} />
+<div
+    class:event={!$eventAnimation}
+    on:mousemove={onMouseMove}
+    on:touchmove|passive={onMouseMove}
+    on:mouseleave={onMouseUp}
+    on:mouseup={onMouseUp}
+    on:mousedown|preventDefault={onMouseDown}
+    on:touchstart|preventDefault={onMouseDown}
+    on:touchend={onMouseUp}
+    on:wheel={onWheel}
+    class="wrapper">
+    {#each $photoseries as seriya, index (index)}
+        <a style="display: none;" href="/{seriya.Route.toLowerCase()}">r</a>
+        <div
+            data-id={index}
+            data-route={seriya.Route}
+            data-color={[seriya.ColorVector]}
+            class="plane">
+            <!-- <picture class="standart__picture">
+                <source
+                    media="(orientation: portrait)"
+                    srcset="/image/webp/720/{seriya.Portrait}.webp"
+                    type="image/webp" />
+                <source
+                    media="(orientation: landscape)"
+                    srcset="/image/webp/720/{seriya.FileName}.webp"
+                    type="image/webp" />
+
+                <img
+                    data-sampler="planeTexture"
+                    class="slider__img"
+                    alt="SvobodinaPhoto"
+                    crossorigin="anonimous"
+                    decoding="async"
+                    draggable="false"
+                    src="/image/jpg/720/{seriya.FileName}.jpg" />
+            </picture> -->
+        </div>
+    {/each}
+</div>
+<div class="title__plane">
+    {#each $photoseries as seriya, index (index)}
+        <div class="title">
+            <h3 class="titleH3">{seriya.Title}</h3>
+        </div>
+    {/each}
+</div>
+<div bind:this={webgl} id="curtains" />

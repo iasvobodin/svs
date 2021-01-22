@@ -15,7 +15,7 @@
     "animejs": "^3.2.1",
     "axios": "^0.21.0",
     "compression": "^1.7.1",
-    "curtainsjs": "^8.0.0",
+    "curtainsjs": "^8.0.2",
     "justified-layout": "^4.0.0",
     "lethargy": "^1.0.9",
     "node-fetch": "^2.6.1",

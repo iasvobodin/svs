@@ -1,6 +1,5 @@
 <script context="module">
   export async function preload({ params }) {
-    console.log("console log from preload PARAMS ", params);
     const res = await this.fetch(`/db/${params.Route}.json`);
     const data = await res.json();
     return { data };
