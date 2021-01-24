@@ -1,6 +1,12 @@
 <script>
-    import { progress, photoseries } from "store.js";
+    import { progress } from "store.js";
+    import { onMount } from "svelte";
     $: style = `clip-path: inset(0% ${100 - $progress}% 0px 0px);`;
+    onMount(() => {
+        // let vh = window.innerHeight * 0.01;
+        // document.documentElement.style.setProperty("--vh", `${vh}px`);
+        console.log("onMount preloader");
+    });
 </script>
 
 <div class="preloader">
@@ -50,7 +56,7 @@
     } */
     .preloader {
         height: 100vh;
-        /* height: calc(var(--vh, 1vh) * 100); */
+        height: calc(var(--vh) * 100);
         width: 100vw;
         position: absolute;
         top: 0;
@@ -59,8 +65,8 @@
     @media (orientation: landscape) {
         .svobodina {
             position: fixed;
-            width: min(60vw, 1600px);
-            height: calc(min(60vw, 1600px) / 6.83);
+            width: min(62vw, 1600px);
+            height: calc(min(62vw, 1600px) / 6.83);
             left: 50vw;
             top: 50vh;
             top: calc(var(--vh) * 50);
@@ -95,14 +101,13 @@
             top: 50vh;
             top: calc(var(--vh) * 50);
             width: 6vh;
-            /* top: calc(var(--vh, 1vh) * 50); */
+            width: calc(var(--vh) * 6);
             position: fixed;
             left: 50vw;
             transform: translate(-220%, -47.45%);
         }
         .svobodina__holder {
             position: absolute;
-            /* top: 0; */
             height: inherit;
             width: auto;
         }
@@ -111,9 +116,9 @@
         }
         .photo {
             position: fixed;
-            /* top: 50vh; */
+            top: 50vh;
             top: calc(var(--vh) * 50);
-            /* height: 50vh; */
+            height: 50vh;
             height: calc(var(--vh) * 50);
             left: 50vw;
             transform: translate(-50%, -52.5%);
