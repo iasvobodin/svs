@@ -85,6 +85,8 @@
             yRoundDisable: 1,
             zRoundEnable: 0,
         };
+    let src;
+
     const { page } = stores();
     $: pageslug = $page.params.Route;
     $: titlePlaneOnLoad = false;
@@ -94,6 +96,7 @@
     $: elWidth = 0;
     $: $leaveIndex && !toRoute && toRouteAnim();
     $: $leaveRoute && toIndexAnim();
+    $: load === $photoseries.length && !pageslug && startAnim();
 
     onMount(() => {
         initCurtains();
@@ -111,6 +114,7 @@
         translateSlider();
     });
     pageslug && showPrelader.set(false);
+
     $: if (pageslug) {
         // SORT PHOTOSERIES
         const object = $photoseries.find(
@@ -120,6 +124,8 @@
             ...n.slice(object.Id),
             ...n.slice(0, object.Id),
         ]);
+        createImage();
+        console.log($photoseries);
         showPrelader.set(false);
         eventAnimation.set(false);
         onMount(() => {
@@ -137,43 +143,45 @@
                     (p) => p.userData.route.toLowerCase() === pageslug
                 );
             }
+            console.log(src);
             getUnifors(activePlane);
+            setTexture(activePlane);
             // activePlane.onAfterResize(() => {
             //     console.log(activePlane.uniforms.uPlanePosition.value);
             // });
-            let texture = $photoseries.find(
-                (t) => t.Route.toLowerCase() === pageslug
-            );
+            // let texture = $photoseries.find(
+            //     (t) => t.Route.toLowerCase() === pageslug
+            // );
 
-            if (aspect === 1.5) {
-                activePlane.loadImage(
-                    `https://raw.githubusercontent.com/iasvobodin/svs/images/static/image/jpg/720/${texture.Portrait}.jpg`,
-                    {
-                        sampler: "texturePortrait",
-                    },
-                    (texture) => {
-                        texture.onSourceLoaded(() => {
-                            activePlane.visible = 1;
-                            activePlane.uniforms.uProgress.value = 1;
-                            curtains.needRender();
-                        });
-                    }
-                );
-            } else {
-                activePlane.loadImage(
-                    `https://raw.githubusercontent.com/iasvobodin/svs/images/static/image/jpg/720/${texture.FileName}.jpg`,
-                    {
-                        sampler: "textureLandscape",
-                    },
-                    (texture) => {
-                        texture.onSourceLoaded(() => {
-                            activePlane.visible = 1;
-                            activePlane.uniforms.uProgress.value = 1;
-                            curtains.needRender();
-                        });
-                    }
-                );
-            }
+            // if (aspect === 1.5) {
+            //     activePlane.loadImage(
+            //         `https://raw.githubusercontent.com/iasvobodin/svs/images/static/image/jpg/720/${texture.Portrait}.jpg`,
+            //         {
+            //             sampler: "texturePortrait",
+            //         },
+            //         (texture) => {
+            //             texture.onSourceLoaded(() => {
+            //                 activePlane.visible = 1;
+            //                 activePlane.uniforms.uProgress.value = 1;
+            //                 curtains.needRender();
+            //             });
+            //         }
+            //     );
+            // } else {
+            //     activePlane.loadImage(
+            //         `https://raw.githubusercontent.com/iasvobodin/svs/images/static/image/jpg/720/${texture.FileName}.jpg`,
+            //         {
+            //             sampler: "textureLandscape",
+            //         },
+            //         (texture) => {
+            //             texture.onSourceLoaded(() => {
+            activePlane.visible = 1;
+            activePlane.uniforms.uProgress.value = 1;
+            curtains.needRender();
+            //             });
+            //         }
+            //     );
+            // }
             titlePlaneOnLoad &&
                 (activePlaneTitle =
                     planesTitle[activePlane.index + photoseries.length]);
@@ -319,66 +327,75 @@
         $photoseries.forEach((el) => {
             images.smallPortrait.push({
                 route: el.Route,
+                tag: "smallPortrait",
                 src: `https://raw.githubusercontent.com/iasvobodin/svs/images/static/image/jpg/480/${el.Portrait}.jpg`,
             });
             images.largePortrait.push({
                 route: el.Route,
+                tag: "largePortrait",
                 src: `https://raw.githubusercontent.com/iasvobodin/svs/images/static/image/jpg/720/${el.Portrait}.jpg`,
             });
             images.smallLandscape.push({
                 route: el.Route,
+                tag: "smallLandscape",
                 src: `https://raw.githubusercontent.com/iasvobodin/svs/images/static/image/jpg/480/${el.FileName}.jpg`,
             });
             images.largeLandscape.push({
                 route: el.Route,
+                tag: "largeLandscape",
                 src: `https://raw.githubusercontent.com/iasvobodin/svs/images/static/image/jpg/720/${el.FileName}.jpg`,
             });
         });
     };
     createImage();
-    // console.log(images);
     function addTexture() {
-        let image;
+        const curtainsBBox = curtains.getBoundingRect();
 
-        // console.time("create texture");
-        let src;
-        aspect === 1.5
-            ? (src = images.smallPortrait)
-            : (src = images.smallLandscape);
+        if (aspect === 1.5) {
+            if (curtainsBBox.width > 720) {
+                src = images.largePortrait;
+                // tag = "largePortrait";
+            } else {
+                src = images.smallPortrait;
+                // tag = "smallPortrait";
+            }
+        } else {
+            if (curtainsBBox.width > 720) {
+                src = images.largeLandscape;
+                // tag = "largeLandscape";
+            } else {
+                src = images.smallLandscape;
+                // tag = "smallLandscape";
+            }
+        }
 
-        const setTexture = () => {
-            planes.forEach((el, i) => {
-                loader.loadImage(
-                    src[i].src,
-                    {},
-                    (texture) => {
-                        texture.userData.route = el.Route;
-                        texture.setMinFilter(curtains.gl.LINEAR_MIPMAP_NEAREST);
-                        texture.onSourceUploaded(() => {
-                            load++;
-                            if (load === $photoseries.length) {
-                                // AFTER LOAD ALL IMAGE => START ANIMATION
-                                startAnim();
-                            }
-                            !pageslug && (el.visible = 1);
-                            console.log(el.userData.route, "plane");
-                            console.log(el.userData.route, "texture");
+        planes.forEach((el, i) => {
+            setTexture(el);
+        });
+        // setTexture();
+    }
+    function setTexture(el) {
+        if (el.userData.tag !== src[el.index].tag) {
+            loader.loadImage(
+                src[el.index].src,
+                {},
+                (texture) => {
+                    el.userData.tag = src[el.index].tag;
+                    // texture.userData.route = el.userData.route;
+                    texture.setMinFilter(curtains.gl.LINEAR_MIPMAP_NEAREST);
+                    texture.onSourceUploaded(() => {
+                        load++;
+                        progress.update((n) => n + 100 / $photoseries.length);
+                        !pageslug && (el.visible = 1);
 
-                            if (el.userData.route) {
-                            }
-
-                            el.textures[0].copy(texture);
-
-                            progress.update(
-                                (n) => n + 100 / $photoseries.length
-                            );
-                        });
-                    },
-                    (image, error) => {}
-                );
-            });
-        };
-        setTexture();
+                        // if (el.userData.route === texture.userData.route) {
+                        el.textures[0].copy(texture);
+                        // }
+                    });
+                },
+                (image, error) => {}
+            );
+        }
     }
     function addShaderPass() {
         const shaderPassParams = {
@@ -918,58 +935,6 @@
     }
 </script>
 
-<svelte:window on:resize={resize} />
-<div
-    class:event={!$eventAnimation}
-    on:mousemove={onMouseMove}
-    on:touchmove|passive={onMouseMove}
-    on:mouseleave={onMouseUp}
-    on:mouseup={onMouseUp}
-    on:mousedown|preventDefault={onMouseDown}
-    on:touchstart|preventDefault={onMouseDown}
-    on:touchend={onMouseUp}
-    on:wheel={onWheel}
-    class="wrapper"
->
-    {#each $photoseries as seriya, index (index)}
-        <a style="display: none;" href="/{seriya.Route.toLowerCase()}">r</a>
-        <div
-            data-id={index}
-            data-route={seriya.Route}
-            data-color={[seriya.ColorVector]}
-            class="plane"
-        >
-            <!-- <picture class="standart__picture">
-                <source
-                    media="(orientation: portrait)"
-                    srcset="/image/webp/720/{seriya.Portrait}.webp"
-                    type="image/webp" />
-                <source
-                    media="(orientation: landscape)"
-                    srcset="/image/webp/720/{seriya.FileName}.webp"
-                    type="image/webp" />
-
-                <img
-                    data-sampler="planeTexture"
-                    class="slider__img"
-                    alt="SvobodinaPhoto"
-                    crossorigin="anonimous"
-                    decoding="async"
-                    draggable="false"
-                    src="/image/jpg/720/{seriya.FileName}.jpg" />
-            </picture> -->
-        </div>
-    {/each}
-</div>
-<div class="title__plane">
-    {#each $photoseries as seriya, index (index)}
-        <div class="title">
-            <h3 class="titleH3">{seriya.Title}</h3>
-        </div>
-    {/each}
-</div>
-<div bind:this={webgl} id="curtains" />
-
 <!-- <div class="box" /> -->
 <style>
     .event {
@@ -1077,3 +1042,53 @@
         height: calc(var(--vh, 1vh) * 100);
     }
 </style>
+
+<svelte:window on:resize={resize} />
+<div
+    class:event={!$eventAnimation}
+    on:mousemove={onMouseMove}
+    on:touchmove|passive={onMouseMove}
+    on:mouseleave={onMouseUp}
+    on:mouseup={onMouseUp}
+    on:mousedown|preventDefault={onMouseDown}
+    on:touchstart|preventDefault={onMouseDown}
+    on:touchend={onMouseUp}
+    on:wheel={onWheel}
+    class="wrapper">
+    {#each $photoseries as seriya, index (index)}
+        <a style="display: none;" href="/{seriya.Route.toLowerCase()}">r</a>
+        <div
+            data-id={index}
+            data-route={seriya.Route}
+            data-color={[seriya.ColorVector]}
+            class="plane">
+            <!-- <picture class="standart__picture">
+                <source
+                    media="(orientation: portrait)"
+                    srcset="/image/webp/720/{seriya.Portrait}.webp"
+                    type="image/webp" />
+                <source
+                    media="(orientation: landscape)"
+                    srcset="/image/webp/720/{seriya.FileName}.webp"
+                    type="image/webp" />
+
+                <img
+                    data-sampler="planeTexture"
+                    class="slider__img"
+                    alt="SvobodinaPhoto"
+                    crossorigin="anonimous"
+                    decoding="async"
+                    draggable="false"
+                    src="/image/jpg/720/{seriya.FileName}.jpg" />
+            </picture> -->
+        </div>
+    {/each}
+</div>
+<div class="title__plane">
+    {#each $photoseries as seriya, index (index)}
+        <div class="title">
+            <h3 class="titleH3">{seriya.Title}</h3>
+        </div>
+    {/each}
+</div>
+<div bind:this={webgl} id="curtains" />
