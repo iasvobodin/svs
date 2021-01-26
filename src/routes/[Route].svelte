@@ -12,10 +12,10 @@
   import Spic from "../components/spic.svelte";
   import { leaveRoute, leaveIndex, paddingCoef, photoseries } from "store.js";
   import { fly } from "svelte/transition";
-  // import IntersectionObserver from "../../components/IntersectionObserver.svelte";
-
-  // const object = $photoseries.find((el) => el.Route === pageslug);
-  // photoseries.update((n) => [...n.slice(object.Id), ...n.slice(0, object.Id)]);
+  import { goto, stores, start } from "@sapper/app";
+  const { page } = stores();
+  const object = $photoseries.find((el) => el.Route === $page.params.Route);
+  photoseries.update((n) => [...n.slice(object.Id), ...n.slice(0, object.Id)]);
   let width,
     height,
     layout,
@@ -82,7 +82,7 @@
     //   if (event.persisted === true) {
     //     console.log("This page *might* be entering the bfcache.");
     //   } else {
-    //     console.log("This page will unload normally and be discarded.");
+    console.log("RouteMounted");
     //   }
     // });
     // window.addEventListener("pageshow", function (event) {

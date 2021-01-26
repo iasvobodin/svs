@@ -9,38 +9,6 @@
     });
 </script>
 
-<div class="preloader">
-    <div class="svobodina">
-        <div {style} class="svobodina__holder">
-            <picture>
-                <source
-                    media="(orientation: portrait)"
-                    srcset="image/svobodinaFillPortrait.svg"
-                    type="image/svg+xml"
-                />
-                <img src="image/svobodinaFill.svg" alt="ph" />
-            </picture>
-        </div>
-        <picture class="svobodina__holder">
-            <source
-                media="(orientation: portrait)"
-                srcset="image/svobodinaPathPortrait.svg"
-                type="image/svg+xml"
-            />
-            <img src="image/svobodinaPath.svg" alt="ph" />
-        </picture>
-    </div>
-    <picture>
-        <source
-            media="(orientation: portrait)"
-            srcset="image/photoPortrait.svg"
-            type="image/svg+xml"
-        />
-        <img class="photo" src="image/photo.svg" alt="ph" />
-    </picture>
-    <img src="image/logo.svg" class="logo" alt="logo" />
-</div>
-
 <style>
     /* .inset-leave-active {
         animation: 4s inset;
@@ -59,37 +27,47 @@
         height: calc(var(--vh) * 100);
         width: 100vw;
         position: absolute;
-        top: 0;
-        bottom: 0;
+        /* top: 0;
+        bottom: 0; */
+        display: grid;
+        place-items: center;
+        grid-template-rows: 1fr;
+        grid-template-columns: 1fr;
     }
     @media (orientation: landscape) {
         .svobodina {
-            position: fixed;
+            position: absolute;
+            /* grid-area: 1/1/2/2; */
+            /* position: fixed; */
             width: min(62vw, 1600px);
             height: calc(min(62vw, 1600px) / 6.83);
-            left: 50vw;
-            top: 50vh;
-            top: calc(var(--vh) * 50);
-            transform: translate(-50%, -200%);
+            /* left: 50vw; */
+            /* top: 50vh; */
+            /* top: calc(var(--vh) * 50); */
+            transform: translate(0, -150%);
         }
         .svobodina__holder {
             position: absolute;
-            top: 0;
+            /* top: 0; */
             width: inherit;
         }
         /* 1.3882 */
         .photo {
-            position: fixed;
+            position: absolute;
+            /* grid-area: 1/1/2/2; */
+            /* position: fixed; */
             width: min(33.3vw, 889px);
-            left: 50vw;
-            top: 50vh;
-            top: calc(var(--vh) * 50);
+            /* left: 50vw; */
+            /* top: 50vh; */
+            /* top: calc(var(--vh) * 50); */
             transform: translate(-52.8%, -64%);
         }
         .logo {
+            position: absolute;
+            /* grid-area: 1/1/2/2; */
             width: 6vw;
             height: auto;
-            position: fixed;
+            /* position: fixed; */
             bottom: 50px;
             right: 50px;
         }
@@ -134,3 +112,32 @@
         }
     }
 </style>
+
+<div class="preloader">
+    <div class="svobodina">
+        <div {style} class="svobodina__holder">
+            <picture>
+                <!-- <source
+                    media="(orientation: portrait)"
+                    srcset="image/svobodinaFillPortrait.svg"
+                    type="image/svg+xml" /> -->
+                <img src="image/svobodinaFill.svg" alt="ph" />
+            </picture>
+        </div>
+        <picture class="svobodina__holder">
+            <!-- <source
+                media="(orientation: portrait)"
+                srcset="image/svobodinaPathPortrait.svg"
+                type="image/svg+xml" /> -->
+            <img src="image/svobodinaPath.svg" alt="ph" />
+        </picture>
+    </div>
+    <picture>
+        <!-- <source
+            media="(orientation: portrait)"
+            srcset="image/photoPortrait.svg"
+            type="image/svg+xml" /> -->
+        <img class="photo" src="image/photo.svg" alt="ph" />
+    </picture>
+    <img src="image/logo.svg" class="logo" alt="logo" />
+</div>

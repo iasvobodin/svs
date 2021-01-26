@@ -16,7 +16,7 @@
     import vertexT from "assets/start.vert";
     import fragmentT from "assets/start.frag";
     import shaderPassFs from "assets/shaderPassFs.frag";
-    // import shaderPassVs from "assets/shaderPassFs.vert";
+    import shaderPassVs from "assets/shaderPassFs.vert";
     import rgbFs from "assets/rgbPass.frag";
     // import fragment from "assets/start.frag";
     // import vertex from "assets/start.vert";
@@ -83,7 +83,7 @@
             yRoundDisable: 1,
             zRoundEnable: 0,
         };
-    let src;
+    let src, textureTag;
 
     const { page } = stores();
     $: pageslug = $page.params.Route;
@@ -97,15 +97,13 @@
     $: load === $photoseries.length && $showPrelader && startAnim();
 
     onMount(() => {
-        const im = document.getElementsByClassName("standart__picture");
-        console.log(im);
         initCurtains();
 
         initMatchMedia();
 
         addPlane();
 
-        addTexture();
+        // addTexture();
 
         addTitlePlane();
 
@@ -117,17 +115,19 @@
 
     $: if (pageslug) {
         // SORT PHOTOSERIES
-        const object = $photoseries.find(
-            (el) => el.Route.toLowerCase() === pageslug
-        );
-        photoseries.update((n) => [
-            ...n.slice(object.Id),
-            ...n.slice(0, object.Id),
-        ]);
-        createImage();
+        // const object = $photoseries.find((el) => el.Route === pageslug);
+        // photoseries.update((n) => [
+        //     ...n.slice($photoseries.find((el) => el.Route === pageslug).Id),
+        //     ...n.slice(0, $photoseries.find((el) => el.Route === pageslug).Id),
+        // ]);
+        console.log("Sortphotoseries");
+        // createImage();
         showPrelader.set(false);
         eventAnimation.set(false);
         onMount(() => {
+            // addTexture();
+            // addPlane();
+
             transitionState.opacityHedline = 0;
             transitionState.opacityPlane = 1;
             transitionState.time = 0;
@@ -135,11 +135,8 @@
             transitionState.scalePlane = 1;
             transitionState.yRoundDisable = 0;
             transitionState.zRoundEnable = 1;
-
             if (!activePlane) {
-                activePlane = planes.find(
-                    (p) => p.userData.route.toLowerCase() === pageslug
-                );
+                activePlane = planes.find((p) => p.userData.route === pageslug);
             }
             getUnifors(activePlane);
             setTexture(activePlane);
@@ -153,6 +150,23 @@
                     planesTitle[activePlane.index + photoseries.length]);
         });
     }
+    //  else {
+    //     onMount(() => {
+    //         initCurtains();
+
+    //         // initMatchMedia();
+
+    //         addPlane();
+
+    //         // addTexture();
+
+    //         addTitlePlane();
+
+    //         addShaderPass();
+
+    //         // translateSlider();
+    //     });
+    // }
 
     // INIT
     function initCurtains() {
@@ -255,9 +269,9 @@
                 fragmentShader: fragment,
             });
             plane.userData = {
-                route: element.dataset.route,
-                color: element.dataset.color,
-                id: element.dataset.id,
+                route: $photoseries[plane.index].Route,
+                color: $photoseries[plane.index].Color,
+                id: $photoseries[plane.index].Id,
             };
             getUnifors(plane, {
                 pCorr: false,
@@ -291,69 +305,18 @@
             planes.trPlane.visible = 1;
         }
     }
-    const createImage = () => {
-        images.smallPortrait = [];
-        images.largePortrait = [];
-        images.smallLandscape = [];
-        images.largeLandscape = [];
-
-        $photoseries.forEach((el) => {
-            images.smallPortrait.push({
-                route: el.Route,
-                tag: "smallPortrait",
-                src: `https://raw.githubusercontent.com/iasvobodin/svs/images/static/image/jpg/480/${el.Portrait}.jpg`,
-            });
-            images.largePortrait.push({
-                route: el.Route,
-                tag: "largePortrait",
-                src: `https://raw.githubusercontent.com/iasvobodin/svs/images/static/image/jpg/720/${el.Portrait}.jpg`,
-            });
-            images.smallLandscape.push({
-                route: el.Route,
-                tag: "smallLandscape",
-                src: `https://raw.githubusercontent.com/iasvobodin/svs/images/static/image/jpg/480/${el.FileName}.jpg`,
-            });
-            images.largeLandscape.push({
-                route: el.Route,
-                tag: "largeLandscape",
-                src: `https://raw.githubusercontent.com/iasvobodin/svs/images/static/image/jpg/720/${el.FileName}.jpg`,
-            });
-        });
-    };
-    createImage();
-    function addTexture() {
-        const curtainsBBox = curtains.getBoundingRect();
-
-        if (aspect === 1.5) {
-            if (curtainsBBox.width > 720) {
-                src = images.largePortrait;
-                // tag = "largePortrait";
-            } else {
-                src = images.smallPortrait;
-                // tag = "smallPortrait";
-            }
-        } else {
-            if (curtainsBBox.width > 720) {
-                src = images.largeLandscape;
-                // tag = "largeLandscape";
-            } else {
-                src = images.smallLandscape;
-                // tag = "smallLandscape";
-            }
-        }
-
-        // planes.forEach((el, i) => {
-        //     setTexture(el);
-        // });
-        // setTexture();
-    }
+    function addTexture() {}
     function setTexture(el) {
-        if (el.userData.tag !== src[el.index].tag) {
+        if (
+            el.userData.textureTag !==
+            $photoseries[el.index][textureTag].textureTag
+        ) {
             loader.loadImage(
-                src[el.index].src,
+                $photoseries[el.index][textureTag].src,
                 {},
                 (texture) => {
-                    el.userData.tag = src[el.index].tag;
+                    el.userData.textureTag =
+                        $photoseries[el.index][textureTag].textureTag;
                     // texture.userData.route = el.userData.route;
                     texture.setMinFilter(curtains.gl.LINEAR_MIPMAP_NEAREST);
                     texture.onSourceUploaded(() => {
@@ -544,6 +507,10 @@
         }
     }
     function setElementSize(height, margin = 0.06) {
+        const { width } = curtains.getBoundingRect();
+        textureTag = `${width > 720 ? "large" : "small"}${
+            aspect === 1.5 ? "Portrait" : "Landscape"
+        }`;
         elWidth =
             (window.innerHeight * height) / aspect +
             window.innerWidth * margin * 2;
@@ -566,11 +533,10 @@
     }
     function resize() {
         // activePlane && getUnifors(activePlane);
-        document.documentElement.style.setProperty(
-            "--vh",
-            window.innerHeight / 100 + "px"
-        );
-
+        // document.documentElement.style.setProperty(
+        //     "--vh",
+        //     window.innerHeight / 100 + "px"
+        // );
         // curtains.onAfterResize(() => {
         // });
     }
@@ -754,7 +720,7 @@
         disp +=
             (sliderState.currentPosition - sliderState.translation - disp) *
             0.3;
-        shaderPass.uniforms.displacement.value = disp / 2500;
+        shaderPass && (shaderPass.uniforms.displacement.value = disp / 2500);
         // );
         planes.forEach((plane, i) => {
             const angle = angleStep * i;
@@ -834,7 +800,7 @@
             eventAnimation.set(false);
             // getUnifors(activePlane);
             toRouteAnim();
-            goto(`/${el.userData.route.toLowerCase()}/`);
+            goto(`/${el.userData.route}/`);
         });
     }
     function onMouseDown(e) {
@@ -907,61 +873,6 @@
         return mousePosition;
     }
 </script>
-
-<svelte:window on:resize={resize} />
-<div
-    class:event={!$eventAnimation}
-    on:mousemove={onMouseMove}
-    on:touchmove|passive={onMouseMove}
-    on:mouseleave={onMouseUp}
-    on:mouseup={onMouseUp}
-    on:mousedown|preventDefault={onMouseDown}
-    on:touchstart|preventDefault={onMouseDown}
-    on:touchend={onMouseUp}
-    on:wheel={onWheel}
-    class="wrapper"
->
-    {#each $photoseries as seriya, index (index)}
-        <a style="display: none;" href="/{seriya.Route.toLowerCase()}">r</a>
-        <div
-            data-id={index}
-            data-route={seriya.Route}
-            data-color={[seriya.ColorVector]}
-            class="plane"
-        >
-            <!-- <picture class="standart__picture">
-                <source
-                    media="(orientation: portrait)"
-                    srcset="/image/webp/720/{seriya.Portrait}.webp"
-                    type="image/webp"
-                />
-                <source
-                    media="(orientation: landscape)"
-                    srcset="/image/webp/720/{seriya.FileName}.webp"
-                    type="image/webp"
-                />
-
-                <img
-                    data-sampler="planeTexture"
-                    class="slider__img"
-                    alt="SvobodinaPhoto"
-                    crossorigin="anonimous"
-                    decoding="async"
-                    draggable="false"
-                    src="/image/jpg/720/{seriya.FileName}.jpg"
-                />
-            </picture> -->
-        </div>
-    {/each}
-</div>
-<div class="title__plane">
-    {#each $photoseries as seriya, index (index)}
-        <div class="title">
-            <h3 class="titleH3">{seriya.Title}</h3>
-        </div>
-    {/each}
-</div>
-<div bind:this={webgl} id="curtains" />
 
 <!-- <div class="box" /> -->
 <style>
@@ -1069,3 +980,56 @@
         height: calc(var(--vh, 1vh) * 100);
     }
 </style>
+
+<svelte:window on:resize={resize} />
+<div
+    class:event={!$eventAnimation}
+    on:mousemove={onMouseMove}
+    on:touchmove|passive={onMouseMove}
+    on:mouseleave={onMouseUp}
+    on:mouseup={onMouseUp}
+    on:mousedown|preventDefault={onMouseDown}
+    on:touchstart|preventDefault={onMouseDown}
+    on:touchend={onMouseUp}
+    on:wheel={onWheel}
+    class="wrapper">
+    {#each $photoseries as seriya, index (index)}
+        <a style="display: none;" href="/{seriya.Route}">r</a>
+        <div
+            data-id={index}
+            data-route={seriya.Route}
+            data-color={[seriya.ColorVector]}
+            class="plane">
+            <!-- <picture class="standart__picture">
+                <source
+                    media="(orientation: portrait)"
+                    srcset="/image/webp/720/{seriya.Portrait}.webp"
+                    type="image/webp"
+                />
+                <source
+                    media="(orientation: landscape)"
+                    srcset="/image/webp/720/{seriya.LandscapeFileName}.webp"
+                    type="image/webp"
+                />
+
+                <img
+                    data-sampler="planeTexture"
+                    class="slider__img"
+                    alt="SvobodinaPhoto"
+                    crossorigin="anonimous"
+                    decoding="async"
+                    draggable="false"
+                    src="/image/jpg/720/{seriya.LandscapeFileName}.jpg"
+                />
+            </picture> -->
+        </div>
+    {/each}
+</div>
+<div class="title__plane">
+    {#each $photoseries as seriya, index (index)}
+        <div class="title">
+            <h3 class="titleH3">{seriya.Title}</h3>
+        </div>
+    {/each}
+</div>
+<div bind:this={webgl} id="curtains" />

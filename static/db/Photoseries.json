@@ -1,8 +1,24 @@
 [
   {
     "Id": 0,
-    "Route": "YulyaKirill",
+    "Route": "yulyakirill",
     "Title": "Юля и Кирилл",
+    "smallPortrait": {
+      "textureTag": "smallPortrait",
+      "src": "https://raw.githubusercontent.com/iasvobodin/svs/images/static/image/jpg/480/20-08-29-14-42-00.jpg"
+    },
+    "largePortrait": {
+      "textureTag": "largePortrait",
+      "src": "https://raw.githubusercontent.com/iasvobodin/svs/images/static/image/jpg/720/20-08-29-14-42-00.jpg"
+    },
+    "smallLandscape": {
+      "textureTag": "smallLandscape",
+      "src": "https://raw.githubusercontent.com/iasvobodin/svs/images/static/image/jpg/480/20-08-29-16-20-24.jpg"
+    },
+    "largeLandscape": {
+      "textureTag": "largeLandscape",
+      "src": "https://raw.githubusercontent.com/iasvobodin/svs/images/static/image/jpg/720/20-08-29-16-20-24.jpg"
+    },
     "LandscapeFileName": "20-08-29-16-20-24",
     "PortraitFileName": "20-08-29-14-42-00",
     "PortraitAspect": 0.667,
@@ -16,8 +32,24 @@
   },
   {
     "Id": 1,
-    "Route": "YulyaEvgeniy",
+    "Route": "yulyaevgeniy",
     "Title": "Юля и Евгений",
+    "smallPortrait": {
+      "textureTag": "smallPortrait",
+      "src": "https://raw.githubusercontent.com/iasvobodin/svs/images/static/image/jpg/480/20-03-09-11-17-09.jpg"
+    },
+    "largePortrait": {
+      "textureTag": "largePortrait",
+      "src": "https://raw.githubusercontent.com/iasvobodin/svs/images/static/image/jpg/720/20-03-09-11-17-09.jpg"
+    },
+    "smallLandscape": {
+      "textureTag": "smallLandscape",
+      "src": "https://raw.githubusercontent.com/iasvobodin/svs/images/static/image/jpg/480/20-03-09-11-13-31.jpg"
+    },
+    "largeLandscape": {
+      "textureTag": "largeLandscape",
+      "src": "https://raw.githubusercontent.com/iasvobodin/svs/images/static/image/jpg/720/20-03-09-11-13-31.jpg"
+    },
     "LandscapeFileName": "20-03-09-11-13-31",
     "PortraitFileName": "20-03-09-11-17-09",
     "PortraitAspect": 0.667,
@@ -31,8 +63,24 @@
   },
   {
     "Id": 2,
-    "Route": "NastyaIgor",
+    "Route": "nastyaigor",
     "Title": "Анастасия и Игорь",
+    "smallPortrait": {
+      "textureTag": "smallPortrait",
+      "src": "https://raw.githubusercontent.com/iasvobodin/svs/images/static/image/jpg/480/20-07-03-17-25-34.jpg"
+    },
+    "largePortrait": {
+      "textureTag": "largePortrait",
+      "src": "https://raw.githubusercontent.com/iasvobodin/svs/images/static/image/jpg/720/20-07-03-17-25-34.jpg"
+    },
+    "smallLandscape": {
+      "textureTag": "smallLandscape",
+      "src": "https://raw.githubusercontent.com/iasvobodin/svs/images/static/image/jpg/480/20-07-03-17-11-29.jpg"
+    },
+    "largeLandscape": {
+      "textureTag": "largeLandscape",
+      "src": "https://raw.githubusercontent.com/iasvobodin/svs/images/static/image/jpg/720/20-07-03-17-11-29.jpg"
+    },
     "LandscapeFileName": "20-07-03-17-11-29",
     "PortraitFileName": "20-07-03-17-25-34",
     "PortraitAspect": 0.667,
@@ -46,8 +94,24 @@
   },
   {
     "Id": 3,
-    "Route": "Inna",
+    "Route": "inna",
     "Title": "Инна",
+    "smallPortrait": {
+      "textureTag": "smallPortrait",
+      "src": "https://raw.githubusercontent.com/iasvobodin/svs/images/static/image/jpg/480/20-08-03-14-47-25.jpg"
+    },
+    "largePortrait": {
+      "textureTag": "largePortrait",
+      "src": "https://raw.githubusercontent.com/iasvobodin/svs/images/static/image/jpg/720/20-08-03-14-47-25.jpg"
+    },
+    "smallLandscape": {
+      "textureTag": "smallLandscape",
+      "src": "https://raw.githubusercontent.com/iasvobodin/svs/images/static/image/jpg/480/20-08-03-14-42-01.jpg"
+    },
+    "largeLandscape": {
+      "textureTag": "largeLandscape",
+      "src": "https://raw.githubusercontent.com/iasvobodin/svs/images/static/image/jpg/720/20-08-03-14-42-01.jpg"
+    },
     "LandscapeFileName": "20-08-03-14-42-01",
     "PortraitFileName": "20-08-03-14-47-25",
     "PortraitAspect": 0.667,
@@ -61,8 +125,24 @@
   },
   {
     "Id": 4,
-    "Route": "bacheloretteParty",
+    "Route": "bacheloretteparty",
     "Title": "Девичник",
+    "smallPortrait": {
+      "textureTag": "smallPortrait",
+      "src": "https://raw.githubusercontent.com/iasvobodin/svs/images/static/image/jpg/480/19-05-05-15-36-26.jpg"
+    },
+    "largePortrait": {
+      "textureTag": "largePortrait",
+      "src": "https://raw.githubusercontent.com/iasvobodin/svs/images/static/image/jpg/720/19-05-05-15-36-26.jpg"
+    },
+    "smallLandscape": {
+      "textureTag": "smallLandscape",
+      "src": "https://raw.githubusercontent.com/iasvobodin/svs/images/static/image/jpg/480/19-05-05-15-24-54.jpg"
+    },
+    "largeLandscape": {
+      "textureTag": "largeLandscape",
+      "src": "https://raw.githubusercontent.com/iasvobodin/svs/images/static/image/jpg/720/19-05-05-15-24-54.jpg"
+    },
     "LandscapeFileName": "19-05-05-15-24-54",
     "PortraitFileName": "19-05-05-15-36-26",
     "PortraitAspect": 0.668,
@@ -76,8 +156,24 @@
   },
   {
     "Id": 5,
-    "Route": "EkaterinaPavel",
+    "Route": "ekaterinapavel",
     "Title": "Екатерина и Павел",
+    "smallPortrait": {
+      "textureTag": "smallPortrait",
+      "src": "https://raw.githubusercontent.com/iasvobodin/svs/images/static/image/jpg/480/19-05-01-12-13-58.jpg"
+    },
+    "largePortrait": {
+      "textureTag": "largePortrait",
+      "src": "https://raw.githubusercontent.com/iasvobodin/svs/images/static/image/jpg/720/19-05-01-12-13-58.jpg"
+    },
+    "smallLandscape": {
+      "textureTag": "smallLandscape",
+      "src": "https://raw.githubusercontent.com/iasvobodin/svs/images/static/image/jpg/480/19-05-01-12-24-16.jpg"
+    },
+    "largeLandscape": {
+      "textureTag": "largeLandscape",
+      "src": "https://raw.githubusercontent.com/iasvobodin/svs/images/static/image/jpg/720/19-05-01-12-24-16.jpg"
+    },
     "LandscapeFileName": "19-05-01-12-24-16",
     "PortraitFileName": "19-05-01-12-13-58",
     "PortraitAspect": 0.668,
@@ -91,8 +187,24 @@
   },
   {
     "Id": 6,
-    "Route": "AngelinaRoman",
+    "Route": "angelinaroman",
     "Title": "Ангелина и Роман",
+    "smallPortrait": {
+      "textureTag": "smallPortrait",
+      "src": "https://raw.githubusercontent.com/iasvobodin/svs/images/static/image/jpg/480/19-05-05-16-18-52.jpg"
+    },
+    "largePortrait": {
+      "textureTag": "largePortrait",
+      "src": "https://raw.githubusercontent.com/iasvobodin/svs/images/static/image/jpg/720/19-05-05-16-18-52.jpg"
+    },
+    "smallLandscape": {
+      "textureTag": "smallLandscape",
+      "src": "https://raw.githubusercontent.com/iasvobodin/svs/images/static/image/jpg/480/19-05-05-16-11-45.jpg"
+    },
+    "largeLandscape": {
+      "textureTag": "largeLandscape",
+      "src": "https://raw.githubusercontent.com/iasvobodin/svs/images/static/image/jpg/720/19-05-05-16-11-45.jpg"
+    },
     "LandscapeFileName": "19-05-05-16-11-45",
     "PortraitFileName": "19-05-05-16-18-52",
     "PortraitAspect": 0.668,
@@ -106,8 +218,24 @@
   },
   {
     "Id": 7,
-    "Route": "AlexandraVadim",
+    "Route": "alexandravadim",
     "Title": "Александра и Вадим",
+    "smallPortrait": {
+      "textureTag": "smallPortrait",
+      "src": "https://raw.githubusercontent.com/iasvobodin/svs/images/static/image/jpg/480/undefined.jpg"
+    },
+    "largePortrait": {
+      "textureTag": "largePortrait",
+      "src": "https://raw.githubusercontent.com/iasvobodin/svs/images/static/image/jpg/720/undefined.jpg"
+    },
+    "smallLandscape": {
+      "textureTag": "smallLandscape",
+      "src": "https://raw.githubusercontent.com/iasvobodin/svs/images/static/image/jpg/480/19-08-24-16-57-52.jpg"
+    },
+    "largeLandscape": {
+      "textureTag": "largeLandscape",
+      "src": "https://raw.githubusercontent.com/iasvobodin/svs/images/static/image/jpg/720/19-08-24-16-57-52.jpg"
+    },
     "LandscapeFileName": "19-08-24-16-57-52",
     "LandscapeAspect": 1.498,
     "ColorHex": "#a48b6b",
@@ -119,8 +247,24 @@
   },
   {
     "Id": 8,
-    "Route": "ElenaNikita",
+    "Route": "elenanikita",
     "Title": "Лена и Никита",
+    "smallPortrait": {
+      "textureTag": "smallPortrait",
+      "src": "https://raw.githubusercontent.com/iasvobodin/svs/images/static/image/jpg/480/19-05-10-17-21-49.jpg"
+    },
+    "largePortrait": {
+      "textureTag": "largePortrait",
+      "src": "https://raw.githubusercontent.com/iasvobodin/svs/images/static/image/jpg/720/19-05-10-17-21-49.jpg"
+    },
+    "smallLandscape": {
+      "textureTag": "smallLandscape",
+      "src": "https://raw.githubusercontent.com/iasvobodin/svs/images/static/image/jpg/480/19-05-10-17-43-45.jpg"
+    },
+    "largeLandscape": {
+      "textureTag": "largeLandscape",
+      "src": "https://raw.githubusercontent.com/iasvobodin/svs/images/static/image/jpg/720/19-05-10-17-43-45.jpg"
+    },
     "LandscapeFileName": "19-05-10-17-43-45",
     "PortraitFileName": "19-05-10-17-21-49",
     "PortraitAspect": 0.668,
@@ -134,8 +278,24 @@
   },
   {
     "Id": 9,
-    "Route": "DashaMaksim",
+    "Route": "dashamaksim",
     "Title": "Даша и Максим",
+    "smallPortrait": {
+      "textureTag": "smallPortrait",
+      "src": "https://raw.githubusercontent.com/iasvobodin/svs/images/static/image/jpg/480/19-05-07-19-38-34.jpg"
+    },
+    "largePortrait": {
+      "textureTag": "largePortrait",
+      "src": "https://raw.githubusercontent.com/iasvobodin/svs/images/static/image/jpg/720/19-05-07-19-38-34.jpg"
+    },
+    "smallLandscape": {
+      "textureTag": "smallLandscape",
+      "src": "https://raw.githubusercontent.com/iasvobodin/svs/images/static/image/jpg/480/19-05-07-19-32-56.jpg"
+    },
+    "largeLandscape": {
+      "textureTag": "largeLandscape",
+      "src": "https://raw.githubusercontent.com/iasvobodin/svs/images/static/image/jpg/720/19-05-07-19-32-56.jpg"
+    },
     "LandscapeFileName": "19-05-07-19-32-56",
     "PortraitFileName": "19-05-07-19-38-34",
     "PortraitAspect": 0.668,
@@ -149,8 +309,24 @@
   },
   {
     "Id": 10,
-    "Route": "AlenaAlexei",
+    "Route": "alenaalexei",
     "Title": "Алёна и Алексей",
+    "smallPortrait": {
+      "textureTag": "smallPortrait",
+      "src": "https://raw.githubusercontent.com/iasvobodin/svs/images/static/image/jpg/480/19-07-27-10-14-37.jpg"
+    },
+    "largePortrait": {
+      "textureTag": "largePortrait",
+      "src": "https://raw.githubusercontent.com/iasvobodin/svs/images/static/image/jpg/720/19-07-27-10-14-37.jpg"
+    },
+    "smallLandscape": {
+      "textureTag": "smallLandscape",
+      "src": "https://raw.githubusercontent.com/iasvobodin/svs/images/static/image/jpg/480/19-07-27-18-08-26.jpg"
+    },
+    "largeLandscape": {
+      "textureTag": "largeLandscape",
+      "src": "https://raw.githubusercontent.com/iasvobodin/svs/images/static/image/jpg/720/19-07-27-18-08-26.jpg"
+    },
     "LandscapeFileName": "19-07-27-18-08-26",
     "PortraitFileName": "19-07-27-10-14-37",
     "PortraitAspect": 0.668,
@@ -164,8 +340,24 @@
   },
   {
     "Id": 11,
-    "Route": "RitaVlad",
+    "Route": "ritavlad",
     "Title": "Рита и Влад",
+    "smallPortrait": {
+      "textureTag": "smallPortrait",
+      "src": "https://raw.githubusercontent.com/iasvobodin/svs/images/static/image/jpg/480/19-06-15-10-17-30.jpg"
+    },
+    "largePortrait": {
+      "textureTag": "largePortrait",
+      "src": "https://raw.githubusercontent.com/iasvobodin/svs/images/static/image/jpg/720/19-06-15-10-17-30.jpg"
+    },
+    "smallLandscape": {
+      "textureTag": "smallLandscape",
+      "src": "https://raw.githubusercontent.com/iasvobodin/svs/images/static/image/jpg/480/19-06-15-11-55-28.jpg"
+    },
+    "largeLandscape": {
+      "textureTag": "largeLandscape",
+      "src": "https://raw.githubusercontent.com/iasvobodin/svs/images/static/image/jpg/720/19-06-15-11-55-28.jpg"
+    },
     "LandscapeFileName": "19-06-15-11-55-28",
     "PortraitFileName": "19-06-15-10-17-30",
     "PortraitAspect": 0.668,
@@ -179,8 +371,24 @@
   },
   {
     "Id": 12,
-    "Route": "IrinaIvan",
+    "Route": "irinaivan",
     "Title": "Ирина и Иван",
+    "smallPortrait": {
+      "textureTag": "smallPortrait",
+      "src": "https://raw.githubusercontent.com/iasvobodin/svs/images/static/image/jpg/480/19-03-02-12-03-07.jpg"
+    },
+    "largePortrait": {
+      "textureTag": "largePortrait",
+      "src": "https://raw.githubusercontent.com/iasvobodin/svs/images/static/image/jpg/720/19-03-02-12-03-07.jpg"
+    },
+    "smallLandscape": {
+      "textureTag": "smallLandscape",
+      "src": "https://raw.githubusercontent.com/iasvobodin/svs/images/static/image/jpg/480/19-03-02-17-25-38.jpg"
+    },
+    "largeLandscape": {
+      "textureTag": "largeLandscape",
+      "src": "https://raw.githubusercontent.com/iasvobodin/svs/images/static/image/jpg/720/19-03-02-17-25-38.jpg"
+    },
     "LandscapeFileName": "19-03-02-17-25-38",
     "PortraitFileName": "19-03-02-12-03-07",
     "PortraitAspect": 0.668,

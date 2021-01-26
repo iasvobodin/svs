@@ -110,8 +110,24 @@ function hexToRGB(h, isPct) {
 const photoseries = db.Series.map((el, index) => {
   return {
     Id: index,
-    Route: el.Name,
+    Route: el.Name.toLowerCase(),
     Title: el.Title,
+    smallPortrait: {
+       textureTag: "smallPortrait",
+      src: `https://raw.githubusercontent.com/iasvobodin/svs/images/static/image/jpg/480/${el.Portrait}.jpg`,
+    },
+    largePortrait: {
+       textureTag: "largePortrait",
+      src: `https://raw.githubusercontent.com/iasvobodin/svs/images/static/image/jpg/720/${el.Portrait}.jpg`,
+    },
+    smallLandscape: {
+       textureTag: "smallLandscape",
+      src: `https://raw.githubusercontent.com/iasvobodin/svs/images/static/image/jpg/480/${el.Cover.Name}.jpg`,
+    },
+    largeLandscape: {
+       textureTag: "largeLandscape",
+      src: `https://raw.githubusercontent.com/iasvobodin/svs/images/static/image/jpg/720/${el.Cover.Name}.jpg`,
+    },
     LandscapeFileName: el.Cover.Name,
     PortraitFileName: el.Portrait,
     PortraitAspect: el.PortraitAspect,
