@@ -120,14 +120,8 @@
         //     ...n.slice($photoseries.find((el) => el.Route === pageslug).Id),
         //     ...n.slice(0, $photoseries.find((el) => el.Route === pageslug).Id),
         // ]);
-        console.log("Sortphotoseries");
-        // createImage();
-        showPrelader.set(false);
-        eventAnimation.set(false);
-        onMount(() => {
-            // addTexture();
-            // addPlane();
 
+        onMount(() => {
             transitionState.opacityHedline = 0;
             transitionState.opacityPlane = 1;
             transitionState.time = 0;
@@ -305,7 +299,6 @@
             planes.trPlane.visible = 1;
         }
     }
-    function addTexture() {}
     function setTexture(el) {
         if (
             el.userData.textureTag !==
@@ -874,6 +867,61 @@
     }
 </script>
 
+<svelte:window on:resize={resize} />
+<div
+    class:event={!$eventAnimation}
+    on:mousemove={onMouseMove}
+    on:touchmove|passive={onMouseMove}
+    on:mouseleave={onMouseUp}
+    on:mouseup={onMouseUp}
+    on:mousedown|preventDefault={onMouseDown}
+    on:touchstart|preventDefault={onMouseDown}
+    on:touchend={onMouseUp}
+    on:wheel={onWheel}
+    class="wrapper"
+>
+    {#each $photoseries as seriya, index (index)}
+        <a style="display: none;" href="/{seriya.Route}">r</a>
+        <div
+            data-id={index}
+            data-route={seriya.Route}
+            data-color={[seriya.ColorVector]}
+            class="plane"
+        >
+            <!-- <picture class="standart__picture">
+                <source
+                    media="(orientation: portrait)"
+                    srcset="/image/webp/720/{seriya.Portrait}.webp"
+                    type="image/webp"
+                />
+                <source
+                    media="(orientation: landscape)"
+                    srcset="/image/webp/720/{seriya.LandscapeFileName}.webp"
+                    type="image/webp"
+                />
+
+                <img
+                    data-sampler="planeTexture"
+                    class="slider__img"
+                    alt="SvobodinaPhoto"
+                    crossorigin="anonimous"
+                    decoding="async"
+                    draggable="false"
+                    src="/image/jpg/720/{seriya.LandscapeFileName}.jpg"
+                />
+            </picture> -->
+        </div>
+    {/each}
+</div>
+<div class="title__plane">
+    {#each $photoseries as seriya, index (index)}
+        <div class="title">
+            <h3 class="titleH3">{seriya.Title}</h3>
+        </div>
+    {/each}
+</div>
+<div bind:this={webgl} id="curtains" />
+
 <!-- <div class="box" /> -->
 <style>
     .event {
@@ -975,61 +1023,8 @@
         left: 0;
         /* right: 0; */
         overflow: hidden;
-        width: 100%;
+        width: 100vw;
         height: 100vh;
         height: calc(var(--vh, 1vh) * 100);
     }
 </style>
-
-<svelte:window on:resize={resize} />
-<div
-    class:event={!$eventAnimation}
-    on:mousemove={onMouseMove}
-    on:touchmove|passive={onMouseMove}
-    on:mouseleave={onMouseUp}
-    on:mouseup={onMouseUp}
-    on:mousedown|preventDefault={onMouseDown}
-    on:touchstart|preventDefault={onMouseDown}
-    on:touchend={onMouseUp}
-    on:wheel={onWheel}
-    class="wrapper">
-    {#each $photoseries as seriya, index (index)}
-        <a style="display: none;" href="/{seriya.Route}">r</a>
-        <div
-            data-id={index}
-            data-route={seriya.Route}
-            data-color={[seriya.ColorVector]}
-            class="plane">
-            <!-- <picture class="standart__picture">
-                <source
-                    media="(orientation: portrait)"
-                    srcset="/image/webp/720/{seriya.Portrait}.webp"
-                    type="image/webp"
-                />
-                <source
-                    media="(orientation: landscape)"
-                    srcset="/image/webp/720/{seriya.LandscapeFileName}.webp"
-                    type="image/webp"
-                />
-
-                <img
-                    data-sampler="planeTexture"
-                    class="slider__img"
-                    alt="SvobodinaPhoto"
-                    crossorigin="anonimous"
-                    decoding="async"
-                    draggable="false"
-                    src="/image/jpg/720/{seriya.LandscapeFileName}.jpg"
-                />
-            </picture> -->
-        </div>
-    {/each}
-</div>
-<div class="title__plane">
-    {#each $photoseries as seriya, index (index)}
-        <div class="title">
-            <h3 class="titleH3">{seriya.Title}</h3>
-        </div>
-    {/each}
-</div>
-<div bind:this={webgl} id="curtains" />

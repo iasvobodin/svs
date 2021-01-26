@@ -18,6 +18,7 @@
     "curtainsjs": "^8.0.2",
     "justified-layout": "^4.1.0",
     "lethargy": "^1.0.9",
+    "lodash-es": "^4.17.20",
     "node-fetch": "^2.6.1",
     "polka": "next",
     "sirv": "^1.0.10"

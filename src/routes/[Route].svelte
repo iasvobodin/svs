@@ -7,20 +7,31 @@
 </script>
 
 <script>
+  import { debounce } from "lodash-es";
   import { onMount, tick } from "svelte";
   import justifiedLayout from "justified-layout";
   import Spic from "../components/spic.svelte";
-  import { leaveRoute, leaveIndex, paddingCoef, photoseries } from "store.js";
+  import {
+    showPrelader,
+    eventAnimation,
+    leaveRoute,
+    leaveIndex,
+    paddingCoef,
+    photoseries,
+  } from "store.js";
   import { fly } from "svelte/transition";
   import { goto, stores, start } from "@sapper/app";
   const { page } = stores();
   const object = $photoseries.find((el) => el.Route === $page.params.Route);
   photoseries.update((n) => [...n.slice(object.Id), ...n.slice(0, object.Id)]);
+  showPrelader.set(false);
+  eventAnimation.set(false);
   let width,
     height,
     layout,
     gallery = {},
     visible = false;
+  console.log(debounce);
   function getJL(w, h, text) {
     layout = justifiedLayout([...text.Aspect], {
       fullWidthBreakoutRowCadence: 2,
@@ -45,6 +56,7 @@
           transform: translate(${Math.floor(el.left)}px, ${Math.floor(
         el.top
       )}px);
+          transition: transform 0.5s;
           overflow: hidden;
           border-radius: 4px;
           position: absolute;
@@ -78,11 +90,12 @@
     return calcWidth;
   }
   onMount(() => {
+    window.addEventListener("resize", debounce(resize, 500));
     // window.addEventListener("pagehide", function (event) {
     //   if (event.persisted === true) {
     //     console.log("This page *might* be entering the bfcache.");
     //   } else {
-    console.log("RouteMounted");
+    // console.log("RouteMounted");
     //   }
     // });
     // window.addEventListener("pageshow", function (event) {
@@ -94,18 +107,15 @@
     // });
     getJL(width, height, post);
   });
-</script>
-
-<style>
-  h1 {
-    display: none;
+  function resize() {
+    getJL(window.innerWidth, window.innerHeight, post);
+    console.log(window.innerWidth);
   }
-</style>
+</script>
 
 <svelte:head>
   <title>{post.Title}</title>
 </svelte:head>
-
 <svelte:window bind:innerWidth={width} bind:innerHeight={height} />
 <h1 transition:fly on:outrostart={() => leaveRoute.set(true)}>{post.Title}</h1>
 {#if layout && !$leaveIndex}
@@ -117,3 +127,9 @@
     {/each}
   </div>
 {/if}
+
+<style>
+  h1 {
+    display: none;
+  }
+</style>

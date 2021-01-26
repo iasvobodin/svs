@@ -222,11 +222,11 @@
     "Title": "Александра и Вадим",
     "smallPortrait": {
       "textureTag": "smallPortrait",
-      "src": "https://raw.githubusercontent.com/iasvobodin/svs/images/static/image/jpg/480/undefined.jpg"
+      "src": "https://raw.githubusercontent.com/iasvobodin/svs/images/static/image/jpg/480/19-08-24-16-57-52.jpg"
     },
     "largePortrait": {
       "textureTag": "largePortrait",
-      "src": "https://raw.githubusercontent.com/iasvobodin/svs/images/static/image/jpg/720/undefined.jpg"
+      "src": "https://raw.githubusercontent.com/iasvobodin/svs/images/static/image/jpg/720/19-08-24-16-57-52.jpg"
     },
     "smallLandscape": {
       "textureTag": "smallLandscape",
