@@ -7,7 +7,7 @@
 </script>
 
 <script>
-  import { debounce } from "lodash-es";
+  import { debounce } from "lodash-es/lodash";
   import { onMount, tick } from "svelte";
   import justifiedLayout from "justified-layout";
   import Spic from "../components/spic.svelte";
@@ -16,50 +16,62 @@
     eventAnimation,
     leaveRoute,
     leaveIndex,
-    paddingCoef,
     photoseries,
   } from "store.js";
   import { fly } from "svelte/transition";
-  import { goto, stores, start } from "@sapper/app";
+  import { stores } from "@sapper/app";
   const { page } = stores();
   const object = $photoseries.find((el) => el.Route === $page.params.Route);
   photoseries.update((n) => [...n.slice(object.Id), ...n.slice(0, object.Id)]);
   showPrelader.set(false);
   eventAnimation.set(false);
-  let width,
-    height,
-    layout,
+  let createJL = true;
+  $: width = 0;
+  $: height = 0;
+  $: paddingCoef = 0;
+  $: poStyle = [];
+  let layout,
     gallery = {},
     visible = false;
-  console.log(debounce);
-  function getJL(w, h, text) {
+  function getJL(text, paddingCoef) {
+    console.log(window.innerWidth, 1);
+    // debugger;
     layout = justifiedLayout([...text.Aspect], {
       fullWidthBreakoutRowCadence: 2,
-      targetRowHeight: h * 0.55,
-      containerWidth: w,
+      targetRowHeight: window.innerHeight * 0.55,
+      containerWidth: window.innerWidth,
       containerPadding: {
         top: 50,
-        right: w * $paddingCoef,
+        right: window.innerWidth * paddingCoef,
         bottom: 50,
-        left: w * $paddingCoef,
+        left: window.innerWidth * paddingCoef,
       },
       boxSpacing: {
-        horizontal: w * 0.04,
-        vertical: h * 0.07,
+        horizontal: window.innerWidth * 0.04,
+        vertical: window.innerHeight * 0.07,
       },
     });
+    poStyle = [];
     layout.boxes.forEach((el, i) => {
       el.info = text.Spec[i];
       el.src = text.ImageName[i];
       el.imageWidth = imageWidth(el.width);
+
+      poStyle.push(`
+          transform: translate(${Math.floor(el.left)}px, ${Math.floor(
+        el.top
+      )}px);
+          box-shadow: inset 0px 0px 0px 2px ${text.Spec[i].Color};
+          width: ${Math.floor(el.width)}px;
+          height: ${Math.floor(el.height)}px;
+          background-image: radial-gradient(circle at bottom center, ${
+            text.Spec[i].Colors[0]
+          },${text.Spec[i].Colors[1]});
+        `);
       el.style = `
           transform: translate(${Math.floor(el.left)}px, ${Math.floor(
         el.top
       )}px);
-          transition: transform 0.5s;
-          overflow: hidden;
-          border-radius: 4px;
-          position: absolute;
           box-shadow: inset 0px 0px 0px 2px ${text.Spec[i].Color};
           width: ${Math.floor(el.width)}px;
           height: ${Math.floor(el.height)}px;
@@ -90,46 +102,63 @@
     return calcWidth;
   }
   onMount(() => {
-    window.addEventListener("resize", debounce(resize, 500));
-    // window.addEventListener("pagehide", function (event) {
-    //   if (event.persisted === true) {
-    //     console.log("This page *might* be entering the bfcache.");
-    //   } else {
-    // console.log("RouteMounted");
-    //   }
-    // });
-    // window.addEventListener("pageshow", function (event) {
-    //   if (event.persisted) {
-    //     console.log("This page was restored from the bfcache.");
-    //   } else {
-    //     console.log("This page was loaded normally.");
-    //   }
-    // });
-    getJL(width, height, post);
+    paddingCoef = window.innerWidth / window.innerHeight > 1 ? 0.12 : 0.03;
+    getJL(post, paddingCoef);
+
+    // window.innerWidth / window.innerHeight >= 1
+    //   ? paddingCoef.set(0.12)
+    //   : paddingCoef.set(0.03);
+    // window.addEventListener(
+    //   "resize",
+    //   // debounce(
+    //   resize
+    //   // , 1000)
+    // );
   });
-  function resize() {
-    getJL(window.innerWidth, window.innerHeight, post);
-    console.log(window.innerWidth);
+  function resize(e) {
+    console.log(e.srcElement.innerWidth);
+    paddingCoef = window.innerWidth / window.innerHeight > 1 ? 0.12 : 0.03;
+    // // setTimeout(() => {
+    // console.log(window.innerWidth);
+    // width = window.innerWidth;
+    // height = window.innerHeight;
+    // if (e.isTrusted) {
+    getJL(post, paddingCoef);
+    // }
+    // }, 0);
   }
 </script>
-
-<svelte:head>
-  <title>{post.Title}</title>
-</svelte:head>
-<svelte:window bind:innerWidth={width} bind:innerHeight={height} />
-<h1 transition:fly on:outrostart={() => leaveRoute.set(true)}>{post.Title}</h1>
-{#if layout && !$leaveIndex}
-  <div style="height: {layout.containerHeight}px" class="gallery">
-    {#each layout.boxes as pos, index (index)}
-      <div style={pos.style}>
-        <Spic src={pos.src} wwidth={pos.imageWidth} />
-      </div>
-    {/each}
-  </div>
-{/if}
 
 <style>
   h1 {
     display: none;
   }
+  .gallery {
+    /* max-width: 95vw; */
+    /* width: 80vw;
+    margin: auto; */
+  }
+  .spic__holder {
+    position: absolute;
+    overflow: hidden;
+    border-radius: 4px;
+  }
 </style>
+
+<svelte:head>
+  <title>{post.Title}</title>
+</svelte:head>
+<svelte:window
+  on:resize={resize}
+  bind:innerWidth={width}
+  bind:innerHeight={height} />
+<h1 transition:fly on:outrostart={() => leaveRoute.set(true)}>{post.Title}</h1>
+{#if layout && !$leaveIndex}
+  <div style="height: {layout.containerHeight}px" class="gallery">
+    {#each layout.boxes as pos, index (index)}
+      <div class="spic__holder" style={poStyle[index]}>
+        <Spic src={post.ImageName[index]} wwidth={pos.imageWidth} />
+      </div>
+    {/each}
+  </div>
+{/if}

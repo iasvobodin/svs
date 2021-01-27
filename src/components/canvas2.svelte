@@ -21,7 +21,7 @@
     // import fragment from "assets/start.frag";
     // import vertex from "assets/start.vert";
     import {
-        paddingCoef,
+        // paddingCoef,
         showPrelader,
         homePageState,
         progress,
@@ -460,9 +460,10 @@
             widthUn = 1;
             heightUn = 0.72;
             radiusCoef = 0.0725;
+
             setElementSize(0.62, 0.12);
             // curtains.resize();
-            paddingCoef.set(0.03);
+            // paddingCoef.set(0.03);
 
             if ($homePageState) {
                 transitionState.radiusAnimation =
@@ -471,7 +472,10 @@
                     2;
             } else {
                 transitionState.radiusAnimation = Math.min(
-                    (window.innerHeight * radiusCoef) / 1.3882 / 2,
+                    (Math.max(window.innerHeight, window.innerWidth) *
+                        radiusCoef) /
+                        1.3882 /
+                        2,
                     100
                 );
             }
@@ -482,8 +486,9 @@
             widthUn = 0.7;
             heightUn = 0.8;
             radiusCoef = 0.0755;
+
             setElementSize(0.54);
-            paddingCoef.set(0.12);
+            // paddingCoef.set(0.12);
 
             if ($homePageState) {
                 transitionState.radiusAnimation =
@@ -492,7 +497,10 @@
                     2;
             } else {
                 transitionState.radiusAnimation = Math.min(
-                    (window.innerWidth * radiusCoef) / 1.3882 / 2,
+                    (Math.max(window.innerHeight, window.innerWidth) *
+                        radiusCoef) /
+                        1.3882 /
+                        2,
                     100
                 );
             }
@@ -519,12 +527,23 @@
             "--plane__height",
             `${window.innerHeight * height}px`
         );
-        document.documentElement.style.setProperty(
-            "--vh",
-            window.innerHeight / 100 + "px"
-        );
+        // document.documentElement.style.setProperty(
+        //     "--vh",
+        //     window.innerHeight / 100 + "px"
+        // );
     }
     function resize() {
+        if ($homePageState) {
+            transitionState.radiusAnimation =
+                elWidth / Math.sin((Math.PI * 2) / $photoseries.length / 2) / 2;
+        } else {
+            transitionState.radiusAnimation = Math.min(
+                (Math.max(window.innerHeight, window.innerWidth) * radiusCoef) /
+                    1.3882 /
+                    2,
+                100
+            );
+        }
         // activePlane && getUnifors(activePlane);
         // document.documentElement.style.setProperty(
         //     "--vh",
@@ -867,61 +886,6 @@
     }
 </script>
 
-<svelte:window on:resize={resize} />
-<div
-    class:event={!$eventAnimation}
-    on:mousemove={onMouseMove}
-    on:touchmove|passive={onMouseMove}
-    on:mouseleave={onMouseUp}
-    on:mouseup={onMouseUp}
-    on:mousedown|preventDefault={onMouseDown}
-    on:touchstart|preventDefault={onMouseDown}
-    on:touchend={onMouseUp}
-    on:wheel={onWheel}
-    class="wrapper"
->
-    {#each $photoseries as seriya, index (index)}
-        <a style="display: none;" href="/{seriya.Route}">r</a>
-        <div
-            data-id={index}
-            data-route={seriya.Route}
-            data-color={[seriya.ColorVector]}
-            class="plane"
-        >
-            <!-- <picture class="standart__picture">
-                <source
-                    media="(orientation: portrait)"
-                    srcset="/image/webp/720/{seriya.Portrait}.webp"
-                    type="image/webp"
-                />
-                <source
-                    media="(orientation: landscape)"
-                    srcset="/image/webp/720/{seriya.LandscapeFileName}.webp"
-                    type="image/webp"
-                />
-
-                <img
-                    data-sampler="planeTexture"
-                    class="slider__img"
-                    alt="SvobodinaPhoto"
-                    crossorigin="anonimous"
-                    decoding="async"
-                    draggable="false"
-                    src="/image/jpg/720/{seriya.LandscapeFileName}.jpg"
-                />
-            </picture> -->
-        </div>
-    {/each}
-</div>
-<div class="title__plane">
-    {#each $photoseries as seriya, index (index)}
-        <div class="title">
-            <h3 class="titleH3">{seriya.Title}</h3>
-        </div>
-    {/each}
-</div>
-<div bind:this={webgl} id="curtains" />
-
 <!-- <div class="box" /> -->
 <style>
     .event {
@@ -1023,8 +987,60 @@
         left: 0;
         /* right: 0; */
         overflow: hidden;
-        width: 100vw;
+        width: 100%;
         height: 100vh;
         height: calc(var(--vh, 1vh) * 100);
     }
 </style>
+
+<svelte:window on:resize={resize} />
+<div
+    class:event={!$eventAnimation}
+    on:mousemove={onMouseMove}
+    on:touchmove|passive={onMouseMove}
+    on:mouseleave={onMouseUp}
+    on:mouseup={onMouseUp}
+    on:mousedown|preventDefault={onMouseDown}
+    on:touchstart|preventDefault={onMouseDown}
+    on:touchend={onMouseUp}
+    on:wheel={onWheel}
+    class="wrapper">
+    {#each $photoseries as seriya, index (index)}
+        <a style="display: none;" href="/{seriya.Route}">r</a>
+        <!-- data-id={index}
+        data-route={seriya.Route}
+        data-color={[seriya.ColorVector]} -->
+        <div class="plane">
+            <!-- <picture class="standart__picture">
+                <source
+                    media="(orientation: portrait)"
+                    srcset="/image/webp/720/{seriya.Portrait}.webp"
+                    type="image/webp"
+                />
+                <source
+                    media="(orientation: landscape)"
+                    srcset="/image/webp/720/{seriya.LandscapeFileName}.webp"
+                    type="image/webp"
+                />
+
+                <img
+                    data-sampler="planeTexture"
+                    class="slider__img"
+                    alt="SvobodinaPhoto"
+                    crossorigin="anonimous"
+                    decoding="async"
+                    draggable="false"
+                    src="/image/jpg/720/{seriya.LandscapeFileName}.jpg"
+                />
+            </picture> -->
+        </div>
+    {/each}
+</div>
+<div class="title__plane">
+    {#each $photoseries as seriya, index (index)}
+        <div class="title">
+            <h3 class="titleH3">{seriya.Title}</h3>
+        </div>
+    {/each}
+</div>
+<div bind:this={webgl} id="curtains" />

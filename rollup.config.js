@@ -43,7 +43,7 @@ export default {
 					dev,
 					hydratable: true,
 				},
-				emitCss: true
+				emitCss: false
 			}),
 			url({
 				sourceDir: path.resolve(__dirname, 'src/node_modules/images'),
