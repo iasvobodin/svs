@@ -118,14 +118,14 @@
   function resize(e) {
     console.log(e.srcElement.innerWidth);
     paddingCoef = window.innerWidth / window.innerHeight > 1 ? 0.12 : 0.03;
-    // // setTimeout(() => {
-    // console.log(window.innerWidth);
-    // width = window.innerWidth;
-    // height = window.innerHeight;
-    // if (e.isTrusted) {
-    getJL(post, paddingCoef);
-    // }
-    // }, 0);
+    setTimeout(() => {
+      console.log(window.innerWidth);
+      // width = window.innerWidth;
+      // height = window.innerHeight;
+      // if (e.isTrusted) {
+      getJL(post, paddingCoef);
+      // }
+    }, 100);
   }
 </script>
 

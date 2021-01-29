@@ -84,7 +84,7 @@
             zRoundEnable: 0,
         };
     let src, textureTag;
-
+    let curtainsWidth, curtainsHeight;
     const { page } = stores();
     $: pageslug = $page.params.Route;
     $: titlePlaneOnLoad = false;
@@ -132,8 +132,21 @@
             if (!activePlane) {
                 activePlane = planes.find((p) => p.userData.route === pageslug);
             }
-            getUnifors(activePlane);
-            setTexture(activePlane);
+            activePlane.onReady(() => {
+                getUnifors(activePlane);
+                setTexture(activePlane);
+            });
+            activePlane.onAfterResize(() => {
+                // const { width } = curtains.getBoundingRect();
+                // textureTag = `${width > 720 ? "large" : "small"}${
+                //     aspect === 1.5 ? "Portrait" : "Landscape"
+                // }`;
+                // getUnifors(activePlane);
+                console.log("activePlane.onAfterResize(() => {");
+
+                // console.log(textureTag);
+                setTexture(activePlane);
+            });
 
             activePlane.visible = 1;
             activePlane.uniforms.uProgress.value = 1;
@@ -144,29 +157,11 @@
                     planesTitle[activePlane.index + photoseries.length]);
         });
     }
-    //  else {
-    //     onMount(() => {
-    //         initCurtains();
-
-    //         // initMatchMedia();
-
-    //         addPlane();
-
-    //         // addTexture();
-
-    //         addTitlePlane();
-
-    //         addShaderPass();
-
-    //         // translateSlider();
-    //     });
-    // }
-
     // INIT
     function initCurtains() {
         curtains = new Curtains({
             container: webgl,
-            pixelRatio: Math.min(1.5, window.devicePixelRatio),
+            pixelRatio: 1, //Math.min(1.5, window.devicePixelRatio),
             production: process.env.NODE_ENV !== "development",
             autoRender: false,
             antialias: false,
@@ -385,75 +380,10 @@
         handlePortrait(portrait);
         portrait.addEventListener("change", handlePortrait);
     }
-    function customCorrection(coef) {
-        sliderState.planeCorrection = angleStep * coef;
-        sliderState.translation = 0;
-        sliderState.currentPosition = 0;
-        sliderState.endPosition = 0;
-        // anime({
-        //     targets: sliderState,
-        //     duration: 500,
-        //     planeCorrection: angleStep * coef,
-        //     translation: 0,
-        //     currentPosition: 0,
-        //     endPosition: 0,
-        //     easing: "linear",
-        // });
-    }
-    function getUnifors(
-        plane,
-        opt = { pCorr: true, sCorr: true, fCorr: true }
-    ) {
-        // GET BOUND
-        curtains.resize();
-        const { width, height, left } = plane.getWebGLBoundingRect();
-        const {
-            width: curtainsWidth,
-            height: curtainsHeight,
-        } = curtains.getBoundingRect();
-        const top = (curtainsHeight - height) / 2;
-        const calcCords = {};
-
-        // SET CORRECTION FRAGMENT SHADER NEED TO START AND RESIZE
-        if (opt.fCorr) {
-            const scaleWidth = window.innerWidth * widthUn;
-            const scaleHeight = window.innerHeight * heightUn;
-            if (scaleHeight / scaleWidth > aspect) {
-                calcCords.xNorm = (scaleWidth / scaleHeight) * aspect;
-                calcCords.yNorm = 1;
-            } else {
-                calcCords.xNorm = 1;
-                calcCords.yNorm = scaleHeight / scaleWidth / aspect;
-            }
-            plane.uniforms.uFragmentCorrection.value = [
-                calcCords.xNorm,
-                calcCords.yNorm,
-            ];
-        }
-
-        // SET SCALE VECTOR NEED TO START AND RESIZE
-        if (opt.sCorr) {
-            plane.uniforms.uScaleVector.value = [
-                (curtainsWidth * widthUn) / width - 1, // * 0.5,
-                (curtainsHeight * heightUn) / height - 1, //* 0.7
-            ];
-        }
-        // PLANE SIZE
-        calcCords.w = curtainsWidth / width;
-        calcCords.h = curtainsHeight / height;
-        console.log(top, height);
-
-        // PLANE POSITION VECTOR
-        calcCords.x = (left / width - calcCords.w / 2 + 0.5) * 2;
-        calcCords.y = (-(top / height - calcCords.h / 2) - 0.5) * 2;
-        if (opt.pCorr) {
-            plane.uniforms.uPlanePosition.value = [calcCords.x, calcCords.y];
-        } else {
-            plane.uniforms.uPlanePosition.value = [0, 0];
-        }
-    }
     function handlePortrait(e) {
         console.log("handlePortrait activation");
+        curtainsWidth = curtains.getBoundingRect().width;
+        curtainsHeight = curtains.getBoundingRect().height;
         if (e.matches) {
             // PORTAIT
             aspect = 1.5;
@@ -507,6 +437,74 @@
             // curtains.resize();
         }
     }
+    function customCorrection(coef) {
+        sliderState.planeCorrection = angleStep * coef;
+        sliderState.translation = 0;
+        sliderState.currentPosition = 0;
+        sliderState.endPosition = 0;
+        // anime({
+        //     targets: sliderState,
+        //     duration: 500,
+        //     planeCorrection: angleStep * coef,
+        //     translation: 0,
+        //     currentPosition: 0,
+        //     endPosition: 0,
+        //     easing: "linear",
+        // });
+    }
+    function getUnifors(
+        plane,
+        opt = { pCorr: true, sCorr: true, fCorr: true }
+    ) {
+        // GET BOUND
+        const { width, height, left } = plane.getWebGLBoundingRect();
+        // const {
+        //     width: curtainsWidth,
+        //     height: curtainsHeight,
+        // } = curtains.getBoundingRect();
+
+        const top = (curtainsHeight - height) / 2;
+        const calcCords = {};
+
+        // SET CORRECTION FRAGMENT SHADER NEED TO START AND RESIZE
+        if (opt.fCorr) {
+            const scaleWidth = window.innerWidth * widthUn;
+            const scaleHeight = window.innerHeight * heightUn;
+            if (scaleHeight / scaleWidth > aspect) {
+                calcCords.xNorm = (scaleWidth / scaleHeight) * aspect;
+                calcCords.yNorm = 1;
+            } else {
+                calcCords.xNorm = 1;
+                calcCords.yNorm = scaleHeight / scaleWidth / aspect;
+            }
+            plane.uniforms.uFragmentCorrection.value = [
+                calcCords.xNorm,
+                calcCords.yNorm,
+            ];
+        }
+
+        // SET SCALE VECTOR NEED TO START AND RESIZE
+        if (opt.sCorr) {
+            plane.uniforms.uScaleVector.value = [
+                (curtainsWidth * widthUn) / width - 1, // * 0.5,
+                (curtainsHeight * heightUn) / height - 1, //* 0.7
+            ];
+        }
+        // PLANE SIZE
+        calcCords.w = curtainsWidth / width;
+        calcCords.h = curtainsHeight / height;
+        console.log(top, height);
+
+        // PLANE POSITION VECTOR
+        calcCords.x = (left / width - calcCords.w / 2 + 0.5) * 2;
+        calcCords.y = (-(top / height - calcCords.h / 2) - 0.5) * 2;
+        if (opt.pCorr) {
+            plane.uniforms.uPlanePosition.value = [calcCords.x, calcCords.y];
+        } else {
+            plane.uniforms.uPlanePosition.value = [0, 0];
+        }
+    }
+
     function setElementSize(height, margin = 0.06) {
         const { width } = curtains.getBoundingRect();
         textureTag = `${width > 720 ? "large" : "small"}${
@@ -532,7 +530,12 @@
         //     window.innerHeight / 100 + "px"
         // );
     }
+    function getCurtainsSize() {
+        curtainsWidth = curtains.getBoundingRect().width;
+        curtainsHeight = curtains.getBoundingRect().height;
+    }
     function resize() {
+        console.log("function resize() {");
         if ($homePageState) {
             transitionState.radiusAnimation =
                 elWidth / Math.sin((Math.PI * 2) / $photoseries.length / 2) / 2;

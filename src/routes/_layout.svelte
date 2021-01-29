@@ -20,6 +20,19 @@
 	segment = !segment;
 </script>
 
+<!-- {/if} -->
+<style>
+	main {
+		position: relative;
+		background-color: black;
+		box-sizing: border-box;
+	}
+	.canvas {
+		height: calc(var(--vh, 1vh) * 100);
+		/* height: 100vh; */
+	}
+</style>
+
 <!-- {#if !$preloading} -->
 <main transition:fade>
 	{#if $showPrelader}
@@ -33,16 +46,3 @@
 		<slot />
 	</section>
 </main>
-
-<!-- {/if} -->
-<style>
-	main {
-		position: relative;
-		background-color: black;
-		box-sizing: border-box;
-	}
-	.canvas {
-		height: calc(var(--vh, 1vh) * 100);
-		/* height: 100vh; */
-	}
-</style>
