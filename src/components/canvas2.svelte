@@ -30,6 +30,9 @@
         leaveIndex,
         leaveRoute,
     } from "store.js";
+    // import {
+    //     getUnifors
+    // } from "func.js";
     import { afterUpdate, getContext, onMount, setContext, tick } from "svelte";
     import { goto, stores, start } from "@sapper/app";
     // import { sineOut } from "svelte/easing";
@@ -84,12 +87,11 @@
             zRoundEnable: 0,
         };
     let src, textureTag;
-    let curtainsWidth, curtainsHeight;
     const { page } = stores();
     $: pageslug = $page.params.Route;
-    $: titlePlaneOnLoad = false;
+    let titlePlaneOnLoad = false;
     $: aspect = 0;
-    $: radius = 0;
+    let radius = 0;
     $: radiusCoef = 0;
     $: elWidth = 0;
     $: $leaveIndex && !toRoute && toRouteAnim();
@@ -103,8 +105,6 @@
 
         addPlane();
 
-        // addTexture();
-
         addTitlePlane();
 
         addShaderPass();
@@ -114,18 +114,11 @@
     pageslug && showPrelader.set(false);
 
     $: if (pageslug) {
-        // SORT PHOTOSERIES
-        // const object = $photoseries.find((el) => el.Route === pageslug);
-        // photoseries.update((n) => [
-        //     ...n.slice($photoseries.find((el) => el.Route === pageslug).Id),
-        //     ...n.slice(0, $photoseries.find((el) => el.Route === pageslug).Id),
-        // ]);
-
         onMount(() => {
             transitionState.opacityHedline = 0;
             transitionState.opacityPlane = 1;
             transitionState.time = 0;
-            transitionState.radiusAnimation = radius;
+            // transitionState.radiusAnimation = radius;
             transitionState.scalePlane = 1;
             transitionState.yRoundDisable = 0;
             transitionState.zRoundEnable = 1;
@@ -136,21 +129,9 @@
                 getUnifors(activePlane);
                 setTexture(activePlane);
             });
-            activePlane.onAfterResize(() => {
-                // const { width } = curtains.getBoundingRect();
-                // textureTag = `${width > 720 ? "large" : "small"}${
-                //     aspect === 1.5 ? "Portrait" : "Landscape"
-                // }`;
-                // getUnifors(activePlane);
-                console.log("activePlane.onAfterResize(() => {");
-
-                // console.log(textureTag);
-                setTexture(activePlane);
-            });
 
             activePlane.visible = 1;
             activePlane.uniforms.uProgress.value = 1;
-            curtains.needRender();
 
             titlePlaneOnLoad &&
                 (activePlaneTitle =
@@ -161,7 +142,7 @@
     function initCurtains() {
         curtains = new Curtains({
             container: webgl,
-            pixelRatio: 1, //Math.min(1.5, window.devicePixelRatio),
+            pixelRatio: Math.min(1.5, window.devicePixelRatio),
             production: process.env.NODE_ENV !== "development",
             autoRender: false,
             antialias: false,
@@ -228,7 +209,7 @@
             autoloadSources: false,
             // depthTest: false,
             fov: 1,
-            // alwaysDraw: false,
+            alwaysDraw: false,
             // shareProgram: true,
             watchScroll: false,
             uniforms: {
@@ -268,13 +249,18 @@
                 fCorr: true,
             });
             plane.setRenderTarget(distortionTarget);
-            // loadsrc(plane);
             plane.onReady(() => {
                 setTexture(plane);
-                // plane.onAfterResize(() => {
-                //     addTexture();
-                //     setTexture(plane);
-                // });
+            });
+            plane.onAfterResize(() => {
+                getUnifors(plane);
+            });
+            plane.onLeaveView(() => (plane.visible = 0));
+            plane.onReEnterView(() => {
+                plane.isDrawn() &&
+                    plane.relativeTranslation.z < 0 &&
+                    (plane.visible = 0);
+                plane.visible = plane.relativeTranslation.z > 0 ? true : false;
             });
             // console.log(plane);
             // CREATE TEXTURE
@@ -381,9 +367,6 @@
         portrait.addEventListener("change", handlePortrait);
     }
     function handlePortrait(e) {
-        console.log("handlePortrait activation");
-        curtainsWidth = curtains.getBoundingRect().width;
-        curtainsHeight = curtains.getBoundingRect().height;
         if (e.matches) {
             // PORTAIT
             aspect = 1.5;
@@ -395,21 +378,15 @@
             // curtains.resize();
             // paddingCoef.set(0.03);
 
-            if ($homePageState) {
-                transitionState.radiusAnimation =
-                    elWidth /
-                    Math.sin((Math.PI * 2) / $photoseries.length / 2) /
-                    2;
-            } else {
+            if (!$homePageState) {
                 transitionState.radiusAnimation = Math.min(
-                    (Math.max(window.innerHeight, window.innerWidth) *
-                        radiusCoef) /
-                        1.3882 /
-                        2,
+                    (window.innerHeight * radiusCoef) / 1.3882 / 2,
                     100
                 );
             }
-            // curtains.resize();
+            if (pageslug) {
+                transitionState.radiusAnimation = radius;
+            }
         } else {
             // LANDSCAPE
             aspect = 0.668;
@@ -418,21 +395,15 @@
             radiusCoef = 0.0755;
 
             setElementSize(0.54);
-            // paddingCoef.set(0.12);
 
-            if ($homePageState) {
-                transitionState.radiusAnimation =
-                    elWidth /
-                    Math.sin((Math.PI * 2) / $photoseries.length / 2) /
-                    2;
-            } else {
+            if (!$homePageState) {
                 transitionState.radiusAnimation = Math.min(
-                    (Math.max(window.innerHeight, window.innerWidth) *
-                        radiusCoef) /
-                        1.3882 /
-                        2,
+                    (window.innerWidth * radiusCoef) / 1.3882 / 2,
                     100
                 );
+            }
+            if (pageslug) {
+                transitionState.radiusAnimation = radius;
             }
             // curtains.resize();
         }
@@ -458,14 +429,16 @@
     ) {
         // GET BOUND
         const { width, height, left } = plane.getWebGLBoundingRect();
-        // const {
-        //     width: curtainsWidth,
-        //     height: curtainsHeight,
-        // } = curtains.getBoundingRect();
-
+        const {
+            width: curtainsWidth,
+            height: curtainsHeight,
+        } = curtains.getBoundingRect();
+        // const curtainsWidth =
+        //     curtains.getBoundingRect().width / curtains.pixelRatio;
+        // const curtainsHeight =
+        //     curtains.getBoundingRect().height / curtains.pixelRatio;
         const top = (curtainsHeight - height) / 2;
         const calcCords = {};
-
         // SET CORRECTION FRAGMENT SHADER NEED TO START AND RESIZE
         if (opt.fCorr) {
             const scaleWidth = window.innerWidth * widthUn;
@@ -493,7 +466,7 @@
         // PLANE SIZE
         calcCords.w = curtainsWidth / width;
         calcCords.h = curtainsHeight / height;
-        console.log(top, height);
+        // console.log(top, height);
 
         // PLANE POSITION VECTOR
         calcCords.x = (left / width - calcCords.w / 2 + 0.5) * 2;
@@ -516,7 +489,10 @@
 
         radius =
             elWidth / Math.sin((Math.PI * 2) / $photoseries.length / 2) / 2;
-
+        console.log(
+            "transitionState.radiusAnimation",
+            transitionState.radiusAnimation
+        );
         document.documentElement.style.setProperty(
             "--plane__width",
             `${(window.innerHeight * height) / aspect}px`
@@ -535,18 +511,19 @@
         curtainsHeight = curtains.getBoundingRect().height;
     }
     function resize() {
-        console.log("function resize() {");
-        if ($homePageState) {
-            transitionState.radiusAnimation =
-                elWidth / Math.sin((Math.PI * 2) / $photoseries.length / 2) / 2;
-        } else {
-            transitionState.radiusAnimation = Math.min(
-                (Math.max(window.innerHeight, window.innerWidth) * radiusCoef) /
-                    1.3882 /
-                    2,
-                100
-            );
-        }
+        // radius =
+        //     elWidth / Math.sin((Math.PI * 2) / $photoseries.length / 2) / 2;
+        // // if ($homePageState) {
+        //     transitionState.radiusAnimation =
+        //         elWidth / Math.sin((Math.PI * 2) / $photoseries.length / 2) / 2;
+        // } else {
+        //     transitionState.radiusAnimation = Math.min(
+        //         (Math.max(window.innerHeight, window.innerWidth) * radiusCoef) /
+        //             1.3882 /
+        //             2,
+        //         100
+        //     );
+        // }
         // activePlane && getUnifors(activePlane);
         // document.documentElement.style.setProperty(
         //     "--vh",
@@ -568,7 +545,7 @@
                 //     console.log("startAnim()");
                 // },
                 targets: transitionState,
-                duration: 4500,
+                duration: 5000,
                 easing: "easeOutSine",
                 time: Math.PI * 4,
             })
@@ -777,13 +754,13 @@
                 }
             }
             plane.setRelativeTranslation(transVec);
-            if ($homePageState) {
-                if (plane.relativeTranslation.z < 0) {
-                    plane.visible = planesTitle[i].visible = false;
-                } else {
-                    plane.visible = planesTitle[i].visible = true;
-                }
-            }
+            // if ($homePageState) {
+            //     if (plane.relativeTranslation.z < 0) {
+            //         plane.visible = planesTitle[i].visible = false;
+            //     } else {
+            //         plane.visible = planesTitle[i].visible = true;
+            //     }
+            // }
         });
         // START ANIMATION
 
@@ -888,6 +865,59 @@
         return mousePosition;
     }
 </script>
+
+<svelte:window on:resize={resize} />
+<div
+    class:event={!$eventAnimation}
+    on:mousemove={onMouseMove}
+    on:touchmove|passive={onMouseMove}
+    on:mouseleave={onMouseUp}
+    on:mouseup={onMouseUp}
+    on:mousedown|preventDefault={onMouseDown}
+    on:touchstart|preventDefault={onMouseDown}
+    on:touchend={onMouseUp}
+    on:wheel={onWheel}
+    class="wrapper"
+>
+    {#each $photoseries as seriya, index (index)}
+        <a style="display: none;" href="/{seriya.Route}">r</a>
+        <!-- data-id={index}
+        data-route={seriya.Route}
+        data-color={[seriya.ColorVector]} -->
+        <div class="plane">
+            <!-- <picture class="standart__picture">
+                <source
+                    media="(orientation: portrait)"
+                    srcset="/image/webp/720/{seriya.Portrait}.webp"
+                    type="image/webp"
+                />
+                <source
+                    media="(orientation: landscape)"
+                    srcset="/image/webp/720/{seriya.LandscapeFileName}.webp"
+                    type="image/webp"
+                />
+
+                <img
+                    data-sampler="planeTexture"
+                    class="slider__img"
+                    alt="SvobodinaPhoto"
+                    crossorigin="anonimous"
+                    decoding="async"
+                    draggable="false"
+                    src="/image/jpg/720/{seriya.LandscapeFileName}.jpg"
+                />
+            </picture> -->
+        </div>
+    {/each}
+</div>
+<div class="title__plane">
+    {#each $photoseries as seriya, index (index)}
+        <div class="title">
+            <h3 class="titleH3">{seriya.Title}</h3>
+        </div>
+    {/each}
+</div>
+<div bind:this={webgl} id="curtains" />
 
 <!-- <div class="box" /> -->
 <style>
@@ -995,55 +1025,3 @@
         height: calc(var(--vh, 1vh) * 100);
     }
 </style>
-
-<svelte:window on:resize={resize} />
-<div
-    class:event={!$eventAnimation}
-    on:mousemove={onMouseMove}
-    on:touchmove|passive={onMouseMove}
-    on:mouseleave={onMouseUp}
-    on:mouseup={onMouseUp}
-    on:mousedown|preventDefault={onMouseDown}
-    on:touchstart|preventDefault={onMouseDown}
-    on:touchend={onMouseUp}
-    on:wheel={onWheel}
-    class="wrapper">
-    {#each $photoseries as seriya, index (index)}
-        <a style="display: none;" href="/{seriya.Route}">r</a>
-        <!-- data-id={index}
-        data-route={seriya.Route}
-        data-color={[seriya.ColorVector]} -->
-        <div class="plane">
-            <!-- <picture class="standart__picture">
-                <source
-                    media="(orientation: portrait)"
-                    srcset="/image/webp/720/{seriya.Portrait}.webp"
-                    type="image/webp"
-                />
-                <source
-                    media="(orientation: landscape)"
-                    srcset="/image/webp/720/{seriya.LandscapeFileName}.webp"
-                    type="image/webp"
-                />
-
-                <img
-                    data-sampler="planeTexture"
-                    class="slider__img"
-                    alt="SvobodinaPhoto"
-                    crossorigin="anonimous"
-                    decoding="async"
-                    draggable="false"
-                    src="/image/jpg/720/{seriya.LandscapeFileName}.jpg"
-                />
-            </picture> -->
-        </div>
-    {/each}
-</div>
-<div class="title__plane">
-    {#each $photoseries as seriya, index (index)}
-        <div class="title">
-            <h3 class="titleH3">{seriya.Title}</h3>
-        </div>
-    {/each}
-</div>
-<div bind:this={webgl} id="curtains" />
