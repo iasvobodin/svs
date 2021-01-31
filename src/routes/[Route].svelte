@@ -28,6 +28,8 @@
   let paddingCoef;
   $: galleryParams = {};
   let layout,
+    height,
+    width,
     gallery = {};
   $: galleryHeight = 0;
   // visible = false;
@@ -100,11 +102,23 @@
   }
   function resize(e) {
     paddingCoef = window.innerWidth / window.innerHeight > 1 ? 0.12 : 0.03;
+    if (width != window.innerWidth) {
+      getJL(gallery);
+      width = window.innerWidth;
+    }
+    if (Math.abs(height - window.innerHeight) < 100) {
+      return;
+    }
+    height = window.innerHeight;
     getJL(gallery);
   }
   onMount(() => {
+    height = window.innerHeight;
+    width = window.innerWidth;
     window.addEventListener("resize", debounce(resize, 400));
-    resize();
+    paddingCoef = window.innerWidth / window.innerHeight > 1 ? 0.12 : 0.03;
+    getJL(gallery);
+    // resize();
   });
 </script>
 

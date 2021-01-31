@@ -105,6 +105,13 @@
 
         addPlane();
 
+        !pageslug &&
+            planes.forEach((e) => {
+                e.onReady(() => {
+                    setTexture(e);
+                });
+            });
+
         addTitlePlane();
 
         addShaderPass();
@@ -192,6 +199,7 @@
                     writeText(planeTitle, texture.source);
                 });
                 planeTitle.setRenderTarget(rgbTarget);
+                planeChangeView(planeTitle);
                 planesTitle.push(planeTitle);
             }
 
@@ -249,19 +257,13 @@
                 fCorr: true,
             });
             plane.setRenderTarget(distortionTarget);
-            plane.onReady(() => {
-                setTexture(plane);
-            });
+            // plane.onReady(() => {
+            //     setTexture(plane);
+            // });
             plane.onAfterResize(() => {
                 getUnifors(plane);
             });
-            plane.onLeaveView(() => (plane.visible = 0));
-            plane.onReEnterView(() => {
-                plane.isDrawn() &&
-                    plane.relativeTranslation.z < 0 &&
-                    (plane.visible = 0);
-                plane.visible = plane.relativeTranslation.z > 0 ? true : false;
-            });
+
             // console.log(plane);
             // CREATE TEXTURE
             plane.createTexture({
@@ -281,6 +283,7 @@
         }
     }
     function setTexture(el) {
+        console.log("function setTexture(el) {");
         if (
             el.userData.textureTag !==
             $photoseries[el.index][textureTag].textureTag
@@ -532,6 +535,20 @@
         // curtains.onAfterResize(() => {
         // });
     }
+    function planeChangeView(plane) {
+        if (plane.relativeTranslation.z < 0) {
+            console.log(" if (plane.relativeTranslation.z < 0) {");
+            plane.visible = 0;
+            plane.uniforms.uOpacity.value = 1;
+        }
+        plane.onLeaveView(() => (plane.visible = 0));
+        plane.onReEnterView(() => {
+            plane.isDrawn() &&
+                plane.relativeTranslation.z < 0 &&
+                (plane.visible = 0);
+            plane.visible = plane.relativeTranslation.z > 0 ? true : false;
+        });
+    }
     //AANIMATE
     function startAnim() {
         if (pageslug) return;
@@ -570,24 +587,30 @@
                     easing: "linear",
                 },
                 1800
+            )
+            .add(
+                {
+                    duration: 300,
+                    targets: transitionState,
+                    opacityPlane: 0,
+                    change: () => {
+                        planes.forEach((plane, i) => {
+                            if (plane.relativeTranslation.z < 0) {
+                                //         (plane.visible = 0);
+                                plane.uniforms.uOpacity.value =
+                                    transitionState.opacityPlane;
+                            }
+                        });
+                    },
+                    changeComplete: () => {
+                        planes.forEach((plane, i) => {
+                            planeChangeView(plane);
+                        });
+                    },
+                    easing: "linear",
+                },
+                4000
             );
-        // .add(
-        //     {
-        //         duration: 500,
-        //         targets: transitionState,
-        //         opacityPlane: 0,
-        //         change: () => {
-        //             // planes.forEach((plane, i) => {
-        //             //     if (plane.relativesliderState.Translation.z < 0) {
-        //             //         plane.uniforms.uOpacity.value =
-        //             //             transitionState.opacityPlane;
-        //             //     }
-        //             // });
-        //         },
-        //         easing: "linear",
-        //     },
-        //     4000
-        // );
         startAnimation &&
             startAnimation.finished.then(() => {
                 homePageState.set(true);
@@ -596,6 +619,17 @@
     }
 
     function toInvisibleAnim(direction) {
+        let invisPlanes = [];
+        planes.forEach((e, i) => {
+            if (!e.isDrawn()) {
+                return;
+            }
+            if (e.index === activePlane.index) {
+                return;
+            }
+            invisPlanes.push(e);
+        });
+        // console.log(invisPlanes);
         toInvisible = anime({
             targets: transitionState,
             duration: 400,
@@ -603,14 +637,7 @@
             opacityPlane: direction,
             easing: "easeOutQuad",
             change: () => {
-                planes.forEach((e, i) => {
-                    if (!e.isDrawn()) {
-                        return;
-                    }
-                    if (e.index === activePlane.index) {
-                        return;
-                    }
-                    // console.log(e.index);
+                invisPlanes.forEach((e, i) => {
                     e.uniforms.uOpacity.value = planesTitle[
                         i
                     ].uniforms.uOpacityTitle.value =
@@ -618,12 +645,15 @@
                 });
             },
             changeComplete: () => {
-                planes.forEach((e, i) => {
-                    if (e.index === activePlane.index) {
-                        return;
-                    }
-                    e.relativeTranslation.z > 0 &&
-                        (e.visible = planesTitle[i].visible = direction[1]);
+                console.log(invisPlanes);
+                invisPlanes.forEach((e, i) => {
+                    e.visible = direction[0];
+                    e.uniforms.uOpacity.value = direction[1];
+                    // if (e.index === activePlane.index) {
+                    //     return;
+                    // }
+                    // e.relativeTranslation.z > 0 &&
+                    //     (e.visible = planesTitle[i].visible = direction[1]);
                 });
             },
             changeBegin: () => {},
@@ -661,7 +691,7 @@
                 changeComplete: () => {},
                 changeBegin: () => {
                     homePageState.set(false);
-                    toInvisibleAnim([1, 0]);
+                    // toInvisibleAnim([1, 0]);
                     getUnifors(activePlane);
                     // activePlane.relativeTranslation.z = radius + 10;
                 },
@@ -687,10 +717,22 @@
             //     getUnifors(activePlane);
             // },
             changeComplete: () => {
-                toInvisibleAnim([0, 1]);
+                // planes.forEach((plane, i) => {
+                //     // plane.visible = 1;
+                //     planeChangeView(plane);
+                // });
+                // toInvisibleAnim([0, 1]);
             },
         });
         toIndex.finished.then(() => {
+            planes.forEach((e) => {
+                if (e.relativeTranslation.z < 0) {
+                    e.visible = 0;
+                    console.log(e.index, e.visible);
+                }
+                // planeChangeView(e);
+                setTexture(e);
+            });
             toIndex = null;
             leaveRoute.set(false);
             eventAnimation.set(true);

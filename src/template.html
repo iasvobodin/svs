@@ -28,6 +28,10 @@
 </head>
 <body>
 	<script>
+		let perfData = window.performance.timing, // The PerformanceTiming interface represents timing-related performance information for the given page.
+    EstimatedTime = -(perfData.loadEventEnd - perfData.navigationStart),
+	time = parseInt((EstimatedTime/1000)%60)*100;
+	console.log(time);
 		 let vh = window.innerHeight * 0.01;
 		document.documentElement.style.setProperty("--vh", `${vh}px`);
 		window.addEventListener("resize",()=>{

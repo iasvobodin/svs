@@ -2,12 +2,44 @@
     import { progress } from "store.js";
     import { onMount } from "svelte";
     $: style = `clip-path: inset(0% ${100 - $progress}% 0px 0px);`;
-    onMount(() => {
-        // let vh = window.innerHeight * 0.01;
-        // document.documentElement.style.setProperty("--vh", `${vh}px`);
-        console.log("onMount preloader");
-    });
+    // onMount(() => {
+    //     // let vh = window.innerHeight * 0.01;
+    //     // document.documentElement.style.setProperty("--vh", `${vh}px`);
+    //     console.log("onMount preloader");
+    // });
 </script>
+
+<div class="preloader">
+    <div class="svobodina">
+        <div {style} class="svobodina__holder">
+            <picture>
+                <source
+                    media="(orientation: portrait)"
+                    srcset="image/svobodinaFillPortrait.svg"
+                    type="image/svg+xml"
+                />
+                <img src="image/svobodinaFill.svg" alt="ph" />
+            </picture>
+        </div>
+        <picture class="svobodina__holder">
+            <source
+                media="(orientation: portrait)"
+                srcset="image/svobodinaPathPortrait.svg"
+                type="image/svg+xml"
+            />
+            <img src="image/svobodinaPath.svg" alt="ph" />
+        </picture>
+    </div>
+    <picture>
+        <source
+            media="(orientation: portrait)"
+            srcset="image/photoPortrait.svg"
+            type="image/svg+xml"
+        />
+        <img class="photo" src="image/photo.svg" alt="ph" />
+    </picture>
+    <img src="image/logo.svg" class="logo" alt="logo" />
+</div>
 
 <style>
     /* .inset-leave-active {
@@ -112,32 +144,3 @@
         }
     }
 </style>
-
-<div class="preloader">
-    <div class="svobodina">
-        <div {style} class="svobodina__holder">
-            <picture>
-                <!-- <source
-                    media="(orientation: portrait)"
-                    srcset="image/svobodinaFillPortrait.svg"
-                    type="image/svg+xml" /> -->
-                <img src="image/svobodinaFill.svg" alt="ph" />
-            </picture>
-        </div>
-        <picture class="svobodina__holder">
-            <!-- <source
-                media="(orientation: portrait)"
-                srcset="image/svobodinaPathPortrait.svg"
-                type="image/svg+xml" /> -->
-            <img src="image/svobodinaPath.svg" alt="ph" />
-        </picture>
-    </div>
-    <picture>
-        <!-- <source
-            media="(orientation: portrait)"
-            srcset="image/photoPortrait.svg"
-            type="image/svg+xml" /> -->
-        <img class="photo" src="image/photo.svg" alt="ph" />
-    </picture>
-    <img src="image/logo.svg" class="logo" alt="logo" />
-</div>
