@@ -15,6 +15,8 @@
     import vertex from "assets/photoseries.vert";
     import vertexT from "assets/start.vert";
     import fragmentT from "assets/start.frag";
+    import trvert from "assets/tr.vert";
+    import trfrag from "assets/tr.frag";
     import shaderPassFs from "assets/shaderPassFs.frag";
     import shaderPassVs from "assets/shaderPassFs.vert";
     import rgbFs from "assets/rgbPass.frag";
@@ -54,6 +56,7 @@
         activePlaneTitle,
         toIndex,
         toRoute,
+        tarnsitionPlane,
         toInvisible,
         animationFrame = null,
         changeOpacity,
@@ -104,6 +107,7 @@
         initMatchMedia();
 
         addPlane();
+        addTransitionPlane();
 
         !pageslug &&
             planes.forEach((e) => {
@@ -112,7 +116,7 @@
                 });
             });
 
-        addTitlePlane();
+        // addTitlePlane();
 
         addShaderPass();
 
@@ -281,6 +285,26 @@
 
             planes.trPlane.visible = 1;
         }
+    }
+    function addTransitionPlane() {
+        const params = {
+            vertexShader: trvert,
+            fragmentShader: trfrag,
+            transparent: true,
+            renderOrder: 1,
+            uniforms: {
+                uTRprogress: {
+                    name: "uTRprogress",
+                    type: "1f",
+                    value: 0,
+                },
+            },
+        };
+        const trPlane = document.getElementsByClassName("transition__plane");
+        tarnsitionPlane = new Plane(curtains, trPlane[0], params);
+        // tarnsitionPlane.onReady(()=>{
+        //     tarnsitionPlane.setRenderOrder(-1);
+        // })
     }
     function setTexture(el) {
         console.log("function setTexture(el) {");
@@ -669,6 +693,7 @@
         if (!activePlane) {
             activePlane = planes.find((p) => p.userData.route === pageslug);
         }
+        activePlane.setRenderOrder(planes.length + 1);
         if (!activePlane.isDrawn()) {
             activePlane.visible = 1;
             toRoute.add({
@@ -717,6 +742,7 @@
             //     getUnifors(activePlane);
             // },
             changeComplete: () => {
+                activePlane.setRenderOrder(planes.length - 1);
                 // planes.forEach((plane, i) => {
                 //     // plane.visible = 1;
                 //     planeChangeView(plane);
@@ -960,9 +986,15 @@
     {/each}
 </div>
 <div bind:this={webgl} id="curtains" />
+<div class="transition__plane" />
 
 <!-- <div class="box" /> -->
 <style>
+    .transition__plane {
+        width: 100%;
+        height: calc(var(--vh) * 100);
+        /* background-color: green; */
+    }
     .event {
         pointer-events: none;
     }
