@@ -129,7 +129,7 @@
             transitionState.opacityHedline = 0;
             transitionState.opacityPlane = 1;
             transitionState.time = 0;
-            // transitionState.radiusAnimation = radius;
+            transitionState.radiusAnimation = radius;
             transitionState.scalePlane = 1;
             transitionState.yRoundDisable = 0;
             transitionState.zRoundEnable = 1;
@@ -140,7 +140,8 @@
                 getUnifors(activePlane);
                 setTexture(activePlane);
             });
-
+            tarnsitionPlane.relativeTranslation.x = 0;
+            tarnsitionPlane.uniforms.uColor.value = activePlane.userData.color;
             activePlane.visible = 1;
             activePlane.uniforms.uProgress.value = 1;
 
@@ -203,7 +204,7 @@
                     writeText(planeTitle, texture.source);
                 });
                 planeTitle.setRenderTarget(rgbTarget);
-                planeChangeView(planeTitle);
+                // planeChangeView(planeTitle);
                 planesTitle.push(planeTitle);
             }
 
@@ -221,6 +222,7 @@
             autoloadSources: false,
             // depthTest: false,
             fov: 1,
+            renderOrder: 2,
             alwaysDraw: false,
             // shareProgram: true,
             watchScroll: false,
@@ -252,7 +254,7 @@
             });
             plane.userData = {
                 route: $photoseries[plane.index].Route,
-                color: $photoseries[plane.index].Color,
+                color: $photoseries[plane.index].ColorVector,
                 id: $photoseries[plane.index].Id,
             };
             getUnifors(plane, {
@@ -290,7 +292,10 @@
         const params = {
             vertexShader: trvert,
             fragmentShader: trfrag,
-            transparent: true,
+            // fov: 1,
+            // depthTest: false,
+            // transparent: true,
+            // renderOrder:1,
             renderOrder: 1,
             uniforms: {
                 uTRprogress: {
@@ -298,10 +303,18 @@
                     type: "1f",
                     value: 0,
                 },
+                uColor: {
+                    name: "uColor",
+                    type: "3f",
+                    value: [0, 0, 0],
+                },
             },
         };
         const trPlane = document.getElementsByClassName("transition__plane");
         tarnsitionPlane = new Plane(curtains, trPlane[0], params);
+        tarnsitionPlane.relativeTranslation.x = -window.innerWidth;
+        tarnsitionPlane.setRenderTarget(distortionTarget);
+        console.log(tarnsitionPlane);
         // tarnsitionPlane.onReady(()=>{
         //     tarnsitionPlane.setRenderOrder(-1);
         // })
@@ -337,6 +350,7 @@
     function addShaderPass() {
         const shaderPassParams = {
             fragmentShader: shaderPassFs,
+            renderOrder: 3,
             // vertexShader: shaderPassVs,
             renderTarget: distortionTarget, // we'll be using the lib default vertex shader
             uniforms: {
@@ -628,6 +642,7 @@
                     },
                     changeComplete: () => {
                         planes.forEach((plane, i) => {
+                            console.log(plane.relativeTranslation.z);
                             planeChangeView(plane);
                         });
                     },
@@ -693,25 +708,37 @@
         if (!activePlane) {
             activePlane = planes.find((p) => p.userData.route === pageslug);
         }
-        activePlane.setRenderOrder(planes.length + 1);
+        activePlane.setRenderOrder(planes.length + 2);
+        tarnsitionPlane.setRenderOrder(planes.length + 1);
+        tarnsitionPlane.uniforms.uColor.value = activePlane.userData.color;
+        // console.log(tarnsitionPlane.uniforms);
         if (!activePlane.isDrawn()) {
             activePlane.visible = 1;
             toRoute.add({
-                targets: sliderState,
+                targets: [sliderState],
                 duration: 1000,
                 planeCorrection: angleStep * activePlane.index,
                 translation: 0,
                 currentPosition: 0,
                 endPosition: 0,
                 easing: "easeOutQuad",
+
+                // change: ()=>{
+                //     tarnsitionPlane.relativeTranslation.x = -window.innerWidth;
+                // },
             });
         }
         // getUnifors(activePlane);
         toRoute.add(
             {
-                targets: [activePlane.uniforms.uProgress, transitionState],
+                targets: [
+                    activePlane.uniforms.uProgress,
+                    tarnsitionPlane.relativeTranslation,
+                    transitionState,
+                ],
                 duration: 1400,
                 value: 1,
+                x: [-window.innerWidth, 0],
                 easing: "easeOutQuad",
                 changeComplete: () => {},
                 changeBegin: () => {
@@ -732,10 +759,15 @@
     }
     function toIndexAnim() {
         toIndex = anime.timeline().add({
-            targets: [activePlane.uniforms.uProgress, transitionState],
+            targets: [
+                activePlane.uniforms.uProgress,
+                transitionState,
+                tarnsitionPlane.relativeTranslation,
+            ],
             duration: 1400,
             autoplay: false,
             value: 0,
+            x: [0, -window.innerWidth],
             opacityPlane: [0, 1],
             easing: "easeInSine",
             // changeBegin: () => {
@@ -752,11 +784,13 @@
         });
         toIndex.finished.then(() => {
             planes.forEach((e) => {
-                if (e.relativeTranslation.z < 0) {
-                    e.visible = 0;
-                    console.log(e.index, e.visible);
-                }
-                // planeChangeView(e);
+                console.log(e.relativeTranslation.z);
+                // if (e.relativeTranslation.z < 0) {
+                //     debugger;
+                //     e.visible = 0;
+                //     console.log(e.index, e.visible);
+                // }
+                planeChangeView(e);
                 setTexture(e);
             });
             toIndex = null;
@@ -985,6 +1019,7 @@
         </div>
     {/each}
 </div>
+
 <div bind:this={webgl} id="curtains" />
 <div class="transition__plane" />
 
