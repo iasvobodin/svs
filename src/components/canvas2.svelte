@@ -100,23 +100,27 @@
     $: $leaveIndex && !toRoute && toRouteAnim();
     $: $leaveRoute && toIndexAnim();
     $: load === $photoseries.length && $showPrelader && startAnim();
-
+    $: testId = 0;
     onMount(() => {
         initCurtains();
 
         initMatchMedia();
 
         addPlane();
-        addTransitionPlane();
 
         !pageslug &&
-            planes.forEach((e) => {
+            planes.forEach((e, i) => {
                 e.onReady(() => {
                     setTexture(e);
+                    const angle = angleStep * i;
+                    console.log(angle, i, "plane");
                 });
             });
 
-        // addTitlePlane();
+        addTitlePlane();
+        document.fonts
+            .load("1em Cormorant Infant")
+            .then(() => addTransitionPlane());
 
         addShaderPass();
 
@@ -140,8 +144,12 @@
                 getUnifors(activePlane);
                 setTexture(activePlane);
             });
-            tarnsitionPlane.relativeTranslation.x = 0;
-            tarnsitionPlane.uniforms.uColor.value = activePlane.userData.color;
+            document.fonts.load("1em Cormorant Infant").then(() => {
+                tarnsitionPlane.relativeTranslation.x = 0;
+                tarnsitionPlane.uniforms.uColor.value =
+                    activePlane.userData.color;
+            });
+
             activePlane.visible = 1;
             activePlane.uniforms.uProgress.value = 1;
 
@@ -192,6 +200,9 @@
                     value: 0,
                 },
             },
+            texturesOptions: {
+                anisotropy: 10,
+            },
         };
         document.fonts.load("1em Cormorant Infant").then(() => {
             titlePlaneOnLoad = true;
@@ -204,11 +215,17 @@
                     writeText(planeTitle, texture.source);
                 });
                 planeTitle.setRenderTarget(rgbTarget);
-                // planeChangeView(planeTitle);
+                planeChangeView(planeTitle);
                 planesTitle.push(planeTitle);
             }
 
             rgbPass = new ShaderPass(curtains, rgbPassParams);
+
+            const image = new Image();
+            image.src = "image/displacement4.jpg";
+            // set its data-sampler attribute to use in fragment shader
+            image.setAttribute("data-sampler", "displacementTexture");
+            shaderPass.loader.loadImage(image);
         });
     }
     function addPlane(trPlane = false) {
@@ -320,7 +337,6 @@
         // })
     }
     function setTexture(el) {
-        console.log("function setTexture(el) {");
         if (
             el.userData.textureTag !==
             $photoseries[el.index][textureTag].textureTag
@@ -366,6 +382,11 @@
             },
         };
         shaderPass = new ShaderPass(curtains, shaderPassParams);
+        const image = new Image();
+        image.src = "image/displacement4.jpg";
+        // set its data-sampler attribute to use in fragment shader
+        image.setAttribute("data-sampler", "displacementTexture");
+        shaderPass.loader.loadImage(image);
     }
     function writeText(plane, canvas) {
         const htmlPlane = plane.htmlElement;
@@ -435,7 +456,7 @@
             heightUn = 0.8;
             radiusCoef = 0.0755;
 
-            setElementSize(0.54);
+            setElementSize(0.69);
 
             if (!$homePageState) {
                 transitionState.radiusAnimation = Math.min(
@@ -530,10 +551,7 @@
 
         radius =
             elWidth / Math.sin((Math.PI * 2) / $photoseries.length / 2) / 2;
-        console.log(
-            "transitionState.radiusAnimation",
-            transitionState.radiusAnimation
-        );
+
         document.documentElement.style.setProperty(
             "--plane__width",
             `${(window.innerHeight * height) / aspect}px`
@@ -575,7 +593,7 @@
     }
     function planeChangeView(plane) {
         if (plane.relativeTranslation.z < 0) {
-            console.log(" if (plane.relativeTranslation.z < 0) {");
+            // console.log(" if (plane.relativeTranslation.z < 0) {");
             plane.visible = 0;
             plane.uniforms.uOpacity.value = 1;
         }
@@ -642,7 +660,7 @@
                     },
                     changeComplete: () => {
                         planes.forEach((plane, i) => {
-                            console.log(plane.relativeTranslation.z);
+                            // console.log(plane.relativeTranslation.z);
                             planeChangeView(plane);
                         });
                     },
@@ -722,10 +740,6 @@
                 currentPosition: 0,
                 endPosition: 0,
                 easing: "easeOutQuad",
-
-                // change: ()=>{
-                //     tarnsitionPlane.relativeTranslation.x = -window.innerWidth;
-                // },
             });
         }
         // getUnifors(activePlane);
@@ -803,19 +817,44 @@
     }
     function translateSlider(t) {
         curtains.render();
-        // $eventAnimation &&
-        //     (
+
         if ($eventAnimation) {
             sliderState.translation +=
                 (sliderState.currentPosition - sliderState.translation) * 0.05;
-
-            // console.log(disp);
+            // sliderState.translation +
+            //     ((sliderState.currentPosition / 1300) % angleStep);
         }
         disp +=
             (sliderState.currentPosition - sliderState.translation - disp) *
             0.3;
         shaderPass && (shaderPass.uniforms.displacement.value = disp / 2500);
+        testId =
+            sliderState.translation > 0
+                ? Math.abs(
+                      Math.floor(
+                          (sliderState.translation / 1300 / angleStep) %
+                              $photoseries.length
+                      ) -
+                          $photoseries.length +
+                          1
+                  )
+                : Math.abs(
+                      Math.floor(
+                          Math.abs(sliderState.translation / 1300 / angleStep) %
+                              $photoseries.length
+                      )
+                  );
+        // console.log(
+        //     // Math.abs(
+        //     // $photoseries.length -
+        //     Math.floor(
+        //         (Math.abs(sliderState.translation / 1300 / angleStep) %
+        //             $photoseries.length) -
+        //             $photoseries.length
+        //     )
+        //     // )
         // );
+
         planes.forEach((plane, i) => {
             const angle = angleStep * i;
             transVec.set(
@@ -909,6 +948,12 @@
             sliderState.endPosition +
             (sliderState.mousePosition[0] - sliderState.startPosition) *
                 sliderState.moveSpeed;
+        console.log(
+            sliderState.currentPosition / 1300,
+            "currentPosition",
+            (sliderState.currentPosition / 1300) % angleStep,
+            "%"
+        );
     }
     function onMouseUp(e) {
         sliderState.isMouseDown = false;
@@ -968,6 +1013,7 @@
     }
 </script>
 
+<h1>{$photoseries[$photoseries.length - testId - 1].Title}</h1>
 <svelte:window on:resize={resize} />
 <div
     class:event={!$eventAnimation}
@@ -1046,7 +1092,7 @@
     } */
     .title__plane {
         opacity: 0;
-        width: var(--plane__width);
+        width: calc(var(--plane__width) + 1vw);
         position: absolute;
         left: 50vw;
         transform: translate(-50%, 50%);
@@ -1056,6 +1102,7 @@
     h3 {
         /* display: none; */
         text-align: center;
+        white-space: pre;
         width: 100%;
         position: absolute;
         top: 0;
@@ -1065,12 +1112,22 @@
         margin: 0;
     }
     @media (orientation: landscape) {
+        @media (min-aspect-ratio: 16/9) {
+            h3 {
+                font-size: clamp(14px, 6vw + 12px, 60px);
+                line-height: clamp(18px, 6.5vw + 12px, 75px);
+            }
+            .title__plane {
+                height: clamp(18px, 6.5vw + 12px, 75px);
+                bottom: calc((100vh - var(--plane__height)) / 4);
+            }
+        }
         h3 {
-            font-size: clamp(14px, 2vw + 12px, 80px);
-            line-height: clamp(18px, 2.5vw + 12px, 90px);
+            font-size: clamp(14px, 6vw + 12px, 80px);
+            line-height: clamp(18px, 6.5vw + 12px, 80px);
         }
         .title__plane {
-            height: clamp(18px, 3.5vw + 12px, 90px);
+            height: clamp(18px, 6.5vw + 12px, 80px);
             bottom: calc((100vh - var(--plane__height)) / 4);
         }
         .wrapper {
