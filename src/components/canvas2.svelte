@@ -927,9 +927,7 @@
   }
   function onChangeTitle(pos, e) {
     let index = -Math.round(pos / (angleStep * 1300)) % $photoseries.length;
-    // if (!e.isTrusted) {
     testId = index >= 1 ? $photoseries.length - index : Math.abs(index);
-    // }
     console.log(e);
   }
   function onMouseMove(e) {
