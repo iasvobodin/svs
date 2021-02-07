@@ -17,12 +17,19 @@
     leaveRoute,
     leaveIndex,
     photoseries,
+    homePageState,
   } from "store.js";
   import { fly } from "svelte/transition";
   import { stores } from "@sapper/app";
   const { page } = stores();
-  const object = $photoseries.find((el) => el.Route === $page.params.Route);
-  photoseries.update((n) => [...n.slice(object.Id), ...n.slice(0, object.Id)]);
+  if (!$homePageState) {
+    const object = $photoseries.find((el) => el.Route === $page.params.Route);
+    photoseries.update((n) => [
+      ...n.slice(object.Id),
+      ...n.slice(0, object.Id),
+    ]);
+  }
+
   showPrelader.set(false);
   eventAnimation.set(false);
   let paddingCoef;

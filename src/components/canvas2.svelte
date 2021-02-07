@@ -9,6 +9,7 @@
     RenderTarget,
   } from "curtainsjs/src/index.mjs";
   import anime from "animejs";
+  import { debounce } from "lodash-es/lodash";
   import { tweened } from "svelte/motion";
   // import photoseries from "db/Photoseries.json";
   import fragment from "assets/photoseries.frag";
@@ -112,8 +113,8 @@
       planes.forEach((e, i) => {
         e.onReady(() => {
           setTexture(e);
-          const angle = angleStep * i;
-          console.log(angle, i, "plane");
+          // const angle = angleStep * i;
+          // console.log(angle, i, "plane");
         });
       });
 
@@ -214,7 +215,7 @@
           writeText(planeTitle, texture.source);
         });
         planeTitle.setRenderTarget(rgbTarget);
-        planeChangeView(planeTitle);
+        // planeChangeView(planeTitle);
         planesTitle.push(planeTitle);
       }
 
@@ -924,6 +925,13 @@
     sliderState.clickDown = getMousePosition(e);
     sliderState.startPosition = sliderState.clickDown[0];
   }
+  function onChangeTitle(pos, e) {
+    let index = -Math.round(pos / (angleStep * 1300)) % $photoseries.length;
+    // if (!e.isTrusted) {
+    testId = index >= 1 ? $photoseries.length - index : Math.abs(index);
+    // }
+    console.log(e);
+  }
   function onMouseMove(e) {
     if (!sliderState.isMouseDown) return;
     sliderState.mousePosition = getMousePosition(e);
@@ -931,32 +939,11 @@
       sliderState.endPosition +
       (sliderState.mousePosition[0] - sliderState.startPosition) *
         sliderState.moveSpeed;
-    console.log(
-      $photoseries.length,
-      "currentPosition",
-      Math.round(
-        (sliderState.currentPosition / (angleStep * 1300)) % $photoseries.length
-      ),
-      "%"
-    );
-    // testId =
-    //   sliderState.currentPosition > (angleStep * 1300) / 2
-    //     ? Math.abs(
-    //         $photoseries.length -
-    //           //   1 -
-    //           Math.round(
-    //             Math.abs(sliderState.currentPosition / (angleStep * 1300)) %
-    //               $photoseries.length
-    //           )
-    //       )
-    //     : Math.round(
-    //         Math.abs(sliderState.currentPosition / (angleStep * 1300)) %
-    //           $photoseries.length
-    //       );
-    let index = Math.round(
-      (sliderState.currentPosition / (angleStep * 1300)) % $photoseries.length
-    );
-    testId = index >= 1 ? $photoseries.length - index : Math.abs(index);
+    onChangeTitle(sliderState.currentPosition, e);
+    // let index =
+    //   -Math.round(sliderState.currentPosition / (angleStep * 1300)) %
+    //   $photoseries.length;
+    // testId = index >= 1 ? $photoseries.length - index : Math.abs(index);
   }
   function onMouseUp(e) {
     sliderState.isMouseDown = false;
@@ -989,6 +976,7 @@
         ? (sliderState.currentPosition += e.deltaY * -1)
         : (sliderState.currentPosition += delta * -1);
       sliderState.endPosition = sliderState.currentPosition;
+      onChangeTitle(sliderState.currentPosition, e);
     }
   }
   function getMousePosition(e) {
@@ -1016,8 +1004,8 @@
   }
 </script>
 
-<!-- <h1>{$photoseries[$photoseries.length - testId - 1].Title}</h1> -->
-<h1>{testId}</h1>
+<h3>{$photoseries[testId].Title}</h3>
+<!-- <h1>{testId}</h1> -->
 <svelte:window on:resize={resize} />
 <div
   class:event={!$eventAnimation}
@@ -1076,6 +1064,7 @@
 <!-- <div class="box" /> -->
 <style>
   h1 {
+    color: white;
     position: fixed;
     top: 0;
     left: 0;
@@ -1110,11 +1099,13 @@
   }
   h3 {
     /* display: none; */
-    text-align: center;
+    /* text-align: center; */
+    z-index: 3;
     white-space: pre;
     width: 100%;
     position: absolute;
     top: 0;
+    left: 0;
     font-family: Cormorant Infant, sans-serif;
     font-weight: 300;
     color: rgb(255, 255, 255);
