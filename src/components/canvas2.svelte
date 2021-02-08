@@ -105,6 +105,8 @@
   $: testId = 0;
   onMount(() => {
     // console.log(slider);
+    slider.addEventListener("mousemove", debounce(onChangeTitle, 30));
+    slider.addEventListener("touchmove", debounce(onChangeTitle, 30));
     initCurtains();
 
     initMatchMedia();
@@ -134,6 +136,9 @@
 
   $: if (pageslug) {
     onMount(() => {
+      anime.set(".main__head", {
+        opacity: 1,
+      });
       transitionState.opacityHedline = 0;
       transitionState.opacityPlane = 1;
       transitionState.time = 0;
@@ -646,8 +651,9 @@
       .add(
         {
           duration: 300,
-          targets: transitionState,
+          targets: [transitionState, ".main__head"],
           opacityPlane: 0,
+          opacity: 1,
           change: () => {
             planes.forEach((plane, i) => {
               if (plane.relativeTranslation.z < 0) {
@@ -733,6 +739,9 @@
       toRoute.add({
         targets: [sliderState],
         duration: 1000,
+        changeBegin: () => {
+          testId = activePlane.index;
+        },
         planeCorrection: angleStep * activePlane.index,
         translation: 0,
         currentPosition: 0,
@@ -912,8 +921,10 @@
     sliderState.clickDown = getMousePosition(e);
     sliderState.startPosition = sliderState.clickDown[0];
   }
-  function onChangeTitle(pos, e) {
-    let index = -Math.round(pos / (angleStep * 1300)) % $photoseries.length;
+  function onChangeTitle() {
+    let index =
+      -Math.round(sliderState.currentPosition / (angleStep * 1300)) %
+      $photoseries.length;
     testId = index >= 1 ? $photoseries.length - index : Math.abs(index);
   }
   function onMouseMove(e) {
@@ -923,7 +934,7 @@
       sliderState.endPosition +
       (sliderState.mousePosition[0] - sliderState.startPosition) *
         sliderState.moveSpeed;
-    onChangeTitle(sliderState.currentPosition, e);
+    // onChangeTitle(sliderState.currentPosition, e);
   }
   function onMouseUp(e) {
     sliderState.isMouseDown = false;
@@ -984,7 +995,7 @@
   }
 </script>
 
-<h3>{$photoseries[testId].Title}</h3>
+<h3 class="main__head">{$photoseries[testId].Title}</h3>
 <!-- <h1>{testId}</h1> -->
 <svelte:window on:resize={resize} />
 <div
@@ -1078,9 +1089,10 @@
     pointer-events: none;
     overflow: hidden;
   }
-  h3 {
+  .main__head {
     /* display: none; */
     /* text-align: center; */
+    opacity: 0;
     z-index: 3;
     white-space: pre;
     /* width: 100%; */
