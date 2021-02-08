@@ -59,6 +59,7 @@
     toRoute,
     tarnsitionPlane,
     toInvisible,
+    slider,
     animationFrame = null,
     changeOpacity,
     transVec = new Vec3(),
@@ -103,6 +104,7 @@
   $: load === $photoseries.length && $showPrelader && startAnim();
   $: testId = 0;
   onMount(() => {
+    // console.log(slider);
     initCurtains();
 
     initMatchMedia();
@@ -112,6 +114,7 @@
     !pageslug &&
       planes.forEach((e, i) => {
         e.onReady(() => {
+          //   console.log("do it?");
           setTexture(e);
           // const angle = angleStep * i;
           // console.log(angle, i, "plane");
@@ -149,7 +152,9 @@
         tarnsitionPlane.relativeTranslation.x = 0;
         tarnsitionPlane.uniforms.uColor.value = activePlane.userData.color;
       });
-
+      planes.forEach((e) => {
+        e.isDrawn() && (e.visible = 0);
+      });
       activePlane.visible = 1;
       activePlane.uniforms.uProgress.value = 1;
 
@@ -235,7 +240,7 @@
       heightSegments: 16,
       vertexShader: vertex,
       // fragmentShader: fragment,
-      visible: 0,
+      visible: 1,
       autoloadSources: false,
       // depthTest: false,
       fov: 1,
@@ -351,8 +356,11 @@
           texture.onSourceUploaded(() => {
             load++;
             progress.update((n) => n + 100 / $photoseries.length);
-            !pageslug && (el.visible = 1);
-
+            //  !pageslug &&
+            el.relativeTranslation.z > 0 && (el.visible = 1);
+            //   if (e.relativeTranslation.z > 0) {
+            //           e.visible = 0;
+            //         }
             // if (el.userData.route === texture.userData.route) {
             el.textures[0].copy(texture);
             // }
@@ -711,6 +719,7 @@
     toRoute = anime.timeline({
       autoplay: false,
     });
+    // set mouse touch and other event disable
     eventAnimation.set(false);
     if (!activePlane) {
       activePlane = planes.find((p) => p.userData.route === pageslug);
@@ -761,40 +770,44 @@
       });
   }
   function toIndexAnim() {
-    toIndex = anime.timeline().add({
-      targets: [
-        activePlane.uniforms.uProgress,
-        transitionState,
-        tarnsitionPlane.relativeTranslation,
-      ],
-      duration: 1400,
-      autoplay: false,
-      value: 0,
-      x: [0, -window.innerWidth],
-      opacityPlane: [0, 1],
-      easing: "easeInSine",
-      // changeBegin: () => {
-      //     getUnifors(activePlane);
-      // },
-      changeComplete: () => {
-        activePlane.setRenderOrder(planes.length - 1);
-        // planes.forEach((plane, i) => {
-        //     // plane.visible = 1;
-        //     planeChangeView(plane);
-        // });
-        // toInvisibleAnim([0, 1]);
-      },
-    });
+    toIndex = anime
+      .timeline({
+        autoplay: false,
+      })
+      .add({
+        targets: [
+          activePlane.uniforms.uProgress,
+          transitionState,
+          tarnsitionPlane.relativeTranslation,
+        ],
+        duration: 1400,
+        autoplay: false,
+        value: 0,
+        x: [0, -window.innerWidth],
+        opacityPlane: [0, 1],
+        easing: "easeInSine",
+        changeBegin: () => {
+          //     getUnifors(activePlane);
+        },
+        changeComplete: () => {
+          activePlane.setRenderOrder(planes.length - 1);
+          // planes.forEach((plane, i) => {
+          //     // plane.visible = 1;
+          //     planeChangeView(plane);
+          // });
+          // toInvisibleAnim([0, 1]);
+        },
+      });
     toIndex.finished.then(() => {
       planes.forEach((e) => {
-        console.log(e.relativeTranslation.z);
+        setTexture(e);
+        // console.log(e.relativeTranslation.z, "Translation.z");
+        console.log(e.index, "index", e.visible, "visible");
         // if (e.relativeTranslation.z < 0) {
-        //     debugger;
-        //     e.visible = 0;
-        //     console.log(e.index, e.visible);
+        //   // debugger;
+        //   e.visible = 0;
         // }
         planeChangeView(e);
-        setTexture(e);
       });
       toIndex = null;
       leaveRoute.set(false);
@@ -810,37 +823,10 @@
     if ($eventAnimation) {
       sliderState.translation +=
         (sliderState.currentPosition - sliderState.translation) * 0.05;
-      // sliderState.translation +
-      //     ((sliderState.currentPosition / 1300) % angleStep);
     }
     disp +=
       (sliderState.currentPosition - sliderState.translation - disp) * 0.3;
     shaderPass && (shaderPass.uniforms.displacement.value = disp / 2500);
-    // testId =
-    //   sliderState.translation > 0
-    //     ? Math.abs(
-    //         Math.floor(
-    //           (sliderState.translation / 1300 / angleStep) % $photoseries.length
-    //         ) -
-    //           $photoseries.length +
-    //           1
-    //       )
-    //     : Math.abs(
-    //         Math.floor(
-    //           Math.abs(sliderState.translation / 1300 / angleStep) %
-    //             $photoseries.length
-    //         )
-    //       );
-    // console.log(
-    //     // Math.abs(
-    //     // $photoseries.length -
-    //     Math.floor(
-    //         (Math.abs(sliderState.translation / 1300 / angleStep) %
-    //             $photoseries.length) -
-    //             $photoseries.length
-    //     )
-    //     // )
-    // );
 
     planes.forEach((plane, i) => {
       const angle = angleStep * i;
@@ -913,7 +899,8 @@
       }
       // Clicked
       activePlane = el;
-      activePlaneTitle = planesTitle[i];
+      testId = el.index;
+      //   activePlaneTitle = planesTitle[i];
       eventAnimation.set(false);
       // getUnifors(activePlane);
       toRouteAnim();
@@ -928,7 +915,6 @@
   function onChangeTitle(pos, e) {
     let index = -Math.round(pos / (angleStep * 1300)) % $photoseries.length;
     testId = index >= 1 ? $photoseries.length - index : Math.abs(index);
-    console.log(e);
   }
   function onMouseMove(e) {
     if (!sliderState.isMouseDown) return;
@@ -938,10 +924,6 @@
       (sliderState.mousePosition[0] - sliderState.startPosition) *
         sliderState.moveSpeed;
     onChangeTitle(sliderState.currentPosition, e);
-    // let index =
-    //   -Math.round(sliderState.currentPosition / (angleStep * 1300)) %
-    //   $photoseries.length;
-    // testId = index >= 1 ? $photoseries.length - index : Math.abs(index);
   }
   function onMouseUp(e) {
     sliderState.isMouseDown = false;
@@ -1006,6 +988,7 @@
 <!-- <h1>{testId}</h1> -->
 <svelte:window on:resize={resize} />
 <div
+  bind:this={slider}
   class:event={!$eventAnimation}
   on:mousemove={onMouseMove}
   on:touchmove|passive={onMouseMove}
@@ -1061,12 +1044,12 @@
 
 <!-- <div class="box" /> -->
 <style>
-  h1 {
+  /* h1 {
     color: white;
     position: fixed;
     top: 0;
     left: 0;
-  }
+  } */
   .transition__plane {
     width: 100%;
     height: calc(var(--vh) * 100);
@@ -1100,34 +1083,26 @@
     /* text-align: center; */
     z-index: 3;
     white-space: pre;
-    width: 100%;
+    /* width: 100%; */
+    transform: translate(0, -50%);
     position: absolute;
-    top: 0;
-    left: 0;
+    top: calc((100vh - var(--plane__height)) / 4);
+    left: 1vw;
     font-family: Cormorant Infant, sans-serif;
     font-weight: 300;
     color: rgb(255, 255, 255);
     margin: 0;
+    font-size: clamp(14px, 6vw + 12px, 80px);
+    line-height: clamp(18px, 6.5vw + 12px, 80px);
   }
   @media (orientation: landscape) {
-    @media (min-aspect-ratio: 16/9) {
-      h3 {
-        font-size: clamp(14px, 6vw + 12px, 60px);
-        line-height: clamp(18px, 6.5vw + 12px, 75px);
-      }
-      .title__plane {
-        height: clamp(18px, 6.5vw + 12px, 75px);
-        bottom: calc((100vh - var(--plane__height)) / 4);
-      }
-    }
-    h3 {
+    /* h3 {
       font-size: clamp(14px, 6vw + 12px, 80px);
       line-height: clamp(18px, 6.5vw + 12px, 80px);
-    }
-    .title__plane {
+    } */
+    /* .title__plane {
       height: clamp(18px, 6.5vw + 12px, 80px);
-      bottom: calc((100vh - var(--plane__height)) / 4);
-    }
+    } */
     .wrapper {
       justify-content: center;
       width: 100%;
@@ -1151,15 +1126,15 @@
       --plane__height: 65vh;
       --plane__width: calc(var(--plane__height) * 0.66);
     }
-    .title__plane {
+    /* .title__plane {
       height: 4vh;
       height: calc(var(--vh) * 4);
       bottom: calc((100vh - var(--plane__height)) / 4);
-    }
-    h3 {
+    } */
+    /* h3 {
       font-size: 4vh;
       font-size: calc(var(--vh) * 4);
-    }
+    } */
     .wrapper {
       justify-content: center;
       width: 100%;
