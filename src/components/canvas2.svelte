@@ -748,6 +748,7 @@
     });
     // set mouse touch and other event disable
     eventAnimation.set(false);
+    
     if (!activePlane) {
       activePlane = planes.find((p) => p.userData.route === pageslug);
     }
@@ -785,10 +786,7 @@
         changeBegin: () => {
           //   homePageState.set(false);
           titleIndex.set(activePlane.index);
-
-          // toInvisibleAnim([1, 0]);
           getUnifors(activePlane);
-          // activePlane.relativeTranslation.z = radius + 10;
         },
       },
       "+=50"
@@ -834,7 +832,7 @@
       eventAnimation.set(true);
       sliderState.currentPosition = sliderState.endPosition =
         sliderState.translation;
-      homePageState.set(true);
+      !$homePageState && homePageState.set(true);
     });
   }
   function translateSlider(t) {
@@ -922,7 +920,6 @@
       //   testId = el.index;
       //   activePlaneTitle = planesTitle[i];
       eventAnimation.set(false);
-      homePageState.set(false);
       // getUnifors(activePlane);
       toRouteAnim();
       goto(`/${el.userData.route}/`);

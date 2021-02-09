@@ -26,14 +26,15 @@
   showPrelader.set(false);
   eventAnimation.set(false);
   const object = $photoseries.find((el) => el.Route === $page.params.Route);
-  $: if (!$homePageState) {
-    console.log("sort ph", object.Id);
+  if (!$homePageState) {
+    console.log("sort ph");
     photoseries.update((n) => [
       ...n.slice(object.Id),
       ...n.slice(0, object.Id),
     ]);
+    homePageState.set(false);
   }
-  // titleIndex.set(object.Id);
+  titleIndex.set(object.Id);
   let paddingCoef;
   $: galleryParams = {};
   let layout,
