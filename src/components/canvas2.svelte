@@ -24,7 +24,7 @@
   // import fragment from "assets/start.frag";
   // import vertex from "assets/start.vert";
   import {
-    // paddingCoef,
+    titleIndex,
     showPrelader,
     homePageState,
     progress,
@@ -740,7 +740,7 @@
         targets: [sliderState],
         duration: 1000,
         changeBegin: () => {
-          testId = activePlane.index;
+          //   testId = activePlane.index;
         },
         planeCorrection: angleStep * activePlane.index,
         translation: 0,
@@ -908,7 +908,7 @@
       }
       // Clicked
       activePlane = el;
-      testId = el.index;
+      //   testId = el.index;
       //   activePlaneTitle = planesTitle[i];
       eventAnimation.set(false);
       // getUnifors(activePlane);
@@ -925,7 +925,8 @@
     let index =
       -Math.round(sliderState.currentPosition / (angleStep * 1300)) %
       $photoseries.length;
-    testId = index >= 1 ? $photoseries.length - index : Math.abs(index);
+    // testId = index >= 1 ? $photoseries.length - index : Math.abs(index);
+    titleIndex.set(index >= 1 ? $photoseries.length - index : Math.abs(index));
   }
   function onMouseMove(e) {
     if (!sliderState.isMouseDown) return;
@@ -995,7 +996,7 @@
   }
 </script>
 
-<h3 class="main__head">{$photoseries[testId].Title}</h3>
+<h3 class="main__head">{$photoseries[$titleIndex].Title}</h3>
 <!-- <h1>{testId}</h1> -->
 <svelte:window on:resize={resize} />
 <div

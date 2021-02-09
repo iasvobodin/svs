@@ -12,6 +12,7 @@
   import justifiedLayout from "justified-layout";
   import Spic from "../components/spic.svelte";
   import {
+    titleIndex,
     showPrelader,
     eventAnimation,
     leaveRoute,
@@ -22,16 +23,16 @@
   import { fly } from "svelte/transition";
   import { stores } from "@sapper/app";
   const { page } = stores();
+  showPrelader.set(false);
+  eventAnimation.set(false);
+  const object = $photoseries.find((el) => el.Route === $page.params.Route);
   if (!$homePageState) {
-    const object = $photoseries.find((el) => el.Route === $page.params.Route);
     photoseries.update((n) => [
       ...n.slice(object.Id),
       ...n.slice(0, object.Id),
     ]);
   }
-
-  showPrelader.set(false);
-  eventAnimation.set(false);
+  titleIndex.set(object.Id);
   let paddingCoef;
   $: galleryParams = {};
   let layout,
@@ -136,6 +137,7 @@
 <h1 transition:fly on:outrostart={() => leaveRoute.set(true)}>
   {gallery.Title}
 </h1>
+<!-- <div class="div"> -->
 {#if galleryHeight && !$leaveIndex}
   <div style="height: {galleryHeight}px" class="gallery">
     {#each gallery.ImageName as photo, index (index)}
@@ -147,6 +149,21 @@
 {/if}
 
 <style>
+  /* .div {
+    width: 100%;
+ display: block;
+ position: relative;
+ top: -2px;
+ height: 166px;
+ background-image: url('data:image/svg+xml;utf8,<svg viewBox="0 0 1920 166" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><path fill="rgba(47, 73, 94, 1)" d="M 0 0 C 388.40000000000003 0 582.5999999999999 110 971 110 L 971 110 L 971 0 L 0 0 Z" stroke-width="0"></path> <path fill="rgba(47, 73, 94, 1)" d="M 970 110 C 1350 110 1540 166 1920 166 L 1920 166 L 1920 0 L 970 0 Z" stroke-width="0"></path> </svg>');
+ background-size: cover;
+ background-repeat: no-repeat;
+}
+@media (max-width:1819px) {
+ .div {
+   background-size: contain;
+ }
+} */
   h1 {
     display: none;
   }
