@@ -26,7 +26,7 @@
   showPrelader.set(false);
   eventAnimation.set(false);
   const object = $photoseries.find((el) => el.Route === $page.params.Route);
-  if (!$homePageState) {
+  $: if (!$homePageState) {
     console.log("sort ph", object.Id);
     photoseries.update((n) => [
       ...n.slice(object.Id),

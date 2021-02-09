@@ -102,7 +102,7 @@
   $: $leaveIndex && !toRoute && toRouteAnim();
   $: $leaveRoute && toIndexAnim();
   $: load === $photoseries.length && $showPrelader && startAnim();
-  $: testId = 0;
+
   onMount(() => {
     // console.log(slider);
     slider.addEventListener("mousemove", debounce(onChangeTitle, 30));
@@ -783,7 +783,7 @@
         easing: "easeOutQuad",
         changeComplete: () => {},
         changeBegin: () => {
-          homePageState.set(false);
+          //   homePageState.set(false);
           titleIndex.set(activePlane.index);
 
           // toInvisibleAnim([1, 0]);
@@ -823,22 +823,10 @@
         },
         changeComplete: () => {
           activePlane.setRenderOrder(planes.length - 1);
-          // planes.forEach((plane, i) => {
-          //     // plane.visible = 1;
-          //     planeChangeView(plane);
-          // });
-          // toInvisibleAnim([0, 1]);
         },
       });
     toIndex.finished.then(() => {
       planes.forEach((e) => {
-        // setTexture(e);
-        // console.log(e.relativeTranslation.z, "Translation.z");
-        // console.log(e.index, "index", e.visible, "visible");
-        // if (e.relativeTranslation.z < 0) {
-        //   // debugger;
-        //   e.visible = 0;
-        // }
         planeChangeView(e);
       });
       toIndex = null;
@@ -846,7 +834,7 @@
       eventAnimation.set(true);
       sliderState.currentPosition = sliderState.endPosition =
         sliderState.translation;
-      !$homePageState && homePageState.set(true);
+      homePageState.set(true);
     });
   }
   function translateSlider(t) {
@@ -934,6 +922,7 @@
       //   testId = el.index;
       //   activePlaneTitle = planesTitle[i];
       eventAnimation.set(false);
+      homePageState.set(false);
       // getUnifors(activePlane);
       toRouteAnim();
       goto(`/${el.userData.route}/`);
@@ -1062,6 +1051,7 @@
         />
 
         <img
+          style="opacity:0"
           data-sampler="planeTexture"
           class="slider__img"
           alt="SvobodinaPhoto"
