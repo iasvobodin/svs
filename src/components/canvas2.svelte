@@ -9,7 +9,7 @@
     RenderTarget,
   } from "curtainsjs/src/index.mjs";
   import anime from "animejs";
-  import { debounce } from "lodash-es/lodash";
+  import { debounce, forEach } from "lodash-es/lodash";
   import { tweened } from "svelte/motion";
   // import photoseries from "db/Photoseries.json";
   import fragment from "assets/photoseries.frag";
@@ -112,12 +112,15 @@
     initMatchMedia();
 
     addPlane();
-
+    planes.forEach((pl, i) => {
+      pl.images[0].onload = () => pl.textures[0].needUpdate();
+      getUnifors(pl);
+    });
     !pageslug &&
       planes.forEach((e, i) => {
         e.onReady(() => {
           //   console.log("do it?");
-          setTexture(e);
+          //   setTexture(e);
           // const angle = angleStep * i;
           // console.log(angle, i, "plane");
         });
@@ -153,7 +156,7 @@
 
       activePlane.onReady(() => {
         getUnifors(activePlane);
-        setTexture(activePlane);
+        // setTexture(activePlane);
       });
       document.fonts.load("1em Cormorant Infant").then(() => {
         tarnsitionPlane.relativeTranslation.x = 0;
@@ -248,7 +251,7 @@
       vertexShader: vertex,
       // fragmentShader: fragment,
       visible: 1,
-      autoloadSources: false,
+      //   autoloadSources: false,
       // depthTest: false,
       fov: 1,
       renderOrder: 2,
@@ -296,15 +299,30 @@
       //     setTexture(plane);
       // });
       plane.onAfterResize(() => {
-        getUnifors(plane);
+        // getUnifors(plane);
       });
-
+      plane.textures[0].onSourceUploaded(() => {
+        load++;
+        // console.log(load);
+        progress.update((n) => n + 100 / $photoseries.length);
+        //  !pageslug &&
+        plane.relativeTranslation.z > 0 && (plane.visible = 1);
+        //   if (e.relativeTranslation.z > 0) {
+        //           e.visible = 0;
+        //         }
+        // if (plane.userData.route === texture.userData.route) {
+        // plane.textures[0].copy(texture);
+        // }
+      });
+      //   plane.onLoading((texture) => {
+      //     // console.log(texture);
+      //   });
       // console.log(plane);
-      // CREATE TEXTURE
-      plane.createTexture({
-        sampler: "planeTexture",
-      }),
-        planes.push(plane);
+      //   // CREATE TEXTURE
+      //   plane.createTexture({
+      //     sampler: "planeTexture",
+      //   }),
+      planes.push(plane);
     });
     // console.timeEnd("create Plane");
 
@@ -444,6 +462,7 @@
   function handlePortrait(e) {
     if (e.matches) {
       // PORTAIT
+
       aspect = 1.5;
       widthUn = 1;
       heightUn = 0.72;
@@ -813,9 +832,9 @@
       });
     toIndex.finished.then(() => {
       planes.forEach((e) => {
-        setTexture(e);
+        // setTexture(e);
         // console.log(e.relativeTranslation.z, "Translation.z");
-        console.log(e.index, "index", e.visible, "visible");
+        // console.log(e.index, "index", e.visible, "visible");
         // if (e.relativeTranslation.z < 0) {
         //   // debugger;
         //   e.visible = 0;
@@ -1022,28 +1041,37 @@
         data-route={seriya.Route}
         data-color={[seriya.ColorVector]} -->
     <div class="plane">
-      <!-- <picture class="standart__picture">
-                <source
-                    media="(orientation: portrait)"
-                    srcset="/image/webp/720/{seriya.Portrait}.webp"
-                    type="image/webp"
-                />
-                <source
-                    media="(orientation: landscape)"
-                    srcset="/image/webp/720/{seriya.LandscapeFileName}.webp"
-                    type="image/webp"
-                />
+      <picture class="standart__picture">
+        <source
+          media="(orientation: portrait)"
+          srcset="https://raw.githubusercontent.com/iasvobodin/svs/images/static/image/webp/{seriya
+            .largePortrait.src}.webp"
+          type="image/webp"
+        />
+        <source
+          media="(orientation: portrait)"
+          srcset="https://raw.githubusercontent.com/iasvobodin/svs/images/static/image/jpg/{seriya
+            .largePortrait.src}.jpg"
+          type="image/jpg"
+        />
+        <source
+          media="(orientation: landscape)"
+          srcset="https://raw.githubusercontent.com/iasvobodin/svs/images/static/image/webp/{seriya
+            .largeLandscape.src}.webp"
+          type="image/webp"
+        />
 
-                <img
-                    data-sampler="planeTexture"
-                    class="slider__img"
-                    alt="SvobodinaPhoto"
-                    crossorigin="anonimous"
-                    decoding="async"
-                    draggable="false"
-                    src="/image/jpg/720/{seriya.LandscapeFileName}.jpg"
-                />
-            </picture> -->
+        <img
+          data-sampler="planeTexture"
+          class="slider__img"
+          alt="SvobodinaPhoto"
+          crossorigin="anonimous"
+          decoding="async"
+          draggable="false"
+          src="https://raw.githubusercontent.com/iasvobodin/svs/images/static/image/jpg/{seriya
+            .largeLandscape.src}.jpg"
+        />
+      </picture>
     </div>
   {/each}
 </div>
@@ -1066,6 +1094,14 @@
     top: 0;
     left: 0;
   } */
+  .slider__img {
+    opacity: 0;
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    object-fit: cover;
+    object-position: center;
+  }
   .transition__plane {
     width: 100%;
     height: calc(var(--vh) * 100);
