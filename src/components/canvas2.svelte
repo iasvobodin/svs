@@ -149,6 +149,8 @@
       if (!activePlane) {
         activePlane = planes.find((p) => p.userData.route === pageslug);
       }
+      titleIndex.set(activePlane.index);
+
       activePlane.onReady(() => {
         getUnifors(activePlane);
         setTexture(activePlane);
@@ -739,13 +741,12 @@
       toRoute.add({
         targets: [sliderState],
         duration: 1000,
-        changeBegin: () => {
-          //   testId = activePlane.index;
+        changeBegin: () => {},
+        changeComplete: () => {
+          sliderState.endPosition = sliderState.translation;
         },
-        planeCorrection: angleStep * activePlane.index,
-        translation: 0,
-        currentPosition: 0,
-        endPosition: 0,
+        translation: angleStep * activePlane.index * 1300,
+        currentPosition: angleStep * activePlane.index * 1300,
         easing: "easeOutQuad",
       });
     }
@@ -764,6 +765,8 @@
         changeComplete: () => {},
         changeBegin: () => {
           homePageState.set(false);
+          titleIndex.set(activePlane.index);
+
           // toInvisibleAnim([1, 0]);
           getUnifors(activePlane);
           // activePlane.relativeTranslation.z = radius + 10;
@@ -775,6 +778,7 @@
     toRoute &&
       toRoute.finished.then(() => {
         toRoute = null;
+        // titleIndex.set(activePlane.index);
         leaveIndex.set(false);
       });
   }
