@@ -123,6 +123,7 @@
     getJL(gallery);
   }
   onMount(() => {
+    console.log("route onmount");
     height = window.innerHeight;
     width = window.innerWidth;
     window.addEventListener("resize", debounce(resize, 400));

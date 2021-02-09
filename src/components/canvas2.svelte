@@ -104,6 +104,7 @@
   $: load === $photoseries.length && $showPrelader && startAnim();
 
   onMount(() => {
+    console.log("canvas2 onmount");
     // console.log(slider);
     slider.addEventListener("mousemove", debounce(onChangeTitle, 30));
     slider.addEventListener("touchmove", debounce(onChangeTitle, 30));
@@ -748,14 +749,13 @@
     });
     // set mouse touch and other event disable
     eventAnimation.set(false);
-    
+
     if (!activePlane) {
       activePlane = planes.find((p) => p.userData.route === pageslug);
     }
     activePlane.setRenderOrder(planes.length + 2);
     tarnsitionPlane.setRenderOrder(planes.length + 1);
     tarnsitionPlane.uniforms.uColor.value = activePlane.userData.color;
-    // console.log(tarnsitionPlane.uniforms);
     if (!activePlane.isDrawn()) {
       activePlane.visible = 1;
       toRoute.add({
@@ -770,7 +770,6 @@
         easing: "easeOutQuad",
       });
     }
-    // getUnifors(activePlane);
     toRoute.add(
       {
         targets: [
