@@ -70,7 +70,7 @@
   .preloader {
     height: 100vh;
     height: calc(var(--vh) * 100);
-    width: 100vw;
+    width: 100%;
     position: absolute;
     display: grid;
     place-items: center;
