@@ -170,17 +170,13 @@
     transitionState.scalePlane = 1;
     transitionState.yRoundDisable = 0;
     transitionState.zRoundEnable = 1;
-    console.log("sortPHhere");
+
     const object = $photoseries.find((el) => el.Route === $page.params.Route);
-    // if (!$homePageState) {
-    console.log("sort ph");
     photoseries.update((n) => [
       ...n.slice(object.Id),
       ...n.slice(0, object.Id),
     ]);
     titleIndex.set(object.Id);
-    // homePageState.set(false);
-    // }
   }
   $: if ($page.params.Route) {
     onMount(() => {
@@ -364,16 +360,6 @@
       //   }),
       planes.push(plane);
     });
-    // console.timeEnd("create Plane");
-
-    if (trPlane) {
-      planes.trPlane = new Plane(curtains, trPlane, {
-        ...params,
-        fragmentShader: fragmentM,
-      });
-
-      planes.trPlane.visible = 1;
-    }
   }
   function addTransitionPlane() {
     const params = {
@@ -454,11 +440,11 @@
       },
     };
     shaderPass = new ShaderPass(curtains, shaderPassParams);
-    const image = new Image();
-    image.src = "image/displacement4.jpg";
-    // set its data-sampler attribute to use in fragment shader
-    image.setAttribute("data-sampler", "displacementTexture");
-    shaderPass.loader.loadImage(image);
+    // const image = new Image();
+    // image.src = "image/displacement4.jpg";
+    // // set its data-sampler attribute to use in fragment shader
+    // image.setAttribute("data-sampler", "displacementTexture");
+    // shaderPass.loader.loadImage(image);
   }
   function writeText(plane, canvas) {
     const htmlPlane = plane.htmlElement;
@@ -868,18 +854,21 @@
         },
       });
     toIndex.finished.then(() => {
-      (async () => {
-        await tick;
-        const planeElement = document.getElementsByClassName("slider__img");
-        console.log([...planeElement]);
-      })();
-
-      // planeElement.forEach(element => {
-      //     element.onload = () => {
-      //   pl.textures[0].needUpdate();
-      //   getUnifors(pl);
-      // };
-      // });
+      eventAnimation.set(true);
+      // (async () => {
+      // await tick;
+      const planeElement = document.getElementsByClassName("slider__img");
+      setTimeout(() => {
+        planes.forEach((element) => {
+          console.log(element);
+          // element.images[0].onload = () => {
+          //   element.textures[0].needUpdate();
+          //   getUnifors(pl);
+          // };
+        });
+      }, 0);
+      console.log([...planeElement]);
+      // })();
 
       //   console.log([...planeElement]);
       planes.forEach((e, i) => {
@@ -898,7 +887,6 @@
       });
       toIndex = null;
       leaveRoute.set(false);
-      eventAnimation.set(true);
       sliderState.currentPosition = sliderState.endPosition =
         sliderState.translation;
       !$homePageState && homePageState.set(true);
@@ -1144,14 +1132,11 @@
 <div bind:this={webgl} id="curtains" />
 <div class="transition__plane" />
 
-<!-- <div class="box" /> -->
 <style>
-  /* h1 {
-    color: white;
-    position: fixed;
-    top: 0;
-    left: 0;
-  } */
+  .standart__picture {
+    width: 100%;
+    height: 100%;
+  }
   .slider__img {
     opacity: 0;
     position: absolute;
@@ -1163,38 +1148,20 @@
   .transition__plane {
     width: 100%;
     height: calc(var(--vh) * 100);
-    /* background-color: green; */
   }
   .event {
     pointer-events: none;
   }
-  /* :root {
-        --margin__wrapper: calc((100vh - var(--plane__height)) / 2);
-        --title__height: calc(14px + 3.2vw);
-        --translationSlide: 0;
-        --plane__height: 52vh;
-        --plane__width: calc(var(--plane__height) * 1.5);
-        --plane__margin: 5vw;
-        --plane__shift: calc(
-            50vw - ((var(--plane__width) + var(--plane__margin) * 2) * 3.5)
-        );
-    } */
   .title__plane {
     opacity: 0;
-    /* width: calc(var(--plane__width) + 1vw); */
     position: absolute;
-    /* left: 50vw;
-    transform: translate(-50%, 50%); */
     pointer-events: none;
     overflow: hidden;
   }
   .main__head {
-    /* display: none; */
-    /* text-align: center; */
     opacity: 0;
     z-index: 3;
     white-space: pre;
-    /* width: 100%; */
     transform: translate(0, -50%);
     position: absolute;
     top: calc((100vh - var(--plane__height)) / 4);
@@ -1207,13 +1174,6 @@
     line-height: clamp(18px, 6.5vw + 12px, 80px);
   }
   @media (orientation: landscape) {
-    /* h3 {
-      font-size: clamp(14px, 6vw + 12px, 80px);
-      line-height: clamp(18px, 6.5vw + 12px, 80px);
-    } */
-    /* .title__plane {
-      height: clamp(18px, 6.5vw + 12px, 80px);
-    } */
     .wrapper {
       justify-content: center;
       width: 100%;
@@ -1237,15 +1197,6 @@
       --plane__height: 65vh;
       --plane__width: calc(var(--plane__height) * 0.66);
     }
-    /* .title__plane {
-      height: 4vh;
-      height: calc(var(--vh) * 4);
-      bottom: calc((100vh - var(--plane__height)) / 4);
-    } */
-    /* h3 {
-      font-size: 4vh;
-      font-size: calc(var(--vh) * 4);
-    } */
     .wrapper {
       justify-content: center;
       width: 100%;

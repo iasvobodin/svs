@@ -5,6 +5,10 @@
   import { fade } from "svelte/transition";
   import { onMount } from "svelte";
   import { showPrelader } from "store.js";
+  // const { page } = stores();
+  // if ($page.params.Route) {
+  //   showPrelader.set(false);
+  // }
   console.log("_layoutInit");
   onMount(() => {
     console.log("onMount layout");
@@ -23,9 +27,9 @@
 
 <!-- {#if !$preloading} -->
 <main transition:fade>
-  {#if $showPrelader}
-    <Preloader />
-  {/if}
+  <!-- {#if $showPrelader} -->
+  <Preloader />
+  <!-- {/if} -->
   <div class="canvas">
     <Canvas2 />
   </div>
