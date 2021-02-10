@@ -30,8 +30,8 @@
     progress,
     eventAnimation,
     photoseries,
-    leaveIndex,
-    leaveRoute,
+    leaveIndex, // true then animation to route
+    leaveRoute, // true then animation to index
   } from "store.js";
   // import {
   //     getUnifors
@@ -42,7 +42,7 @@
   //INIT BEFORE MOUNT
 
   // VARIABLE DATA
-
+  console.log("canvas2init");
   let curtains,
     webgl,
     shaderPass,
@@ -102,6 +102,7 @@
   $: $leaveIndex && !toRoute && toRouteAnim();
   $: $leaveRoute && toIndexAnim();
   $: load === $photoseries.length && $showPrelader && startAnim();
+  //   pageslug && showPrelader.set(false);
 
   onMount(() => {
     console.log("canvas2 onmount");
@@ -117,61 +118,108 @@
       pl.images[0].onload = () => pl.textures[0].needUpdate();
       getUnifors(pl);
     });
-    !pageslug &&
-      planes.forEach((e, i) => {
-        e.onReady(() => {
-          //   console.log("do it?");
-          //   setTexture(e);
-          // const angle = angleStep * i;
-          // console.log(angle, i, "plane");
-        });
-      });
+    // !pageslug &&
+    //   planes.forEach((e, i) => {
+    //     e.onReady(() => {
+    //       //   console.log("do it?");
+    //       //   setTexture(e);
+    //       // const angle = angleStep * i;
+    //       // console.log(angle, i, "plane");
+    //     });
+    //   });
 
-    addTitlePlane();
-    document.fonts
-      .load("1em Cormorant Infant")
-      .then(() => addTransitionPlane());
+    // addTitlePlane();
+    // document.fonts
+    //   .load("1em Cormorant Infant")
+    //   .then(() => );
+
+    addTransitionPlane();
 
     addShaderPass();
 
     translateSlider();
-  });
-  pageslug && showPrelader.set(false);
 
-  $: if (pageslug) {
-    onMount(() => {
+    if ($page.params.Route) {
       anime.set(".main__head", {
         opacity: 1,
       });
-      transitionState.opacityHedline = 0;
-      transitionState.opacityPlane = 1;
-      transitionState.time = 0;
-      transitionState.radiusAnimation = radius;
-      transitionState.scalePlane = 1;
-      transitionState.yRoundDisable = 0;
-      transitionState.zRoundEnable = 1;
+
       if (!activePlane) {
-        activePlane = planes.find((p) => p.userData.route === pageslug);
+        activePlane = planes.find(
+          (p) => p.userData.route === $page.params.Route
+        );
       }
-      titleIndex.set(activePlane.index);
 
       activePlane.onReady(() => {
         getUnifors(activePlane);
-        // setTexture(activePlane);
       });
-      document.fonts.load("1em Cormorant Infant").then(() => {
-        tarnsitionPlane.relativeTranslation.x = 0;
-        tarnsitionPlane.uniforms.uColor.value = activePlane.userData.color;
-      });
+      activePlane.uniforms.uProgress.value = 1;
+      tarnsitionPlane.relativeTranslation.x = 0;
+      tarnsitionPlane.uniforms.uColor.value = activePlane.userData.color;
       planes.forEach((e) => {
         e.isDrawn() && (e.visible = 0);
       });
       activePlane.visible = 1;
-      activePlane.uniforms.uProgress.value = 1;
+    }
+  });
+  if ($page.params.Route) {
+    showPrelader.set(false);
+    eventAnimation.set(false);
+    transitionState.opacityHedline = 0;
+    transitionState.opacityPlane = 1;
+    transitionState.time = 0;
+    transitionState.radiusAnimation = radius;
+    transitionState.scalePlane = 1;
+    transitionState.yRoundDisable = 0;
+    transitionState.zRoundEnable = 1;
+    console.log("sortPHhere");
+    const object = $photoseries.find((el) => el.Route === $page.params.Route);
+    // if (!$homePageState) {
+    console.log("sort ph");
+    photoseries.update((n) => [
+      ...n.slice(object.Id),
+      ...n.slice(0, object.Id),
+    ]);
+    titleIndex.set(object.Id);
+    // homePageState.set(false);
+    // }
+  }
+  $: if ($page.params.Route) {
+    onMount(() => {
+      //   anime.set(".main__head", {
+      //     opacity: 1,
+      //   });
+      //   transitionState.opacityHedline = 0;
+      //   transitionState.opacityPlane = 1;
+      //   transitionState.time = 0;
+      //   transitionState.radiusAnimation = radius;
+      //   transitionState.scalePlane = 1;
+      //   transitionState.yRoundDisable = 0;
+      //   transitionState.zRoundEnable = 1;
+      //   if (!activePlane) {
+      //     activePlane = planes.find(
+      //       (p) => p.userData.route === $page.params.Route
+      //     );
+      //   }
+      titleIndex.set(activePlane.index);
 
-      titlePlaneOnLoad &&
-        (activePlaneTitle =
-          planesTitle[activePlane.index + photoseries.length]);
+      //   activePlane.onReady(() => {
+      //     getUnifors(activePlane);
+      //     // setTexture(activePlane);
+      //   });
+      // //   document.fonts.load("1em Cormorant Infant").then(() => {
+      //     tarnsitionPlane.relativeTranslation.x = 0;
+      //     tarnsitionPlane.uniforms.uColor.value = activePlane.userData.color;
+      // //   });
+      //   planes.forEach((e) => {
+      //     e.isDrawn() && (e.visible = 0);
+      //   });
+      //   activePlane.visible = 1;
+      //   activePlane.uniforms.uProgress.value = 1;
+
+      //   titlePlaneOnLoad &&
+      //     (activePlaneTitle =
+      //       planesTitle[activePlane.index + photoseries.length]);
     });
   }
   // INIT
@@ -304,16 +352,8 @@
       });
       plane.textures[0].onSourceUploaded(() => {
         load++;
-        // console.log(load);
         progress.update((n) => n + 100 / $photoseries.length);
-        //  !pageslug &&
         plane.relativeTranslation.z > 0 && (plane.visible = 1);
-        //   if (e.relativeTranslation.z > 0) {
-        //           e.visible = 0;
-        //         }
-        // if (plane.userData.route === texture.userData.route) {
-        // plane.textures[0].copy(texture);
-        // }
       });
       //   plane.onLoading((texture) => {
       //     // console.log(texture);
@@ -382,7 +422,7 @@
           texture.onSourceUploaded(() => {
             load++;
             progress.update((n) => n + 100 / $photoseries.length);
-            //  !pageslug &&
+            //  !$page.params.Route &&
             el.relativeTranslation.z > 0 && (el.visible = 1);
             //   if (e.relativeTranslation.z > 0) {
             //           e.visible = 0;
@@ -479,7 +519,7 @@
           100
         );
       }
-      if (pageslug) {
+      if ($page.params.Route) {
         transitionState.radiusAnimation = radius;
       }
     } else {
@@ -497,7 +537,7 @@
           100
         );
       }
-      if (pageslug) {
+      if ($page.params.Route) {
         transitionState.radiusAnimation = radius;
       }
       // curtains.resize();
@@ -633,7 +673,7 @@
   }
   //AANIMATE
   function startAnim() {
-    if (pageslug) return;
+    if ($page.params.Route) return;
     // homePageState.set(true);
     startAnimation = anime
       .timeline({
@@ -751,7 +791,7 @@
     eventAnimation.set(false);
 
     if (!activePlane) {
-      activePlane = planes.find((p) => p.userData.route === pageslug);
+      activePlane = planes.find((p) => p.userData.route === $page.params.Route);
     }
     activePlane.setRenderOrder(planes.length + 2);
     tarnsitionPlane.setRenderOrder(planes.length + 1);
@@ -1109,10 +1149,10 @@
     } */
   .title__plane {
     opacity: 0;
-    width: calc(var(--plane__width) + 1vw);
+    /* width: calc(var(--plane__width) + 1vw); */
     position: absolute;
-    left: 50vw;
-    transform: translate(-50%, 50%);
+    /* left: 50vw;
+    transform: translate(-50%, 50%); */
     pointer-events: none;
     overflow: hidden;
   }

@@ -22,19 +22,20 @@
   } from "store.js";
   import { fly } from "svelte/transition";
   import { stores } from "@sapper/app";
+  console.log("routeInit");
   const { page } = stores();
-  showPrelader.set(false);
-  eventAnimation.set(false);
-  const object = $photoseries.find((el) => el.Route === $page.params.Route);
-  if (!$homePageState) {
-    console.log("sort ph");
-    photoseries.update((n) => [
-      ...n.slice(object.Id),
-      ...n.slice(0, object.Id),
-    ]);
-    homePageState.set(false);
-  }
-  titleIndex.set(object.Id);
+  // showPrelader.set(false);
+  // eventAnimation.set(false);
+  // const object = $photoseries.find((el) => el.Route === $page.params.Route);
+  // if (!$homePageState) {
+  //   console.log("sort ph");
+  //   photoseries.update((n) => [
+  //     ...n.slice(object.Id),
+  //     ...n.slice(0, object.Id),
+  //   ]);
+  //   homePageState.set(false);
+  // }
+  // titleIndex.set(object.Id);
   let paddingCoef;
   $: galleryParams = {};
   let layout,
@@ -171,7 +172,7 @@
     display: none;
   }
   .gallery {
-    width: 100vw;
+    width: 100%;
     overflow: hidden;
     position: relative;
     /* max-width: 95vw; */
