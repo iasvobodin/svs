@@ -4,20 +4,21 @@
   import { stores } from "@sapper/app";
   import { fade } from "svelte/transition";
   import { onMount } from "svelte";
-  import { showPrelader } from "store.js";
-  // const { page } = stores();
-  // if ($page.params.Route) {
-  //   showPrelader.set(false);
-  // }
+  import { showPrelader, photoseries, titleIndex } from "store.js";
+  const { page } = stores();
+  if ($page.params.Route) {
+    showPrelader.set(false);
+    const object = $photoseries.find((el) => el.Route === $page.params.Route);
+    photoseries.update((n) => [
+      ...n.slice(object.Id),
+      ...n.slice(0, object.Id),
+    ]);
+    console.log("sortph");
+    titleIndex.set(object.Id);
+  }
   console.log("_layoutInit");
   onMount(() => {
     console.log("onMount layout");
-    // let vh = window.innerHeight * 0.01;
-    // document.documentElement.style.setProperty("--vh", `${vh}px`);
-    // window.addEventListener("resize", () => {
-    // 	let vh = window.innerHeight * 0.01;
-    // 	document.documentElement.style.setProperty("--vh", `${vh}px`);
-    // });
   });
   // const { preloading } = stores();
   // $: console.log($preloading, "$preloading");
@@ -27,9 +28,9 @@
 
 <!-- {#if !$preloading} -->
 <main transition:fade>
-  <!-- {#if $showPrelader} -->
-  <Preloader />
-  <!-- {/if} -->
+  {#if $showPrelader}
+    <Preloader />
+  {/if}
   <div class="canvas">
     <Canvas2 />
   </div>
