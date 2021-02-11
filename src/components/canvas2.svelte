@@ -314,8 +314,8 @@
     tarnsitionPlane.setRenderTarget(distortionTarget);
   }
   async function setTexture(pl) {
-    await tick();
     const planeImages = document.getElementsByClassName("slider__img");
+    await tick();
     planeImages[pl.index] &&
       pl.images.length === 0 &&
       pl.loadImage(planeImages[pl.index]);
@@ -326,6 +326,7 @@
       });
     if (pl.images[0]) {
       pl.images[0].onload = () => {
+        console.log("changeTexture");
         pl.textures[0].needUpdate();
         getUnifors(pl);
       };
