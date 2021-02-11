@@ -316,7 +316,9 @@
   async function setTexture(pl) {
     await tick();
     const planeImages = document.getElementsByClassName("slider__img");
-    planeImages[pl.index] && pl.loadImage(planeImages[pl.index]);
+    planeImages[pl.index] &&
+      pl.images.length === 0 &&
+      pl.loadImage(planeImages[pl.index]);
     pl.textures[0] &&
       pl.textures[0].onSourceUploaded(() => {
         load++;
@@ -396,15 +398,20 @@
   function handlePortrait(e) {
     if (e.matches) {
       // PORTAIT
-      tarnsitionPlane && (tarnsitionPlane.relativeTranslation.x = 0);
+
+      if ($homePageState) {
+        tarnsitionPlane.relativeTranslation.x = -window.innerWidth;
+        // console.log("homepage", tarnsitionPlane);
+      } else {
+        tarnsitionPlane && (tarnsitionPlane.relativeTranslation.x = 0);
+      }
+
       aspect = 1.5;
       widthUn = 1;
       heightUn = 0.72;
       radiusCoef = 0.0725;
 
       setElementSize(0.62, 0.12);
-      // curtains.resize();
-      // paddingCoef.set(0.03);
 
       if (!$homePageState) {
         transitionState.radiusAnimation = Math.min(
@@ -417,7 +424,12 @@
       }
     } else {
       // LANDSCAPE
-      tarnsitionPlane && (tarnsitionPlane.relativeTranslation.x = 0);
+      if ($homePageState) {
+        tarnsitionPlane.relativeTranslation.x = -window.innerWidth;
+      } else {
+        tarnsitionPlane && (tarnsitionPlane.relativeTranslation.x = 0);
+      }
+
       aspect = 0.668;
       widthUn = 0.7;
       heightUn = 0.8;
