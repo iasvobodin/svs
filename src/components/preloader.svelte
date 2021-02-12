@@ -1,7 +1,30 @@
 <script>
   import { progress } from "store.js";
   import { onMount } from "svelte";
-  $: style = `clip-path: inset(0% ${100 - $progress}% 0px 0px);`;
+  import { tweened } from "svelte/motion";
+  import { cubicOut, linear } from "svelte/easing";
+  import anime from "animejs";
+
+  const pr = tweened(0, {
+    duration: 11000,
+    easing: cubicOut,
+  });
+  $: style = `inset(0% ${100 - $pr}% 0px 0px)`;
+  onMount(() => {
+    anime({
+      targets: "testholder",
+      change: () => {},
+    });
+    const preloader = document.getElementById("testholder");
+    console.log("preloader", preloader.style);
+    const change = () => {
+      preloader.style.clipPath = style;
+      window.requestAnimationFrame(change);
+    };
+    // preloader.style.clipPath = style; //`clip-path: inset(0% ${100 - $pr}% 0px 0px);`
+    pr.set(100);
+  });
+
   // onMount(() => {
   //     // let vh = window.innerHeight * 0.01;
   //     // document.documentElement.style.setProperty("--vh", `${vh}px`);
@@ -11,7 +34,7 @@
 
 <div class="preloader">
   <div class="svobodina">
-    <div {style} class="svobodina__holder">
+    <div id="testholder" class="svobodina__holder">
       <picture>
         <source
           media="(orientation: portrait)"

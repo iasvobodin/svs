@@ -141,6 +141,7 @@
 <h1 transition:fly on:outrostart={() => leaveRoute.set(true)}>
   {gallery.Title}
 </h1>
+
 <!-- <div class="div"> -->
 {#if galleryHeight && !$leaveIndex}
   <div style="height: {galleryHeight}px" class="gallery">
@@ -175,6 +176,9 @@
     width: 100%;
     overflow: hidden;
     position: relative;
+    background-image: url('data:image/svg+xml;utf8,<svg viewBox="0 0 1920 50" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><path fill="rgba(18, 53, 81, 1)" d="M 0 0 C 565 0 565 576 1130 576 L 1130 576 L 1130 0 L 0 0 Z" stroke-width="0"></path> <path fill="rgba(18, 53, 81, 1)" d="M 1129 576 C 1524.5 576 1524.5 50 1920 50 L 1920 50 L 1920 0 L 1129 0 Z" stroke-width="0"></path> </svg>');
+    background-size: cover;
+    background-repeat: no-repeat;
     /* max-width: 95vw; */
     /* width: 80vw;
     margin: auto; */

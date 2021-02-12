@@ -134,9 +134,9 @@
 
     addPlane();
 
-    addTransitionPlane();
-
     addShaderPass();
+
+    addTransitionPlane();
 
     translateSlider();
 
@@ -284,7 +284,9 @@
         fCorr: true,
       });
       plane.setRenderTarget(distortionTarget);
-
+      plane.onLoading(() => {
+        // (plane.visible = 1)
+      });
       setTexture(plane);
 
       planes.push(plane);
@@ -326,7 +328,6 @@
       });
     if (pl.images[0]) {
       pl.images[0].onload = () => {
-        console.log("changeTexture");
         pl.textures[0].needUpdate();
         getUnifors(pl);
       };
@@ -400,55 +401,39 @@
     if (e.matches) {
       // PORTAIT
 
-      if ($homePageState) {
-        tarnsitionPlane.relativeTranslation.x = -window.innerWidth;
-        // console.log("homepage", tarnsitionPlane);
-      } else {
-        tarnsitionPlane && (tarnsitionPlane.relativeTranslation.x = 0);
-      }
-
       aspect = 1.5;
       widthUn = 1;
       heightUn = 0.72;
       radiusCoef = 0.0725;
-
       setElementSize(0.62, 0.12);
-
-      if (!$homePageState) {
-        transitionState.radiusAnimation = Math.min(
-          (window.innerHeight * radiusCoef) / 1.3882 / 2,
-          100
-        );
-      }
-      if ($page.params.Route) {
-        transitionState.radiusAnimation = radius;
-      }
     } else {
       // LANDSCAPE
-      if ($homePageState) {
-        tarnsitionPlane.relativeTranslation.x = -window.innerWidth;
-      } else {
-        tarnsitionPlane && (tarnsitionPlane.relativeTranslation.x = 0);
-      }
-
       aspect = 0.668;
       widthUn = 0.7;
       heightUn = 0.8;
       radiusCoef = 0.0755;
-
       setElementSize(0.69);
-
-      if (!$homePageState) {
-        transitionState.radiusAnimation = Math.min(
-          (window.innerWidth * radiusCoef) / 1.3882 / 2,
-          100
-        );
-      }
-      if ($page.params.Route) {
-        transitionState.radiusAnimation = radius;
-      }
-      // curtains.resize();
     }
+    if ($page.params.Route && !$eventAnimation) {
+      tarnsitionPlane && (tarnsitionPlane.relativeTranslation.x = 0);
+    }
+    if (!$page.params.Route) {
+      transitionState.radiusAnimation = Math.min(
+        (window.innerWidth * radiusCoef) / 1.3882 / 2,
+        100
+      );
+      tarnsitionPlane &&
+        (tarnsitionPlane.relativeTranslation.x = -window.innerWidth);
+    } else {
+      transitionState.radiusAnimation = radius;
+    }
+    if (!$page.params.Route && $homePageState) {
+      console.log("ei");
+      transitionState.radiusAnimation = radius;
+    }
+    // if ($page.params.Route && !$homePageState) {
+    //   transitionState.radiusAnimation = radius;
+    // }
   }
   function customCorrection(coef) {
     sliderState.planeCorrection = angleStep * coef;
@@ -518,10 +503,6 @@
   }
 
   function setElementSize(height, margin = 0.06) {
-    // const { width } = curtains.getBoundingRect();
-    // textureTag = `${width > 720 ? "large" : "small"}${
-    //   aspect === 1.5 ? "Portrait" : "Landscape"
-    // }`;
     elWidth =
       (window.innerHeight * height) / aspect + window.innerWidth * margin * 2;
 
@@ -535,10 +516,6 @@
       "--plane__height",
       `${window.innerHeight * height}px`
     );
-    // document.documentElement.style.setProperty(
-    //     "--vh",
-    //     window.innerHeight / 100 + "px"
-    // );
   }
   function getCurtainsSize() {
     curtainsWidth = curtains.getBoundingRect().width;
@@ -1027,6 +1004,7 @@
 <div bind:this={webgl} id="curtains" />
 <div class="transition__plane" />
 
+<!-- <h1>{testId}</h1> -->
 <style>
   .standart__picture {
     width: 100%;
@@ -1088,10 +1066,10 @@
     }
   }
   @media (orientation: portrait) {
-    :root {
+    /* :root {
       --plane__height: 65vh;
       --plane__width: calc(var(--plane__height) * 0.66);
-    }
+    } */
     .wrapper {
       justify-content: center;
       width: 100%;
