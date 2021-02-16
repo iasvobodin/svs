@@ -91,9 +91,9 @@
       yRoundDisable: 1,
       zRoundEnable: 0,
     };
-  //   let src, textureTag;
+  let src, textureTag;
   const { page } = stores();
-  //   $: pageslug = $page.params.Route;
+  $: pageslug = $page.params.Route;
   let titlePlaneOnLoad = false;
   $: aspect = 0;
   let radius = 0;
@@ -103,31 +103,11 @@
   $: $leaveRoute && toIndexAnim();
   $: load === $photoseries.length && $showPrelader && startAnim();
   //   pageslug && showPrelader.set(false);
+
   onMount(() => {
     slider.addEventListener("mousemove", debounce(onChangeTitle, 30));
     slider.addEventListener("touchmove", debounce(onChangeTitle, 30));
-  });
-  //FIRST INIT ROUTE PAGE
-  if ($page.params.Route) {
-    // showPrelader.set(false);
-    eventAnimation.set(false);
-    transitionState.opacityHedline = 0;
-    transitionState.opacityPlane = 1;
-    transitionState.time = 0;
-    transitionState.radiusAnimation = radius;
-    transitionState.scalePlane = 1;
-    transitionState.yRoundDisable = 0;
-    transitionState.zRoundEnable = 1;
 
-    // const object = $photoseries.find((el) => el.Route === $page.params.Route);
-    // photoseries.update((n) => [
-    //   ...n.slice(object.Id),
-    //   ...n.slice(0, object.Id),
-    // ]);
-    // console.log("sortph");
-    // titleIndex.set(object.Id);
-  }
-  onMount(() => {
     initCurtains();
 
     initMatchMedia();
@@ -145,19 +125,93 @@
         opacity: 1,
       });
 
-      activePlane = planes[0];
+      if (!activePlane) {
+        activePlane = planes.find(
+          (p) => p.userData.route === $page.params.Route
+        );
+      }
+
+      activePlane.images[0].onload = () => {
+        activePlane.textures[0].needUpdate();
+        getUnifors(activePlane);
+      };
+      activePlane.onReady(() => {});
+      //   getUnifors(pl);
       activePlane.uniforms.uProgress.value = 1;
       tarnsitionPlane.relativeTranslation.x = 0;
       tarnsitionPlane.uniforms.uColor.value = activePlane.userData.color;
 
-      activePlane.setRenderOrder(planes.length + 2);
-      tarnsitionPlane.setRenderOrder(planes.length + 1);
+      planes.forEach((e) => {
+        e.isDrawn() && (activePlane.visible = 1) && (e.visible = 0);
+      });
+
+      //   activePlane.visible = 1;
+    } else {
+      planes.forEach((pl, i) => {
+        pl.textures[0].onSourceUploaded(() => {
+          load++;
+          progress.update((n) => n + 100 / $photoseries.length);
+          pl.relativeTranslation.z > 0 && (pl.visible = 1);
+        });
+        pl.images[0].onload = () => {
+          pl.textures[0].needUpdate();
+          getUnifors(pl);
+        };
+      });
     }
   });
+  if ($page.params.Route) {
+    showPrelader.set(false);
+    eventAnimation.set(false);
+    transitionState.opacityHedline = 0;
+    transitionState.opacityPlane = 1;
+    transitionState.time = 0;
+    transitionState.radiusAnimation = radius;
+    transitionState.scalePlane = 1;
+    transitionState.yRoundDisable = 0;
+    transitionState.zRoundEnable = 1;
 
+    const object = $photoseries.find((el) => el.Route === $page.params.Route);
+    photoseries.update((n) => [
+      ...n.slice(object.Id),
+      ...n.slice(0, object.Id),
+    ]);
+    titleIndex.set(object.Id);
+  }
   $: if ($page.params.Route) {
     onMount(() => {
+      //   anime.set(".main__head", {
+      //     opacity: 1,
+      //   });
+      //   transitionState.opacityHedline = 0;
+      //   transitionState.opacityPlane = 1;
+      //   transitionState.time = 0;
+      //   transitionState.radiusAnimation = radius;
+      //   transitionState.scalePlane = 1;
+      //   transitionState.yRoundDisable = 0;
+      //   transitionState.zRoundEnable = 1;
+      //   if (!activePlane) {
+      //     activePlane = planes.find(
+      //       (p) => p.userData.route === $page.params.Route
+      //     );
+      //   }
       titleIndex.set(activePlane.index);
+      //   activePlane.onReady(() => {
+      //     getUnifors(activePlane);
+      //     // setTexture(activePlane);
+      //   });
+      // //   document.fonts.load("1em Cormorant Infant").then(() => {
+      //     tarnsitionPlane.relativeTranslation.x = 0;
+      //     tarnsitionPlane.uniforms.uColor.value = activePlane.userData.color;
+      // //   });
+      //   planes.forEach((e) => {
+      //     e.isDrawn() && (e.visible = 0);
+      //   });
+      //   activePlane.visible = 1;
+      //   activePlane.uniforms.uProgress.value = 1;
+      //   titlePlaneOnLoad &&
+      //     (activePlaneTitle =
+      //       planesTitle[activePlane.index + photoseries.length]);
     });
   }
   // INIT
@@ -230,8 +284,7 @@
       shaderPass.loader.loadImage(image);
     });
   }
-  function addPlane() {
-    console.log("createplane");
+  function addPlane(trPlane = false) {
     const planeElement = document.getElementsByClassName("plane");
     const paramsPlane = {
       widthSegments: 16,
@@ -239,14 +292,11 @@
       vertexShader: vertex,
       // fragmentShader: fragment,
       visible: 1,
-      autoloadSources: false,
+      //   autoloadSources: false,
       // depthTest: false,
       fov: 1,
       renderOrder: 2,
       alwaysDraw: false,
-      //   texturesOptions: {
-      //     minFilter: curtains.gl.LINEAR_MIPMAP_NEAREST,
-      //   },
       // shareProgram: true,
       watchScroll: false,
       uniforms: {
@@ -268,6 +318,8 @@
       },
     };
 
+    // if (Array.isArray(planeElement)) {
+    // console.time("create Plane");
     [...planeElement].forEach((element, i) => {
       const plane = new Plane(curtains, element, {
         ...paramsPlane,
@@ -284,11 +336,28 @@
         fCorr: true,
       });
       plane.setRenderTarget(distortionTarget);
-      plane.onLoading(() => {
-        // (plane.visible = 1)
+      // plane.onReady(() => {
+      //     setTexture(plane);
+      // });
+      plane.onAfterResize(() => {
+        // getUnifors(plane);
       });
-      setTexture(plane);
-
+      plane.onLoading(() => {
+        console.log("loading?");
+      });
+      //   plane.textures[0].onSourceUploaded(() => {
+      //     load++;
+      //     progress.update((n) => n + 100 / $photoseries.length);
+      //     plane.relativeTranslation.z > 0 && (plane.visible = 1);
+      //   });
+      //   plane.onLoading((texture) => {
+      //     // console.log(texture);
+      //   });
+      // console.log(plane);
+      //   // CREATE TEXTURE
+      //   plane.createTexture({
+      //     sampler: "planeTexture",
+      //   }),
       planes.push(plane);
     });
   }
@@ -296,6 +365,10 @@
     const params = {
       vertexShader: trvert,
       fragmentShader: trfrag,
+      // fov: 1,
+      // depthTest: false,
+      // transparent: true,
+      // renderOrder:1,
       renderOrder: 1,
       uniforms: {
         uTRprogress: {
@@ -314,23 +387,38 @@
     tarnsitionPlane = new Plane(curtains, trPlane[0], params);
     tarnsitionPlane.relativeTranslation.x = -window.innerWidth;
     tarnsitionPlane.setRenderTarget(distortionTarget);
+    console.log(tarnsitionPlane);
+    // tarnsitionPlane.onReady(()=>{
+    //     tarnsitionPlane.setRenderOrder(-1);
+    // })
   }
-  async function setTexture(pl) {
-    const planeImages = document.getElementsByClassName("slider__img");
-    await tick();
-    planeImages[pl.index] &&
-      pl.images.length === 0 &&
-      pl.loadImage(planeImages[pl.index]);
-    pl.textures[0] &&
-      pl.textures[0].onSourceUploaded(() => {
-        load++;
-        progress.update((n) => n + 100 / $photoseries.length);
-      });
-    if (pl.images[0]) {
-      pl.images[0].onload = () => {
-        pl.textures[0].needUpdate();
-        getUnifors(pl);
-      };
+  function setTexture(el) {
+    if (
+      el.userData.textureTag !== $photoseries[el.index][textureTag].textureTag
+    ) {
+      loader.loadImage(
+        $photoseries[el.index][textureTag].src,
+        {},
+        (texture) => {
+          el.userData.textureTag =
+            $photoseries[el.index][textureTag].textureTag;
+          // texture.userData.route = el.userData.route;
+          texture.setMinFilter(curtains.gl.LINEAR_MIPMAP_NEAREST);
+          texture.onSourceUploaded(() => {
+            load++;
+            progress.update((n) => n + 100 / $photoseries.length);
+            //  !$page.params.Route &&
+            el.relativeTranslation.z > 0 && (el.visible = 1);
+            //   if (e.relativeTranslation.z > 0) {
+            //           e.visible = 0;
+            //         }
+            // if (el.userData.route === texture.userData.route) {
+            el.textures[0].copy(texture);
+            // }
+          });
+        },
+        (image, error) => {}
+      );
     }
   }
   function addShaderPass() {
@@ -503,6 +591,10 @@
   }
 
   function setElementSize(height, margin = 0.06) {
+    const { width } = curtains.getBoundingRect();
+    textureTag = `${width > 720 ? "large" : "small"}${
+      aspect === 1.5 ? "Portrait" : "Landscape"
+    }`;
     elWidth =
       (window.innerHeight * height) / aspect + window.innerWidth * margin * 2;
 
@@ -603,6 +695,7 @@
           change: () => {
             planes.forEach((plane, i) => {
               if (plane.relativeTranslation.z < 0) {
+                //         (plane.visible = 0);
                 plane.uniforms.uOpacity.value = transitionState.opacityPlane;
               }
             });
@@ -753,12 +846,38 @@
       });
     toIndex.finished.then(() => {
       eventAnimation.set(true);
-      leaveRoute.set(false);
+      // (async () => {
+      // await tick;
+      const planeElement = document.getElementsByClassName("slider__img");
+      setTimeout(() => {
+        planes.forEach((element) => {
+          console.log(element);
+          // element.images[0].onload = () => {
+          //   element.textures[0].needUpdate();
+          //   getUnifors(pl);
+          // };
+        });
+      }, 0);
+      console.log([...planeElement]);
+      // })();
 
-      planes.forEach((pl, i) => {
-        planeChangeView(pl);
-        setTexture(pl);
+      //   console.log([...planeElement]);
+      planes.forEach((e, i) => {
+        planeChangeView(e);
+        // e.resetPlane(planeElement[i]);
+        // e.onLoading(() => {
+        //   console.log("loading?");
+        // });
+        // e.onReady(() => {
+        //   console.log("onReady(");
+        // });
+        // // e.loadSource(planeElement[i]);
+        // console.log(
+        //   e //.images //[0].needUpdate();
+        // );
       });
+      toIndex = null;
+      leaveRoute.set(false);
       sliderState.currentPosition = sliderState.endPosition =
         sliderState.translation;
       !$homePageState && homePageState.set(true);

@@ -95,7 +95,6 @@
     height: calc(var(--vh) * 100);
     width: 100%;
     position: absolute;
-    /* opacity: 0; */
     display: grid;
     place-items: center;
     grid-template-rows: 1fr;
