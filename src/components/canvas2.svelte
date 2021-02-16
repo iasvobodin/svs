@@ -56,6 +56,7 @@
     activePlane,
     activePlaneTitle,
     toIndex,
+    planeImg = [],
     toRoute,
     tarnsitionPlane,
     toInvisible,
@@ -95,6 +96,7 @@
   const { page } = stores();
   //   $: pageslug = $page.params.Route;
   let titlePlaneOnLoad = false;
+  $: planeImagesSrc = [];
   $: aspect = 0;
   let radius = 0;
   $: radiusCoef = 0;
@@ -104,6 +106,13 @@
   $: load === $photoseries.length && $showPrelader && startAnim();
   //   pageslug && showPrelader.set(false);
   onMount(() => {
+    $photoseries.forEach((el, i) => {
+      planeImagesSrc.push(
+        `https://raw.githubusercontent.com/iasvobodin/svs/images/static/image/jpg/${el.largeLandscape.src}.jpg`
+      );
+    });
+
+    console.log(Date.now(), "planeImg", planeImg);
     slider.addEventListener("mousemove", debounce(onChangeTitle, 30));
     slider.addEventListener("touchmove", debounce(onChangeTitle, 30));
   });
@@ -318,11 +327,14 @@
   async function setTexture(pl) {
     const planeImages = document.getElementsByClassName("slider__img");
     await tick();
+    // planeImages[1].onload = () =>
+    // console.log("image load ", [...planeImages][1].src);
     planeImages[pl.index] &&
       pl.images.length === 0 &&
       pl.loadImage(planeImages[pl.index]);
     pl.textures[0] &&
       pl.textures[0].onSourceUploaded(() => {
+        console.log("texture load ", pl.index);
         load++;
         progress.update((n) => n + 100 / $photoseries.length);
       });
@@ -978,6 +990,8 @@
           />
 
           <img
+            on:load={console.log(Date.now())}
+            bind:this={planeImg[index]}
             style="opacity:0"
             data-sampler="planeTexture"
             class="slider__img"
@@ -985,8 +999,7 @@
             crossorigin="anonimous"
             decoding="async"
             draggable="false"
-            src="https://raw.githubusercontent.com/iasvobodin/svs/images/static/image/jpg/{seriya
-              .largeLandscape.src}.jpg"
+            src=""
           />
         </picture>
       {/if}
