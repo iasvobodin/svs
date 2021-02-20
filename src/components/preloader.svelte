@@ -1,22 +1,3 @@
-<script>
-  import { progress } from "store.js";
-  import { onMount } from "svelte";
-  import { tweened } from "svelte/motion";
-  import { cubicOut, linear } from "svelte/easing";
-  import anime from "animejs";
-
-  // $: style = `inset(0% ${100 - $progress}% 0px 0px)`;
-  // function ticck() {
-  //   document.documentElement.style.setProperty("--rpeloader__inset", `${50}%`);
-  // }
-  onMount(() => {
-    // let vh = window.innerHeight * 0.01;
-    // document.documentElement.style.setProperty("--vh", `${vh}px`);
-    console.log("onMount preloader");
-  });
-</script>
-
-<!-- <button on:click={ticck}>click</button> -->
 <div class="preloader">
   <div class="svobodina">
     <div class="svobodina__holder variable__path">
@@ -76,6 +57,7 @@
     place-items: center;
     grid-template-rows: 1fr;
     grid-template-columns: 1fr;
+    /* opacity: 0; */
   }
   @media (orientation: landscape) {
     .variable__path {

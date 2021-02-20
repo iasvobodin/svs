@@ -27,9 +27,9 @@
 
 <!-- {#if !$preloading} -->
 <main transition:fade>
-  <!-- {#if $showPrelader} -->
-  <Preloader />
-  <!-- {/if} -->
+  {#if $showPrelader}
+    <Preloader />
+  {/if}
   <div class="canvas">
     <Canvas2 />
   </div>

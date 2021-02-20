@@ -94,9 +94,9 @@
     };
   let src, textureTag;
   const { page } = stores();
-  $: pageslug = $page.params.Route;
+  // $: pageslug = $page.params.Route;
   let titlePlaneOnLoad = false;
-  $: aspect = 0;
+  let aspect = 0;
   let radius = 0;
   $: radiusCoef = 0;
   $: elWidth = 0;
@@ -1072,7 +1072,6 @@
         data-route={seriya.Route}
         data-color={[seriya.ColorVector]} -->
     <div class="plane">
-      <!-- {#if showPicture} -->
       {#if showPicture && $eventAnimation ? true : index === 0 ? true : false}
         <picture class="standart__picture">
           <source
@@ -1107,7 +1106,6 @@
           />
         </picture>
       {/if}
-      <!-- {/if} -->
     </div>
   {/each}
 </div>
