@@ -2,8 +2,19 @@
   export async function preload({ params }) {
     const res = await this.fetch(`/db/${params.Route}.json`);
     const data = await res.json();
-    return { data };
+    let [Route, type] = params.Route;
+
+return {data, type, Route };
+    // return { data };
   }
+</script>
+
+<script context="module">
+	export async function preload({ params }) {
+		let [slug, year, month, day] = params.slug;
+
+		return { slug, year, month, day };
+	}
 </script>
 
 <script>

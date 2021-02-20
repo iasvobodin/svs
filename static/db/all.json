@@ -4,6 +4,7 @@
     "Name": "YulyaKirill",
     "Title": "Юля и Кирилл",
     "Descripion": "",
+    "Type": "wedding",
     "EngDescription": "",
     "ImageName": [
       "20-08-29-14-00-31",
@@ -1577,6 +1578,7 @@
     "Name": "YulyaEvgeniy",
     "Title": "Юля и Евгений",
     "Descripion": "",
+    "Type": "wedding",
     "EngDescription": "",
     "ImageName": [
       "20-03-09-11-05-44",
@@ -2030,6 +2032,7 @@
     "Name": "NastyaIgor",
     "Title": "Анастасия и Игорь",
     "Descripion": "",
+    "Type": "wedding",
     "EngDescription": "",
     "ImageName": [
       "20-07-03-16-42-25",
@@ -3459,6 +3462,7 @@
     "Name": "Inna",
     "Title": "Инна",
     "Descripion": "",
+    "Type": "wedding",
     "EngDescription": "",
     "ImageName": [
       "20-08-03-14-01-25",
@@ -3880,6 +3884,7 @@
     "Name": "bacheloretteParty",
     "Title": "Девичник",
     "Descripion": "",
+    "Type": "wedding",
     "EngDescription": "",
     "ImageName": [
       "19-05-05-15-24-20",
@@ -4302,6 +4307,7 @@
     "Name": "EkaterinaPavel",
     "Title": "Екатерина и Павел",
     "Descripion": "",
+    "Type": "wedding",
     "EngDescription": "",
     "ImageName": [
       "19-05-01-11-02-36",
@@ -4948,6 +4954,7 @@
     "Name": "AngelinaRoman",
     "Title": "Ангелина и Роман",
     "Descripion": "",
+    "Type": "wedding",
     "EngDescription": "",
     "ImageName": [
       "19-05-05-16-01-00",
@@ -5530,6 +5537,7 @@
     "Name": "AlexandraVadim",
     "Title": "Александра и Вадим",
     "Descripion": "",
+    "Type": "wedding",
     "EngDescription": "",
     "ImageName": [
       "19-08-24-16-35-35",
@@ -5950,6 +5958,7 @@
     "Name": "ElenaNikita",
     "Title": "Лена и Никита",
     "Descripion": "",
+    "Type": "lovestory",
     "EngDescription": "",
     "ImageName": [
       "19-05-10-16-57-23",
@@ -6515,6 +6524,7 @@
     "Name": "DashaMaksim",
     "Title": "Даша и Максим",
     "Descripion": "",
+    "Type": "lovestory",
     "EngDescription": "",
     "ImageName": [
       "19-05-07-19-29-25",
@@ -6936,6 +6946,7 @@
     "Name": "AlenaAlexei",
     "Title": "Алёна и Алексей",
     "Descripion": "",
+    "Type": "wedding",
     "EngDescription": "",
     "ImageName": [
       "19-07-27-08-02-50",
@@ -8287,6 +8298,7 @@
     "Name": "RitaVlad",
     "Title": "Рита и Влад",
     "Descripion": "",
+    "Type": "wedding",
     "EngDescription": "",
     "ImageName": [
       "19-06-15-08-41-50",
@@ -9908,6 +9920,7 @@
     "Name": "IrinaIvan",
     "Title": "Ирина и Иван",
     "Descripion": "",
+    "Type": "wedding",
     "EngDescription": "",
     "ImageName": [
       "19-03-02-10-37-05",

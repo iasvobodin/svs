@@ -332,6 +332,7 @@
         route: $photoseries[plane.index].Route,
         color: $photoseries[plane.index].ColorVector,
         id: $photoseries[plane.index].Id,
+        type: $photoseries[plane.index].Type,
       };
       getUnifors(plane, {
         pCorr: false,
@@ -967,7 +968,7 @@
       eventAnimation.set(false);
       // getUnifors(activePlane);
       toRouteAnim();
-      goto(`/${el.userData.route}/`);
+      goto(`/${el.userData.type}/${el.userData.route}/`);
     });
   }
   function onMouseDown(e) {
@@ -1076,19 +1077,19 @@
         <picture class="standart__picture">
           <source
             media="(orientation: portrait)"
-            srcset="https://raw.githubusercontent.com/iasvobodin/svs/images/static/image/webp/{seriya
+            srcset="https://raw.githubusercontent.com/iasvobodin/svs/images/static/image/webp/720/{seriya
               .largePortrait.src}.webp"
             type="image/webp"
           />
           <source
             media="(orientation: portrait)"
-            srcset="https://raw.githubusercontent.com/iasvobodin/svs/images/static/image/jpg/{seriya
+            srcset="https://raw.githubusercontent.com/iasvobodin/svs/images/static/image/jpg/720/{seriya
               .largePortrait.src}.jpg"
             type="image/jpg"
           />
           <source
             media="(orientation: landscape)"
-            srcset="https://raw.githubusercontent.com/iasvobodin/svs/images/static/image/webp/{seriya
+            srcset="https://raw.githubusercontent.com/iasvobodin/svs/images/static/image/webp/720/{seriya
               .largeLandscape.src}.webp"
             type="image/webp"
           />
@@ -1101,7 +1102,7 @@
             crossorigin="anonimous"
             decoding="async"
             draggable="false"
-            src="https://raw.githubusercontent.com/iasvobodin/svs/images/static/image/jpg/{seriya
+            src="https://raw.githubusercontent.com/iasvobodin/svs/images/static/image/jpg/720/{seriya
               .largeLandscape.src}.jpg"
           />
         </picture>

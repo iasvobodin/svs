@@ -1,11 +1,11 @@
 {
   "Series": [
-    
     {
       "id": "13",
       "Name": "YulyaKirill",
       "Title": "Юля и Кирилл",
       "Descripion": "",
+      "Type":"wedding",
       "EngDescription": ""
     },
     {
@@ -13,6 +13,7 @@
       "Name": "YulyaEvgeniy",
       "Title": "Юля и Евгений",
       "Descripion": "",
+      "Type":"wedding",
       "EngDescription": ""
     },
     {
@@ -20,6 +21,7 @@
       "Name": "NastyaIgor",
       "Title": "Анастасия и Игорь",
       "Descripion": "",
+      "Type":"wedding",
       "EngDescription": ""
     },
     {
@@ -27,6 +29,7 @@
       "Name": "Inna",
       "Title": "Инна",
       "Descripion": "",
+      "Type":"wedding",
       "EngDescription": ""
     },
     {
@@ -34,6 +37,7 @@
       "Name": "bacheloretteParty",
       "Title": "Девичник",
       "Descripion": "",
+      "Type":"wedding",
       "EngDescription": ""
     },
     {
@@ -41,6 +45,7 @@
       "Name": "EkaterinaPavel",
       "Title": "Екатерина и Павел",
       "Descripion": "",
+      "Type":"wedding",
       "EngDescription": ""
     },
     {
@@ -48,6 +53,7 @@
       "Name": "AngelinaRoman",
       "Title": "Ангелина и Роман",
       "Descripion": "",
+      "Type":"wedding",
       "EngDescription": ""
     },
     {
@@ -55,6 +61,7 @@
       "Name": "AlexandraVadim",
       "Title": "Александра и Вадим",
       "Descripion": "",
+      "Type":"wedding",
       "EngDescription": ""
     },
     {
@@ -62,6 +69,7 @@
       "Name": "ElenaNikita",
       "Title": "Лена и Никита",
       "Descripion": "",
+      "Type":"lovestory",
       "EngDescription": ""
     },
     {
@@ -69,6 +77,7 @@
       "Name": "DashaMaksim",
       "Title": "Даша и Максим",
       "Descripion": "",
+      "Type":"lovestory",
       "EngDescription": ""
     },
     {
@@ -76,6 +85,7 @@
       "Name": "AlenaAlexei",
       "Title": "Алёна и Алексей",
       "Descripion": "",
+      "Type":"wedding",
       "EngDescription": ""
     },
     {
@@ -83,6 +93,7 @@
       "Name": "RitaVlad",
       "Title": "Рита и Влад",
       "Descripion": "",
+      "Type":"wedding",
       "EngDescription": ""
     },
     {
@@ -90,6 +101,7 @@
       "Name": "IrinaIvan",
       "Title": "Ирина и Иван",
       "Descripion": "",
+      "Type":"wedding",
       "EngDescription": ""
     }
   ],
@@ -99,6 +111,7 @@
     "Name": "Portfolio",
     "Title": "Портфолио",
     "Descripion": "",
+    "Type":"wedding",
     "EngDescription": ""
   }
 ]

@@ -112,21 +112,22 @@ const photoseries = db.Series.map((el, index) => {
     Id: index,
     Route: el.Name.toLowerCase(),
     Title: el.Title,
+    Type: el.Type,
     smallPortrait: {
        textureTag: "smallPortrait",
-      src: `https://raw.githubusercontent.com/iasvobodin/svs/images/static/image/jpg/480/${el.Portrait}.jpg`,
+      src: `${el.Portrait}`,
     },
     largePortrait: {
        textureTag: "largePortrait",
-      src: `https://raw.githubusercontent.com/iasvobodin/svs/images/static/image/jpg/720/${el.Portrait}.jpg`,
+      src: `${el.Portrait}`,
     },
     smallLandscape: {
        textureTag: "smallLandscape",
-      src: `https://raw.githubusercontent.com/iasvobodin/svs/images/static/image/jpg/480/${el.Cover.Name}.jpg`,
+      src: `${el.Cover.Name}`,
     },
     largeLandscape: {
        textureTag: "largeLandscape",
-      src: `https://raw.githubusercontent.com/iasvobodin/svs/images/static/image/jpg/720/${el.Cover.Name}.jpg`,
+      src: `${el.Cover.Name}`,
     },
     LandscapeFileName: el.Cover.Name,
     PortraitFileName: el.Portrait,
