@@ -59,10 +59,7 @@
   :root {
     --rpeloader__inset: 100%;
   }
-  .variable__path {
-    clip-path: inset(0% var(--rpeloader__inset) 0px 0px);
-    transition: clip-path 1s;
-  }
+
   .preloader__img {
     position: absolute;
     height: 100%;
@@ -81,6 +78,10 @@
     grid-template-columns: 1fr;
   }
   @media (orientation: landscape) {
+    .variable__path {
+      clip-path: inset(0% var(--rpeloader__inset) 0px 0px);
+      transition: clip-path 1s;
+    }
     .svobodina {
       position: absolute;
       width: min(62vw, 1600px);
@@ -107,6 +108,10 @@
     }
   }
   @media (orientation: portrait) {
+    .variable__path {
+      clip-path: inset(var(--rpeloader__inset) 0% 0px 0px);
+      transition: clip-path 1s;
+    }
     .svobodina {
       height: 90vh;
       height: calc(var(--vh) * 90);
