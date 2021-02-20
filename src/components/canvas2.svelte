@@ -44,6 +44,7 @@
   // VARIABLE DATA
   console.log("canvas2init");
   let curtains,
+    // showPicture = false,
     webgl,
     shaderPass,
     disp = 0,
@@ -102,9 +103,11 @@
   $: $leaveIndex && !toRoute && toRouteAnim();
   $: $leaveRoute && toIndexAnim();
   $: load === $photoseries.length && $showPrelader && startAnim();
+  $: showPicture = false;
   //   pageslug && showPrelader.set(false);
 
   onMount(() => {
+    showPicture = true;
     slider.addEventListener("mousemove", debounce(onChangeTitle, 30));
     slider.addEventListener("touchmove", debounce(onChangeTitle, 30));
 
@@ -147,17 +150,17 @@
 
       //   activePlane.visible = 1;
     } else {
-      planes.forEach((pl, i) => {
-        pl.textures[0].onSourceUploaded(() => {
-          load++;
-          progress.update((n) => n + 100 / $photoseries.length);
-          pl.relativeTranslation.z > 0 && (pl.visible = 1);
-        });
-        pl.images[0].onload = () => {
-          pl.textures[0].needUpdate();
-          getUnifors(pl);
-        };
-      });
+      // planes.forEach((pl, i) => {
+      //   pl.textures[0].onSourceUploaded(() => {
+      //     load++;
+      //     // progress.update((n) => n + 100 / $photoseries.length);
+      //     pl.relativeTranslation.z > 0 && (pl.visible = 1);
+      //   });
+      //   pl.images[0].onload = () => {
+      //     pl.textures[0].needUpdate();
+      //     getUnifors(pl);
+      //   };
+      // });
     }
   });
   if ($page.params.Route) {
@@ -292,7 +295,7 @@
       vertexShader: vertex,
       // fragmentShader: fragment,
       visible: 1,
-      //   autoloadSources: false,
+      autoloadSources: false,
       // depthTest: false,
       fov: 1,
       renderOrder: 2,
@@ -343,8 +346,9 @@
         // getUnifors(plane);
       });
       plane.onLoading(() => {
-        console.log("loading?");
+        // console.log("loading?");
       });
+      setTexture(plane);
       //   plane.textures[0].onSourceUploaded(() => {
       //     load++;
       //     progress.update((n) => n + 100 / $photoseries.length);
@@ -392,33 +396,26 @@
     //     tarnsitionPlane.setRenderOrder(-1);
     // })
   }
-  function setTexture(el) {
-    if (
-      el.userData.textureTag !== $photoseries[el.index][textureTag].textureTag
-    ) {
-      loader.loadImage(
-        $photoseries[el.index][textureTag].src,
-        {},
-        (texture) => {
-          el.userData.textureTag =
-            $photoseries[el.index][textureTag].textureTag;
-          // texture.userData.route = el.userData.route;
-          texture.setMinFilter(curtains.gl.LINEAR_MIPMAP_NEAREST);
-          texture.onSourceUploaded(() => {
-            load++;
-            progress.update((n) => n + 100 / $photoseries.length);
-            //  !$page.params.Route &&
-            el.relativeTranslation.z > 0 && (el.visible = 1);
-            //   if (e.relativeTranslation.z > 0) {
-            //           e.visible = 0;
-            //         }
-            // if (el.userData.route === texture.userData.route) {
-            el.textures[0].copy(texture);
-            // }
-          });
-        },
-        (image, error) => {}
-      );
+  async function setTexture(pl) {
+    const planeImages = document.getElementsByClassName("slider__img");
+    await tick();
+    planeImages[pl.index] &&
+      pl.images.length === 0 &&
+      pl.loadImage(planeImages[pl.index]);
+    pl.textures[0] &&
+      pl.textures[0].onSourceUploaded(() => {
+        load++;
+        document.documentElement.style.setProperty(
+          "--rpeloader__inset",
+          `${100 - load * (100 / $photoseries.length)}%`
+        );
+        // progress.update((n) => n + 100 / $photoseries.length);
+      });
+    if (pl.images[0]) {
+      pl.images[0].onload = () => {
+        pl.textures[0].needUpdate();
+        getUnifors(pl);
+      };
     }
   }
   function addShaderPass() {
@@ -1075,7 +1072,8 @@
         data-route={seriya.Route}
         data-color={[seriya.ColorVector]} -->
     <div class="plane">
-      {#if $eventAnimation ? true : index === 0 ? true : false}
+      <!-- {#if showPicture} -->
+      {#if showPicture && $eventAnimation ? true : index === 0 ? true : false}
         <picture class="standart__picture">
           <source
             media="(orientation: portrait)"
@@ -1109,6 +1107,7 @@
           />
         </picture>
       {/if}
+      <!-- {/if} -->
     </div>
   {/each}
 </div>
