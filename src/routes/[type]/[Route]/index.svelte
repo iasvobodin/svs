@@ -2,26 +2,19 @@
   export async function preload({ params }) {
     const res = await this.fetch(`/db/${params.Route}.json`);
     const data = await res.json();
-    let [Route, type] = params.Route;
+    // let [Route, type] = params.Route;
 
-return {data, type, Route };
+    return { data };
     // return { data };
   }
 </script>
 
-<script context="module">
-	export async function preload({ params }) {
-		let [slug, year, month, day] = params.slug;
-
-		return { slug, year, month, day };
-	}
-</script>
-
+<!--<script context="module" ✂prettier:content✂="CglleHBvcnQgYXN5bmMgZnVuY3Rpb24gcHJlbG9hZCh7IHBhcmFtcyB9KSB7CgkJbGV0IFtzbHVnLCB5ZWFyLCBtb250aCwgZGF5XSA9IHBhcmFtcy5zbHVnOwoKCQlyZXR1cm4geyBzbHVnLCB5ZWFyLCBtb250aCwgZGF5IH07Cgl9Cg==">{}</script>-->
 <script>
   import { debounce } from "lodash-es/lodash";
   import { onMount, tick } from "svelte";
   import justifiedLayout from "justified-layout";
-  import Spic from "../components/spic.svelte";
+  import Spic from "../../../components/spic.svelte";
   import {
     titleIndex,
     showPrelader,

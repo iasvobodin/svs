@@ -25,9 +25,10 @@
   // import vertex from "assets/start.vert";
   import {
     titleIndex,
+    typePhotoseries,
     showPrelader,
     homePageState,
-    progress,
+    activePhotoseries,
     eventAnimation,
     photoseries,
     leaveIndex, // true then animation to route
@@ -104,7 +105,9 @@
   $: $leaveRoute && toIndexAnim();
   $: load === $photoseries.length && $showPrelader && startAnim();
   $: showPicture = false;
+  $: titlePh = 0;
   //   pageslug && showPrelader.set(false);
+  // activePhotoseries.set($photoseries.find((el) => el.Route === "irinaivan"));
 
   onMount(() => {
     showPicture = true;
@@ -115,7 +118,11 @@
 
     initMatchMedia();
 
-    addPlane();
+    const activeElement = document.getElementsByClassName("activeplane");
+    addPlane(activeElement);
+
+    const planeElement = document.getElementsByClassName("plane");
+    planeElement && addPlane(planeElement);
 
     addShaderPass();
 
@@ -129,38 +136,27 @@
       });
 
       if (!activePlane) {
-        activePlane = planes.find(
-          (p) => p.userData.route === $page.params.Route
-        );
+        activePlane = planes[0];
       }
-
-      activePlane.images[0].onload = () => {
-        activePlane.textures[0].needUpdate();
-        getUnifors(activePlane);
-      };
-      activePlane.onReady(() => {});
+      // console.log(activePlane, "activePlane");
+      // activePlane.images[0].onload = () => {
+      //   activePlane.textures[0].needUpdate();
+      //   getUnifors(activePlane);
+      // };
+      // activePlane.onReady(() => {});
       //   getUnifors(pl);
       activePlane.uniforms.uProgress.value = 1;
       tarnsitionPlane.relativeTranslation.x = 0;
+      // console.log(tarnsitionPlane, activePlane.userData, "tarnsitionPlane");
       tarnsitionPlane.uniforms.uColor.value = activePlane.userData.color;
 
       planes.forEach((e) => {
         e.isDrawn() && (activePlane.visible = 1) && (e.visible = 0);
       });
 
-      //   activePlane.visible = 1;
+      activePlane.visible = 1;
+      // curtains.needRender();
     } else {
-      // planes.forEach((pl, i) => {
-      //   pl.textures[0].onSourceUploaded(() => {
-      //     load++;
-      //     // progress.update((n) => n + 100 / $photoseries.length);
-      //     pl.relativeTranslation.z > 0 && (pl.visible = 1);
-      //   });
-      //   pl.images[0].onload = () => {
-      //     pl.textures[0].needUpdate();
-      //     getUnifors(pl);
-      //   };
-      // });
     }
   });
   if ($page.params.Route) {
@@ -173,50 +169,43 @@
     transitionState.scalePlane = 1;
     transitionState.yRoundDisable = 0;
     transitionState.zRoundEnable = 1;
+    //SET ACTIVE PLANE NODE
+    const activeNode = $photoseries.find(
+      (el) => el.Route === $page.params.Route
+    );
+    activePhotoseries.set(activeNode);
+    // console.log($typePhotoseries, "$typePhotoseries");
+    // typePhotoseries.set(
+    //   $photoseries.filter(
+    //     (el) => el.Type === $page.params.type && el.Route !== $page.params.Route
+    //   )
+    // );
+    // console.log(
+    //   $photoseries.filter(
+    //     (el) => el.Type === $page.params.type && el.Route !== $page.params.Route
+    //   )
+    // );
+    // $photoseries.Type;
+    // photoseries.update((n) => [
+    //   ...n.slice(activeNode.Id),
+    //   ...n.slice(0, activeNode.Id),
+    // ]);
 
-    const object = $photoseries.find((el) => el.Route === $page.params.Route);
-    photoseries.update((n) => [
-      ...n.slice(object.Id),
-      ...n.slice(0, object.Id),
-    ]);
-    titleIndex.set(object.Id);
+    titleIndex.set(0);
+  } else {
+    activePhotoseries.set($photoseries[0]);
+    typePhotoseries.set($photoseries.filter((el) => el.Id !== 0));
   }
   $: if ($page.params.Route) {
     onMount(() => {
-      //   anime.set(".main__head", {
-      //     opacity: 1,
-      //   });
-      //   transitionState.opacityHedline = 0;
-      //   transitionState.opacityPlane = 1;
-      //   transitionState.time = 0;
-      //   transitionState.radiusAnimation = radius;
-      //   transitionState.scalePlane = 1;
-      //   transitionState.yRoundDisable = 0;
-      //   transitionState.zRoundEnable = 1;
-      //   if (!activePlane) {
-      //     activePlane = planes.find(
-      //       (p) => p.userData.route === $page.params.Route
-      //     );
-      //   }
       titleIndex.set(activePlane.index);
-      //   activePlane.onReady(() => {
-      //     getUnifors(activePlane);
-      //     // setTexture(activePlane);
-      //   });
-      // //   document.fonts.load("1em Cormorant Infant").then(() => {
-      //     tarnsitionPlane.relativeTranslation.x = 0;
-      //     tarnsitionPlane.uniforms.uColor.value = activePlane.userData.color;
-      // //   });
-      //   planes.forEach((e) => {
-      //     e.isDrawn() && (e.visible = 0);
-      //   });
-      //   activePlane.visible = 1;
-      //   activePlane.uniforms.uProgress.value = 1;
-      //   titlePlaneOnLoad &&
-      //     (activePlaneTitle =
-      //       planesTitle[activePlane.index + photoseries.length]);
     });
   }
+  $: $typePhotoseries
+    ? (titlePh = [$activePhotoseries, ...$typePhotoseries])
+    : (titlePh = $activePhotoseries);
+  console.log(titlePh);
+
   // INIT
   function initCurtains() {
     curtains = new Curtains({
@@ -287,13 +276,12 @@
       shaderPass.loader.loadImage(image);
     });
   }
-  function addPlane(trPlane = false) {
-    const planeElement = document.getElementsByClassName("plane");
+  function addPlane(planeNode, trPlane = false) {
     const paramsPlane = {
       widthSegments: 16,
       heightSegments: 16,
       vertexShader: vertex,
-      // fragmentShader: fragment,
+      fragmentShader: fragment,
       visible: 1,
       autoloadSources: false,
       // depthTest: false,
@@ -320,51 +308,38 @@
         uOpacity: { name: "uOpacity", type: "1f", value: 1 },
       },
     };
-
-    // if (Array.isArray(planeElement)) {
-    // console.time("create Plane");
-    [...planeElement].forEach((element, i) => {
-      const plane = new Plane(curtains, element, {
-        ...paramsPlane,
-        fragmentShader: fragment,
-      });
+    const setPlane = (plane) => {
+      plane.setRenderTarget(distortionTarget);
       plane.userData = {
-        route: $photoseries[plane.index].Route,
-        color: $photoseries[plane.index].ColorVector,
-        id: $photoseries[plane.index].Id,
-        type: $photoseries[plane.index].Type,
+        route: plane.htmlElement.dataset.route,
+        type: plane.htmlElement.dataset.type,
+        color: plane.htmlElement.dataset.color.split(","),
+        id: plane.htmlElement.dataset.id,
+        // route: $photoseries[plane.index].Route,
+        // color: $photoseries[plane.index].ColorVector,
+        // id: $photoseries[plane.index].Id,
+        // type: $photoseries[plane.index].Type,
       };
       getUnifors(plane, {
         pCorr: false,
         sCorr: true,
         fCorr: true,
       });
-      plane.setRenderTarget(distortionTarget);
-      // plane.onReady(() => {
-      //     setTexture(plane);
-      // });
-      plane.onAfterResize(() => {
-        // getUnifors(plane);
-      });
-      plane.onLoading(() => {
-        // console.log("loading?");
-      });
       setTexture(plane);
-      //   plane.textures[0].onSourceUploaded(() => {
-      //     load++;
-      //     progress.update((n) => n + 100 / $photoseries.length);
-      //     plane.relativeTranslation.z > 0 && (plane.visible = 1);
-      //   });
-      //   plane.onLoading((texture) => {
-      //     // console.log(texture);
-      //   });
-      // console.log(plane);
-      //   // CREATE TEXTURE
-      //   plane.createTexture({
-      //     sampler: "planeTexture",
-      //   }),
+      plane.onReady(() => {
+        // console.log(plane.htmlElement.dataset.color);
+      });
+      plane.onAfterResize(() => {});
+      plane.onLoading(() => {});
       planes.push(plane);
-    });
+    };
+    [...planeNode].length !== 1
+      ? [...planeNode].forEach((element, i) => {
+          const plane = new Plane(curtains, element, paramsPlane);
+          setPlane(plane);
+        })
+      : setPlane(new Plane(curtains, planeNode[0], paramsPlane));
+    // console.log(planeNode, "planeNode[0]");
   }
   function addTransitionPlane() {
     const params = {
@@ -498,7 +473,7 @@
       widthUn = 0.7;
       heightUn = 0.8;
       radiusCoef = 0.0755;
-      setElementSize(0.69);
+      setElementSize(0.5);
     }
     if ($page.params.Route && !$eventAnimation) {
       tarnsitionPlane && (tarnsitionPlane.relativeTranslation.x = 0);
@@ -654,9 +629,7 @@
         // autoplay: false,
       })
       .add({
-        // update: () => {
-        //     console.log("startAnim()");
-        // },
+        update: () => {},
         targets: transitionState,
         duration: 5000,
         easing: "easeOutSine",
@@ -813,12 +786,26 @@
       });
   }
   function toIndexAnim() {
-    // planes.forEach((pl) => {
-    //   pl.images[0].onload = () => {
-    //     pl.textures[0].needUpdate();
-    //     getUnifors(pl);
-    //   };
-    // });
+    !$typePhotoseries &&
+      typePhotoseries.set(
+        $photoseries.filter(
+          (el) =>
+            // el.Type === $page.params.type &&
+            el.Route !== activePlane.userData.route //$page.params.Route
+        )
+      );
+    (async () => {
+      await tick();
+      const planeElement = document.getElementsByClassName("plane");
+      // console.log(planeElement, "planeElement", $photoseries);
+      addPlane(planeElement);
+    })();
+
+    // console.log(
+    //   activePlane.userData.route,
+    //   $typePhotoseries,
+    //   "$typePhotoseries"
+    // );
     toIndex = anime
       .timeline({
         autoplay: false,
@@ -844,35 +831,8 @@
       });
     toIndex.finished.then(() => {
       eventAnimation.set(true);
-      // (async () => {
-      // await tick;
-      const planeElement = document.getElementsByClassName("slider__img");
-      setTimeout(() => {
-        planes.forEach((element) => {
-          console.log(element);
-          // element.images[0].onload = () => {
-          //   element.textures[0].needUpdate();
-          //   getUnifors(pl);
-          // };
-        });
-      }, 0);
-      console.log([...planeElement]);
-      // })();
-
-      //   console.log([...planeElement]);
       planes.forEach((e, i) => {
         planeChangeView(e);
-        // e.resetPlane(planeElement[i]);
-        // e.onLoading(() => {
-        //   console.log("loading?");
-        // });
-        // e.onReady(() => {
-        //   console.log("onReady(");
-        // });
-        // // e.loadSource(planeElement[i]);
-        // console.log(
-        //   e //.images //[0].needUpdate();
-        // );
       });
       toIndex = null;
       leaveRoute.set(false);
@@ -892,51 +852,53 @@
       (sliderState.currentPosition - sliderState.translation - disp) * 0.3;
     shaderPass && (shaderPass.uniforms.displacement.value = disp / 2500);
 
-    planes.forEach((plane, i) => {
-      const angle = angleStep * i;
-      transVec.set(
-        Math.cos(
-          angle +
-            step +
-            angleStep -
-            sliderState.planeCorrection -
-            sliderState.translation / 1300 +
-            transitionState.time
-        ) * transitionState.radiusAnimation,
-        // Y
-        Math.cos(angle + transitionState.time) *
-          transitionState.radiusAnimation *
-          transitionState.yRoundDisable,
-        // Z
-        Math.sin(
-          angle +
-            step +
-            angleStep -
-            sliderState.planeCorrection -
-            sliderState.translation / 1300 +
-            transitionState.time
-        ) *
-          transitionState.radiusAnimation *
-          transitionState.zRoundEnable
-      );
-      if ($eventAnimation) {
-        plane.setScale(
-          new Vec2(transitionState.scalePlane, transitionState.scalePlane)
+    planes.length > 1 &&
+      planes.forEach((plane, i) => {
+        const angle = angleStep * i;
+        transVec.set(
+          // X
+          Math.cos(
+            angle +
+              step +
+              angleStep -
+              sliderState.planeCorrection -
+              sliderState.translation / 1300 +
+              transitionState.time
+          ) * transitionState.radiusAnimation,
+          // Y
+          Math.cos(angle + transitionState.time) *
+            transitionState.radiusAnimation *
+            transitionState.yRoundDisable,
+          // Z
+          Math.sin(
+            angle +
+              step +
+              angleStep -
+              sliderState.planeCorrection -
+              sliderState.translation / 1300 +
+              transitionState.time
+          ) *
+            transitionState.radiusAnimation *
+            transitionState.zRoundEnable
         );
-        if (titlePlaneOnLoad) {
-          rgbPass.uniforms.scrollEffect.value = disp;
-          planesTitle[i].setRelativeTranslation(transVec);
+        if ($eventAnimation) {
+          plane.setScale(
+            new Vec2(transitionState.scalePlane, transitionState.scalePlane)
+          );
+          // if (titlePlaneOnLoad) {
+          //   rgbPass.uniforms.scrollEffect.value = disp;
+          //   planesTitle[i].setRelativeTranslation(transVec);
+          // }
         }
-      }
-      plane.setRelativeTranslation(transVec);
-      // if ($homePageState) {
-      //     if (plane.relativeTranslation.z < 0) {
-      //         plane.visible = planesTitle[i].visible = false;
-      //     } else {
-      //         plane.visible = planesTitle[i].visible = true;
-      //     }
-      // }
-    });
+        plane.setRelativeTranslation(transVec);
+        // if ($homePageState) {
+        //     if (plane.relativeTranslation.z < 0) {
+        //         plane.visible = planesTitle[i].visible = false;
+        //     } else {
+        //         plane.visible = planesTitle[i].visible = true;
+        //     }
+        // }
+      });
     // START ANIMATION
 
     toIndex && toIndex.tick(t);
@@ -1051,7 +1013,11 @@
   }
 </script>
 
-<h3 class="main__head">{$photoseries[$titleIndex].Title}</h3>
+<!-- {#if $page.params.Route}
+  <h3 class="main__head">{$activePhotoseries.Title}</h3>
+{:else}
+  <h3 class="main__head">{titlePh[$titleIndex].Title}</h3>
+{/if} -->
 <!-- <h1>{testId}</h1> -->
 <svelte:window on:resize={resize} />
 <div
@@ -1067,48 +1033,89 @@
   on:wheel={onWheel}
   class="wrapper"
 >
-  {#each $photoseries as seriya, index (index)}
-    <a style="display: none;" href="/{seriya.Route}">r</a>
-    <!-- data-id={index}
+  <div
+    data-id={$activePhotoseries.Id}
+    data-route={$activePhotoseries.Route}
+    data-color={$activePhotoseries.ColorVector}
+    data-type={$activePhotoseries.Type}
+    class="activeplane"
+  >
+    <picture class="standart__picture">
+      <source
+        media="(orientation: portrait)"
+        srcset="https://raw.githubusercontent.com/iasvobodin/svs/images/static/image/webp/720/{$activePhotoseries.PortraitFileName}.webp"
+        type="image/webp"
+      />
+      <source
+        media="(orientation: portrait)"
+        srcset="https://raw.githubusercontent.com/iasvobodin/svs/images/static/image/jpg/720/{$activePhotoseries.PortraitFileName}.jpg"
+        type="image/jpg"
+      />
+      <source
+        media="(orientation: landscape)"
+        srcset="https://raw.githubusercontent.com/iasvobodin/svs/images/static/image/webp/720/{$activePhotoseries.LandscapeFileName}.webp"
+        type="image/webp"
+      />
+      <img
+        style="opacity:0"
+        data-sampler="planeTexture"
+        class="slider__img"
+        alt="SvobodinaPhoto"
+        crossorigin="anonimous"
+        decoding="async"
+        draggable="false"
+        src="https://raw.githubusercontent.com/iasvobodin/svs/images/static/image/jpg/720/{$activePhotoseries.LandscapeFileName}.jpg"
+      />
+    </picture>
+  </div>
+  {#if $typePhotoseries}
+    {#each $typePhotoseries as seriya, index (index)}
+      <a style="display: none;" href="/{seriya.Type}/{seriya.Route}">r</a>
+      <!--  -->
+      <div
+        data-id={index}
         data-route={seriya.Route}
-        data-color={[seriya.ColorVector]} -->
-    <div class="plane">
-      {#if showPicture && $eventAnimation ? true : index === 0 ? true : false}
-        <picture class="standart__picture">
-          <source
-            media="(orientation: portrait)"
-            srcset="https://raw.githubusercontent.com/iasvobodin/svs/images/static/image/webp/720/{seriya
-              .largePortrait.src}.webp"
-            type="image/webp"
-          />
-          <source
-            media="(orientation: portrait)"
-            srcset="https://raw.githubusercontent.com/iasvobodin/svs/images/static/image/jpg/720/{seriya
-              .largePortrait.src}.jpg"
-            type="image/jpg"
-          />
-          <source
-            media="(orientation: landscape)"
-            srcset="https://raw.githubusercontent.com/iasvobodin/svs/images/static/image/webp/720/{seriya
-              .largeLandscape.src}.webp"
-            type="image/webp"
-          />
+        data-color={seriya.ColorVector}
+        data-type={seriya.Type}
+        class="plane"
+      >
+        {#if showPicture}
+          <picture class="standart__picture">
+            <source
+              media="(orientation: portrait)"
+              srcset="https://raw.githubusercontent.com/iasvobodin/svs/images/static/image/webp/720/{seriya
+                .largePortrait.src}.webp"
+              type="image/webp"
+            />
+            <source
+              media="(orientation: portrait)"
+              srcset="https://raw.githubusercontent.com/iasvobodin/svs/images/static/image/jpg/720/{seriya
+                .largePortrait.src}.jpg"
+              type="image/jpg"
+            />
+            <source
+              media="(orientation: landscape)"
+              srcset="https://raw.githubusercontent.com/iasvobodin/svs/images/static/image/webp/720/{seriya
+                .largeLandscape.src}.webp"
+              type="image/webp"
+            />
 
-          <img
-            style="opacity:0"
-            data-sampler="planeTexture"
-            class="slider__img"
-            alt="SvobodinaPhoto"
-            crossorigin="anonimous"
-            decoding="async"
-            draggable="false"
-            src="https://raw.githubusercontent.com/iasvobodin/svs/images/static/image/jpg/720/{seriya
-              .largeLandscape.src}.jpg"
-          />
-        </picture>
-      {/if}
-    </div>
-  {/each}
+            <img
+              style="opacity:0"
+              data-sampler="planeTexture"
+              class="slider__img"
+              alt="SvobodinaPhoto"
+              crossorigin="anonimous"
+              decoding="async"
+              draggable="false"
+              src="https://raw.githubusercontent.com/iasvobodin/svs/images/static/image/jpg/720/{seriya
+                .largeLandscape.src}.jpg"
+            />
+          </picture>
+        {/if}
+      </div>
+    {/each}
+  {/if}
 </div>
 <div class="title__plane">
   {#each $photoseries as seriya, index (index)}
@@ -1174,7 +1181,8 @@
       display: flex;
       position: absolute;
     }
-    .plane {
+    .plane,
+    .activeplane {
       align-self: center;
       position: absolute;
       box-sizing: border-box;
@@ -1195,7 +1203,8 @@
       display: flex;
       position: absolute;
     }
-    .plane {
+    .plane,
+    .activeplane {
       align-self: center;
       position: absolute;
       box-sizing: border-box;

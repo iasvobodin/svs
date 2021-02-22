@@ -25,13 +25,7 @@
       srcset="image/photoPortrait.svg"
       type="image/svg+xml"
     />
-    <img
-      width="577.99px"
-      height="158.2px"
-      class="preloader__img"
-      src="image/photo.svg"
-      alt="ph"
-    />
+    <img class="preloader__img" src="image/photo.svg" alt="ph" />
   </picture>
   <img src="image/logo.svg" class="logo" alt="logo" />
 </div>
@@ -43,10 +37,13 @@
 
   .preloader__img {
     position: absolute;
+    /* height: inherit;
+    width: inherit; */
     height: 100%;
     width: 100%;
     object-fit: cover;
     object-position: center;
+    /* margin: 1px; */
   }
   .preloader {
     height: 100vh;
@@ -77,7 +74,7 @@
     }
     .photo {
       position: absolute;
-      height: calc(min(33.3vw, 889px) / 3.65);
+      height: calc(min(33.3vw, 889px) / 3.65353982);
       width: min(33.3vw, 889px);
       transform: translate(-2.8%, -14%);
     }
