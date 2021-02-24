@@ -1,6 +1,6 @@
 <script>
-  import Canvas2 from "../components/canvas2.svelte";
-  import Preloader from "../components/preloader.svelte";
+  import Canvas2 from "../../components/canvas2.svelte";
+  import Preloader from "../../components/preloader.svelte";
   import { stores } from "@sapper/app";
   import { fade } from "svelte/transition";
   import { onMount } from "svelte";

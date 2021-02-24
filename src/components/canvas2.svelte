@@ -11,7 +11,6 @@
   import anime from "animejs";
   import { debounce, forEach } from "lodash-es/lodash";
   import { tweened } from "svelte/motion";
-  // import photoseries from "db/Photoseries.json";
   import fragment from "assets/photoseries.frag";
   import vertex from "assets/photoseries.vert";
   import vertexT from "assets/start.vert";
@@ -769,10 +768,8 @@
         changeComplete: () => {
           sliderState.endPosition = sliderState.translation;
         },
-        translation:
-          angleStep * (activePlane.index - 1) * (300 + window.innerWidth),
-        currentPosition:
-          angleStep * (activePlane.index - 1) * (300 + window.innerWidth),
+        translation: angleStep * (activePlane.index - 1) * 1000,
+        currentPosition: angleStep * (activePlane.index - 1) * 1000,
         easing: "easeOutQuad",
       });
     }
@@ -878,7 +875,7 @@
               step +
               angleStep -
               sliderState.planeCorrection -
-              sliderState.translation / (300 + window.innerWidth) +
+              sliderState.translation / 1000 +
               transitionState.time
           ) * transitionState.radiusAnimation,
           // Y
@@ -891,7 +888,7 @@
               step +
               angleStep -
               sliderState.planeCorrection -
-              sliderState.translation / (300 + window.innerWidth) +
+              sliderState.translation / 1000 +
               transitionState.time
           ) *
             transitionState.radiusAnimation *
@@ -956,7 +953,7 @@
       eventAnimation.set(false);
       // getUnifors(activePlane);
       toRouteAnim();
-      goto(`/${el.userData.type}/${el.userData.route}/`);
+      goto(`/photoseries/${el.userData.type}/${el.userData.route}/`);
     });
   }
   function onMouseDown(e) {
@@ -966,9 +963,8 @@
   }
   function onChangeTitle() {
     let index =
-      -Math.round(
-        sliderState.currentPosition / (angleStep * (300 + window.innerWidth))
-      ) % $photoseries.length;
+      -Math.round(sliderState.currentPosition / (angleStep * 1000)) %
+      $photoseries.length;
     // testId = index >= 1 ? $photoseries.length - index : Math.abs(index);
     titleIndex.set(index >= 1 ? $photoseries.length - index : Math.abs(index));
   }
@@ -1064,7 +1060,8 @@
   >
     <a
       style="display: none;"
-      href="/{$activePhotoseries.Type}/{$activePhotoseries.Route}">r</a
+      href="/photoseries/{$activePhotoseries.Type}/{$activePhotoseries.Route}"
+      >r</a
     >
     <picture class="standart__picture">
       <source
@@ -1096,7 +1093,9 @@
   </div>
   {#if $typePhotoseries}
     {#each $typePhotoseries as seriya, index (index)}
-      <a style="display: none;" href="/{seriya.Type}/{seriya.Route}">r</a>
+      <a style="display: none;" href="/photoseries/{seriya.Type}/{seriya.Route}"
+        >r</a
+      >
       <!--  -->
       <div
         data-id={seriya.Id}

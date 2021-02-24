@@ -9,14 +9,14 @@
   }
 </script>
 
-<!--<script context="module" ✂prettier:content✂="CglleHBvcnQgYXN5bmMgZnVuY3Rpb24gcHJlbG9hZCh7IHBhcmFtcyB9KSB7CgkJbGV0IFtzbHVnLCB5ZWFyLCBtb250aCwgZGF5XSA9IHBhcmFtcy5zbHVnOwoKCQlyZXR1cm4geyBzbHVnLCB5ZWFyLCBtb250aCwgZGF5IH07Cgl9Cg==" ✂prettier:content✂="e30=" ✂prettier:content✂="e30=" ✂prettier:content✂="e30=" ✂prettier:content✂="e30=" ✂prettier:content✂="e30=" ✂prettier:content✂="e30=" ✂prettier:content✂="e30=" ✂prettier:content✂="e30=" ✂prettier:content✂="e30=" ✂prettier:content✂="e30=" ✂prettier:content✂="e30=" ✂prettier:content✂="e30=" ✂prettier:content✂="e30=">{}</script>-->
+<!--<script context="module" ✂prettier:content✂="CglleHBvcnQgYXN5bmMgZnVuY3Rpb24gcHJlbG9hZCh7IHBhcmFtcyB9KSB7CgkJbGV0IFtzbHVnLCB5ZWFyLCBtb250aCwgZGF5XSA9IHBhcmFtcy5zbHVnOwoKCQlyZXR1cm4geyBzbHVnLCB5ZWFyLCBtb250aCwgZGF5IH07Cgl9Cg==" ✂prettier:content✂="e30=" ✂prettier:content✂="e30=" ✂prettier:content✂="e30=" ✂prettier:content✂="e30=" ✂prettier:content✂="e30=" ✂prettier:content✂="e30=" ✂prettier:content✂="e30=" ✂prettier:content✂="e30=" ✂prettier:content✂="e30=" ✂prettier:content✂="e30=" ✂prettier:content✂="e30=" ✂prettier:content✂="e30=" ✂prettier:content✂="e30=" ✂prettier:content✂="e30=">{}</script>-->
 <script>
   import { debounce } from "lodash-es/lodash";
   import { onMount, tick } from "svelte";
   import justifiedLayout from "justified-layout";
-  import Spic from "../../../components/spic.svelte";
+  import Spic from "../../../../components/spic.svelte";
   import anime from "animejs";
-  import Buttondown from "../../../components/buttondown.svelte";
+  import Buttondown from "../../../../components/buttondown.svelte";
   import {
     titleIndex,
     showPrelader,
