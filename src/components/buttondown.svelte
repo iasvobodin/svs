@@ -77,7 +77,7 @@
     height: 60px;
     fill: white;
     position: absolute;
-    top: calc(100vh - 70px);
+    top: calc(var(--vh, 1vh) * 100 - 70px);
     left: calc(50vw - 30px);
     cursor: pointer;
   }
