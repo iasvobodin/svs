@@ -1057,6 +1057,10 @@
     data-type={$activePhotoseries.Type}
     class="activeplane"
   >
+    <a
+      style="display: none;"
+      href="/{$activePhotoseries.Type}/{$activePhotoseries.Route}">r</a
+    >
     <picture class="standart__picture">
       <source
         media="(orientation: portrait)"
