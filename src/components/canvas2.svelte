@@ -769,8 +769,10 @@
         changeComplete: () => {
           sliderState.endPosition = sliderState.translation;
         },
-        translation: angleStep * (activePlane.index - 1) * 1300,
-        currentPosition: angleStep * (activePlane.index - 1) * 1300,
+        translation:
+          angleStep * (activePlane.index - 1) * (300 + window.innerWidth),
+        currentPosition:
+          angleStep * (activePlane.index - 1) * (300 + window.innerWidth),
         easing: "easeOutQuad",
       });
     }
@@ -876,7 +878,7 @@
               step +
               angleStep -
               sliderState.planeCorrection -
-              sliderState.translation / 1300 +
+              sliderState.translation / (300 + window.innerWidth) +
               transitionState.time
           ) * transitionState.radiusAnimation,
           // Y
@@ -889,7 +891,7 @@
               step +
               angleStep -
               sliderState.planeCorrection -
-              sliderState.translation / 1300 +
+              sliderState.translation / (300 + window.innerWidth) +
               transitionState.time
           ) *
             transitionState.radiusAnimation *
@@ -964,8 +966,9 @@
   }
   function onChangeTitle() {
     let index =
-      -Math.round(sliderState.currentPosition / (angleStep * 1300)) %
-      $photoseries.length;
+      -Math.round(
+        sliderState.currentPosition / (angleStep * (300 + window.innerWidth))
+      ) % $photoseries.length;
     // testId = index >= 1 ? $photoseries.length - index : Math.abs(index);
     titleIndex.set(index >= 1 ? $photoseries.length - index : Math.abs(index));
   }
@@ -1140,13 +1143,13 @@
     {/each}
   {/if}
 </div>
-<div class="title__plane">
+<!-- <div class="title__plane">
   {#each $photoseries as seriya, index (index)}
     <div class="title">
       <h3 class="titleH3">{seriya.Title}</h3>
     </div>
   {/each}
-</div>
+</div> -->
 
 <div bind:this={webgl} id="curtains" />
 <div class="transition__plane" />

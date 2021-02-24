@@ -5,13 +5,13 @@
   import { fade } from "svelte/transition";
   import { onMount } from "svelte";
   import { showPrelader } from "store.js";
-  // const { page } = stores();
+  const { page } = stores();
   // if ($page.params.Route) {
   //   showPrelader.set(false);
   // }
   console.log("_layoutInit");
   onMount(() => {
-    console.log("onMount layout");
+    console.log($page.params, "onMount layout");
     // let vh = window.innerHeight * 0.01;
     // document.documentElement.style.setProperty("--vh", `${vh}px`);
     // window.addEventListener("resize", () => {
@@ -30,6 +30,7 @@
   {#if $showPrelader}
     <Preloader />
   {/if}
+  <!-- {#if $page.params.Route } -->
   <div class="canvas">
     <Canvas2 />
   </div>

@@ -1,10 +1,14 @@
 <script>
   import { onMount } from "svelte";
-
+  import { progress } from "store.js";
+  import { fade } from "svelte/transition";
   export let src, wwidth;
   let visible = false,
     gallery;
   //   pic;
+  function setOpacity() {
+    console.log("load");
+  }
   const options = {
     // родитель целевого элемента - область просмотра
     root: null,
@@ -16,19 +20,11 @@
 
   // создаем наблюдатель
   const observer = new IntersectionObserver((entries, observer) => {
-    // console.log(entries);
     visible = entries[0].isIntersecting;
-    // для каждой записи-целевого элемента
     entries.forEach((entry, i) => {
-      // console.log(entry);
-      // если элемент является наблюдаемым
+      console.log(entry);
       if (entry.isIntersecting) {
         const lazyImg = entry.target;
-        // выводим информацию в консоль - проверка работоспособности наблюдателя
-        // console.log(lazyImg);
-        // меняем фон контейнера
-        // lazyImg.style.background = "deepskyblue";
-        // прекращаем наблюдение
         observer.unobserve(lazyImg);
       }
     });
@@ -38,6 +34,25 @@
     observer.observe(gallery);
   });
 </script>
+
+<div class="holder" bind:this={gallery}>
+  {#if visible}
+    <picture transition:fade>
+      <source
+        srcset="https://raw.githubusercontent.com/iasvobodin/svs/images/static/image/webp/{wwidth}/{src}.webp"
+        type="image/webp"
+      />
+      <img
+        class="gallery__img"
+        alt="SvobodinaPhoto"
+        crossorigin="anonimous"
+        decoding="async"
+        draggable="false"
+        src="https://raw.githubusercontent.com/iasvobodin/svs/images/static/image/jpg/{wwidth}/{src}.jpg"
+      />
+    </picture>
+  {/if}
+</div>
 
 <style>
   .gallery__img {
@@ -49,20 +64,3 @@
     object-position: center;
   }
 </style>
-
-<div class="holder" bind:this={gallery}>
-  {#if visible}
-    <picture>
-      <source
-        srcset="https://raw.githubusercontent.com/iasvobodin/svs/images/static/image/webp/{wwidth}/{src}.webp"
-        type="image/webp" />
-      <img
-        class="gallery__img"
-        alt="SvobodinaPhoto"
-        crossorigin="anonimous"
-        decoding="async"
-        draggable="false"
-        src="https://raw.githubusercontent.com/iasvobodin/svs/images/static/image/jpg/{wwidth}/{src}.jpg" />
-    </picture>
-  {/if}
-</div>

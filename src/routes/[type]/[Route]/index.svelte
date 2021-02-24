@@ -9,12 +9,14 @@
   }
 </script>
 
-<!--<script context="module" ✂prettier:content✂="CglleHBvcnQgYXN5bmMgZnVuY3Rpb24gcHJlbG9hZCh7IHBhcmFtcyB9KSB7CgkJbGV0IFtzbHVnLCB5ZWFyLCBtb250aCwgZGF5XSA9IHBhcmFtcy5zbHVnOwoKCQlyZXR1cm4geyBzbHVnLCB5ZWFyLCBtb250aCwgZGF5IH07Cgl9Cg==">{}</script>-->
+<!--<script context="module" ✂prettier:content✂="CglleHBvcnQgYXN5bmMgZnVuY3Rpb24gcHJlbG9hZCh7IHBhcmFtcyB9KSB7CgkJbGV0IFtzbHVnLCB5ZWFyLCBtb250aCwgZGF5XSA9IHBhcmFtcy5zbHVnOwoKCQlyZXR1cm4geyBzbHVnLCB5ZWFyLCBtb250aCwgZGF5IH07Cgl9Cg==" ✂prettier:content✂="e30=" ✂prettier:content✂="e30=" ✂prettier:content✂="e30=" ✂prettier:content✂="e30=" ✂prettier:content✂="e30=" ✂prettier:content✂="e30=" ✂prettier:content✂="e30=" ✂prettier:content✂="e30=" ✂prettier:content✂="e30=" ✂prettier:content✂="e30=" ✂prettier:content✂="e30=" ✂prettier:content✂="e30=" ✂prettier:content✂="e30=">{}</script>-->
 <script>
   import { debounce } from "lodash-es/lodash";
   import { onMount, tick } from "svelte";
   import justifiedLayout from "justified-layout";
   import Spic from "../../../components/spic.svelte";
+  import anime from "animejs";
+  import Buttondown from "../../../components/buttondown.svelte";
   import {
     titleIndex,
     showPrelader,
@@ -60,8 +62,8 @@
         left: window.innerWidth * paddingCoef,
       },
       boxSpacing: {
-        horizontal: window.innerWidth * 0.04,
-        vertical: window.innerHeight * 0.07,
+        horizontal: window.innerWidth * 0.06,
+        vertical: window.innerHeight * 0.09,
       },
     });
     galleryHeight = layout.containerHeight;
@@ -73,9 +75,11 @@
       // el.imageWidth = imageWidth(el.width);
       galleryParams.width.push(imageWidth(el.width));
       galleryParams.style.push(`
-          transform: translate(${Math.floor(el.left)}px, ${Math.floor(
-        el.top
-      )}px);
+          transform: translate(${
+            Math.floor(el.left) + anime.random(-width * 0.028, width * 0.028)
+          }px, ${
+        Math.floor(el.top) + anime.random(-height * 0.045, height * 0.045)
+      }px);
           box-shadow: inset 0px 0px 0px 2px ${text.Spec[i].Color};
           width: ${Math.floor(el.width)}px;
           height: ${Math.floor(el.height)}px;
@@ -128,20 +132,29 @@
     getJL(gallery);
   }
   onMount(() => {
-    console.log("route onmount");
+    console.log("random", anime.random(0, 270));
     height = window.innerHeight;
     width = window.innerWidth;
+
+    console.log("route onmount");
+
     window.addEventListener("resize", debounce(resize, 400));
     paddingCoef = window.innerWidth / window.innerHeight > 1 ? 0.12 : 0.03;
     getJL(gallery);
     // resize();
+    // anime.set(".spic__holder", {
+    //   translateX: {
+    //     value: `+=${anime.random(-width * 0.017, width * 0.017)}`,
+    //   },
+    //   translateY: () => anime.random(-height * 0.03, height * 0.03),
+    // });
   });
 </script>
 
 <svelte:head>
   <title>{gallery.Title}</title>
 </svelte:head>
-
+<Buttondown />
 <h1 transition:fly on:outrostart={() => leaveRoute.set(true)}>
   {gallery.Title}
 </h1>
@@ -180,9 +193,7 @@
     width: 100%;
     overflow: hidden;
     position: relative;
-    background-image: url('data:image/svg+xml;utf8,<svg viewBox="0 0 1920 50" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><path fill="rgba(18, 53, 81, 1)" d="M 0 0 C 565 0 565 576 1130 576 L 1130 576 L 1130 0 L 0 0 Z" stroke-width="0"></path> <path fill="rgba(18, 53, 81, 1)" d="M 1129 576 C 1524.5 576 1524.5 50 1920 50 L 1920 50 L 1920 0 L 1129 0 Z" stroke-width="0"></path> </svg>');
-    background-size: cover;
-    background-repeat: no-repeat;
+
     /* max-width: 95vw; */
     /* width: 80vw;
     margin: auto; */
