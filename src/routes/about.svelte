@@ -20,12 +20,23 @@
       PS. Знаю английский как родной!
     </h2>
     <div class="social">
-      <a class="social__icon" href=""><img src="icons/vk.svg" alt="vk" /></a>
-      <a class="social__icon" href=""
-        ><img src="icons/facebook.svg" alt="vk" /></a
+      <a
+        target="_blank"
+        class="social__icon"
+        href="https://vk.com/svobodinaphoto"
+        ><img src="icons/vk.svg" alt="vk" /></a
       >
-      <a class="social__icon" href=""
-        ><img src="icons/instagram.svg" alt="vk" /></a
+      <a
+        target="_blank"
+        class="social__icon"
+        href="https://www.facebook.com/svobodinaphoto"
+        ><img src="icons/facebook.svg" alt="facebook" /></a
+      >
+      <a
+        target="_blank"
+        class="social__icon"
+        href="https://www.instagram.com/svobodinaphoto/"
+        ><img src="icons/instagram.svg" alt="instagram" /></a
       >
       <!-- <a class="social__icon" href=""
           ><img src="icons/telegram.svg" alt="vk"

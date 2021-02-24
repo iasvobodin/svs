@@ -22,7 +22,8 @@
   // const { preloading } = stores();
   // $: console.log($preloading, "$preloading");
   export let segment;
-  segment = !segment;
+  console.log(segment, "segment");
+  // segment = !segment;
 </script>
 
 <!-- {#if !$preloading} -->
@@ -30,6 +31,8 @@
   {#if $showPrelader}
     <Preloader />
   {/if}
+
+  <a class="link_to" href="/about/">О себе</a>
   <!-- {#if $page.params.Route } -->
   <div class="canvas">
     <Canvas2 />
@@ -42,6 +45,18 @@
 
 <!-- {/if} -->
 <style>
+  .link_to {
+    z-index: 3;
+    position: fixed;
+    top: 20px;
+    right: 40px;
+    color: white;
+    text-decoration-line: none;
+    font-family: Comfortaa;
+    font-weight: 150;
+    font-size: 20px;
+    line-height: 24px;
+  }
   main {
     position: relative;
     background-color: black;
