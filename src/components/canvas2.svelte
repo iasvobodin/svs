@@ -287,7 +287,7 @@
       heightSegments: 16,
       vertexShader: vertex,
       fragmentShader: fragment,
-      visible: 1,
+      visible: 0,
       autoloadSources: false,
       // depthTest: false,
       fov: 1,
@@ -388,6 +388,11 @@
     pl.textures[0] &&
       pl.textures[0].onSourceUploaded(() => {
         load++;
+        if (pl.relativeTranslation.z < 0) {
+          pl.visible = 0;
+        } else {
+          pl.visible = 1;
+        }
         document.documentElement.style.setProperty(
           "--rpeloader__inset",
           `${100 - load * (100 / $photoseries.length)}%`
@@ -470,7 +475,7 @@
 
       aspect = 1.5;
       widthUn = 1;
-      heightUn = 0.72;
+      heightUn = 1;
       radiusCoef = 0.0725;
       setElementSize(0.62, 0.12);
     } else {
@@ -478,6 +483,8 @@
       aspect = 0.668;
       widthUn = 0.7;
       heightUn = 0.8;
+      // widthUn = 1;
+      // heightUn = 1;
       radiusCoef = 0.0755;
       setElementSize(0.5);
     }
@@ -762,8 +769,8 @@
         changeComplete: () => {
           sliderState.endPosition = sliderState.translation;
         },
-        translation: angleStep * activePlane.index * 1300,
-        currentPosition: angleStep * activePlane.index * 1300,
+        translation: angleStep * (activePlane.index - 1) * 1300,
+        currentPosition: angleStep * (activePlane.index - 1) * 1300,
         easing: "easeOutQuad",
       });
     }
@@ -1031,11 +1038,6 @@
 </script>
 
 <h3 class="main__head">{$photoseriesSort[$titleIndex].Title}</h3>
-<!-- {#if $page.params.Route}
-  <h3 class="main__head">{$activePhotoseries.Title}</h3>
-{:else}
-{/if} -->
-<!-- <h1>{testId}</h1> -->
 <svelte:window on:resize={resize} />
 <div
   bind:this={slider}
@@ -1177,19 +1179,21 @@
     overflow: hidden;
   }
   .main__head {
+    /* -webkit-text-stroke: 1px rgb(0, 0, 0); */
+    /* color: transparent; */
     opacity: 0;
     z-index: 3;
     white-space: pre;
-    transform: translate(0, -50%);
+    transform: translate(-50%, -50%);
     position: absolute;
     top: calc((100vh - var(--plane__height)) / 4);
-    left: 1vw;
+    left: 50vw;
     font-family: Cormorant Infant, sans-serif;
     font-weight: 300;
     color: rgb(255, 255, 255);
     margin: 0;
-    font-size: clamp(14px, 6vw + 12px, 80px);
-    line-height: clamp(18px, 6.5vw + 12px, 80px);
+    font-size: clamp(18px, 6vw + 20px, 120px);
+    line-height: clamp(20px, 6.5vw + 22px, 130px);
   }
   @media (orientation: landscape) {
     .wrapper {
