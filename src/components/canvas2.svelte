@@ -26,6 +26,7 @@
   import {
     titleIndex,
     typePhotoseries,
+    photoseriesSort,
     showPrelader,
     homePageState,
     activePhotoseries,
@@ -118,6 +119,8 @@
 
     initMatchMedia();
 
+    addTransitionPlane();
+
     const activeElement = document.getElementsByClassName("activeplane");
     addPlane(activeElement);
 
@@ -125,8 +128,6 @@
     planeElement && addPlane(planeElement);
 
     addShaderPass();
-
-    addTransitionPlane();
 
     translateSlider();
 
@@ -174,6 +175,10 @@
       (el) => el.Route === $page.params.Route
     );
     activePhotoseries.set(activeNode);
+    photoseriesSort.update((n) => [
+      ...n.slice(activeNode.Id),
+      ...n.slice(0, activeNode.Id),
+    ]);
     // console.log($typePhotoseries, "$typePhotoseries");
     // typePhotoseries.set(
     //   $photoseries.filter(
@@ -198,7 +203,7 @@
   }
   $: if ($page.params.Route) {
     onMount(() => {
-      titleIndex.set(activePlane.index);
+      titleIndex.set(0);
     });
   }
   $: $typePhotoseries
@@ -331,6 +336,8 @@
       });
       plane.onAfterResize(() => {});
       plane.onLoading(() => {});
+      console.log(plane.userData.id, plane.index - 1);
+
       planes.push(plane);
     };
     [...planeNode].length !== 1
@@ -349,7 +356,7 @@
       // depthTest: false,
       // transparent: true,
       // renderOrder:1,
-      renderOrder: 1,
+      // renderOrder: 1,
       uniforms: {
         uTRprogress: {
           name: "uTRprogress",
@@ -375,9 +382,9 @@
   async function setTexture(pl) {
     const planeImages = document.getElementsByClassName("slider__img");
     await tick();
-    planeImages[pl.index] &&
+    planeImages[pl.index - 1] &&
       pl.images.length === 0 &&
-      pl.loadImage(planeImages[pl.index]);
+      pl.loadImage(planeImages[pl.index - 1]);
     pl.textures[0] &&
       pl.textures[0].onSourceUploaded(() => {
         load++;
@@ -385,7 +392,6 @@
           "--rpeloader__inset",
           `${100 - load * (100 / $photoseries.length)}%`
         );
-        // progress.update((n) => n + 100 / $photoseries.length);
       });
     if (pl.images[0]) {
       pl.images[0].onload = () => {
@@ -665,16 +671,20 @@
           opacity: 1,
           change: () => {
             planes.forEach((plane, i) => {
-              if (plane.relativeTranslation.z < 0) {
-                //         (plane.visible = 0);
+              if (plane.isDrawn && plane.relativeTranslation.z < 0) {
                 plane.uniforms.uOpacity.value = transitionState.opacityPlane;
               }
             });
           },
           changeComplete: () => {
             planes.forEach((plane, i) => {
+              if (plane.isDrawn && plane.relativeTranslation.z < 0) {
+                plane.visible = 0;
+                plane.uniforms.uOpacity.value = 1;
+              }
+
               // console.log(plane.relativeTranslation.z);
-              planeChangeView(plane);
+              // planeChangeView(plane);
             });
           },
           easing: "linear",
@@ -771,7 +781,7 @@
         changeComplete: () => {},
         changeBegin: () => {
           //   homePageState.set(false);
-          titleIndex.set(activePlane.index);
+          titleIndex.set(activePlane.index - 1);
           getUnifors(activePlane);
         },
       },
@@ -788,24 +798,13 @@
   function toIndexAnim() {
     !$typePhotoseries &&
       typePhotoseries.set(
-        $photoseries.filter(
+        $photoseriesSort.filter(
           (el) =>
             // el.Type === $page.params.type &&
             el.Route !== activePlane.userData.route //$page.params.Route
         )
       );
-    (async () => {
-      await tick();
-      const planeElement = document.getElementsByClassName("plane");
-      // console.log(planeElement, "planeElement", $photoseries);
-      addPlane(planeElement);
-    })();
 
-    // console.log(
-    //   activePlane.userData.route,
-    //   $typePhotoseries,
-    //   "$typePhotoseries"
-    // );
     toIndex = anime
       .timeline({
         autoplay: false,
@@ -832,13 +831,21 @@
     toIndex.finished.then(() => {
       eventAnimation.set(true);
       planes.forEach((e, i) => {
-        planeChangeView(e);
+        // planeChangeView(e);
       });
       toIndex = null;
       leaveRoute.set(false);
       sliderState.currentPosition = sliderState.endPosition =
         sliderState.translation;
-      !$homePageState && homePageState.set(true);
+      if (planes.length !== $photoseries.length) {
+        (async () => {
+          await tick();
+          !$homePageState && homePageState.set(true);
+
+          const planeElement = document.getElementsByClassName("plane");
+          addPlane(planeElement);
+        })();
+      }
     });
   }
   function translateSlider(t) {
@@ -885,19 +892,29 @@
           plane.setScale(
             new Vec2(transitionState.scalePlane, transitionState.scalePlane)
           );
+          // if ($homePageState && plane.relativeTranslation.z < 0) {
+          //   plane.visible = 0;
+          // } else {
+          //   plane.visible = 1;
+          //   plane.uniforms.uOpacity.value = 1;
+          // }
           // if (titlePlaneOnLoad) {
           //   rgbPass.uniforms.scrollEffect.value = disp;
           //   planesTitle[i].setRelativeTranslation(transVec);
           // }
         }
         plane.setRelativeTranslation(transVec);
-        // if ($homePageState) {
-        //     if (plane.relativeTranslation.z < 0) {
-        //         plane.visible = planesTitle[i].visible = false;
-        //     } else {
-        //         plane.visible = planesTitle[i].visible = true;
-        //     }
-        // }
+        if ($homePageState) {
+          if (plane.relativeTranslation.z < 0) {
+            plane.visible =
+              //planesTitle[i].visible =
+              false;
+          } else {
+            plane.visible =
+              // planesTitle[i].visible =
+              true;
+          }
+        }
       });
     // START ANIMATION
 
@@ -1013,10 +1030,10 @@
   }
 </script>
 
+<h3 class="main__head">{$photoseriesSort[$titleIndex].Title}</h3>
 <!-- {#if $page.params.Route}
   <h3 class="main__head">{$activePhotoseries.Title}</h3>
 {:else}
-  <h3 class="main__head">{titlePh[$titleIndex].Title}</h3>
 {/if} -->
 <!-- <h1>{testId}</h1> -->
 <svelte:window on:resize={resize} />
@@ -1073,7 +1090,7 @@
       <a style="display: none;" href="/{seriya.Type}/{seriya.Route}">r</a>
       <!--  -->
       <div
-        data-id={index}
+        data-id={seriya.Id}
         data-route={seriya.Route}
         data-color={seriya.ColorVector}
         data-type={seriya.Type}

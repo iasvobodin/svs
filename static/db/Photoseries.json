@@ -230,11 +230,11 @@
     "Type": "wedding",
     "smallPortrait": {
       "textureTag": "smallPortrait",
-      "src": "undefined"
+      "src": "19-08-24-16-57-52"
     },
     "largePortrait": {
       "textureTag": "largePortrait",
-      "src": "undefined"
+      "src": "19-08-24-16-57-52"
     },
     "smallLandscape": {
       "textureTag": "smallLandscape",
@@ -245,6 +245,7 @@
       "src": "19-08-24-16-57-52"
     },
     "LandscapeFileName": "19-08-24-16-57-52",
+    "PortraitFileName": "19-08-24-16-57-52",
     "LandscapeAspect": 1.498,
     "ColorHex": "#a48b6b",
     "ColorVector": [
