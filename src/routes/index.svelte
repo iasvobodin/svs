@@ -37,10 +37,10 @@
         position: relative;
         overscroll-behavior: none;
         display: grid;
-        width: 200%;
-        height: 200vh;
+        width: 100%;
+        height: 100vh;
         /* transform: scale(0.5) translate(-100% -100%); */
-        background: url(image/ggr.svg) left top / 100% 200vh no-repeat;
+        background: url(image/ggr.svg) left top / 100% 100vh no-repeat;
         grid-template-rows: 1fr 1fr 2fr 4fr 2.66fr 5.33fr 5.33fr 4.33fr 2.83fr 3.5fr 3.5fr 2.83fr 4.33fr 5.33fr 5.33fr 2.66fr 4fr 2fr 1fr 1fr;
         grid-template-columns: 1fr 1fr 2fr 4fr 2.66fr 5.33fr 5.33fr 4.33fr 2.83fr 3.5fr 3.5fr 2.83fr 4.33fr 5.33fr 5.33fr 2.66fr 4fr 2fr 1fr 1fr;
     }
