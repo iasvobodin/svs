@@ -131,8 +131,9 @@
     position: absolute;
     width: 60px;
     margin: 2vw;
-    align-self: center;
-    justify-self: center;
+    /* align-self: center;
+    justify-self: center; */
+    bottom: 0px;
   }
   .video__placeholder__image {
     width: 100%;
@@ -169,6 +170,9 @@
     }
     .video__title {
       width: var(--video_width);
+    }
+    .video__placeholder {
+      margin: auto;
     }
   }
 </style>

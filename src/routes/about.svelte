@@ -1,6 +1,7 @@
 <script>
   import VimeoComponent from "../components/vimeoComponent.svelte";
   import HellowComponent from "../components/hellowComponent.svelte";
+  import Reviews from "../components/reviews.svelte";
   let play = true;
   let play2 = true;
 </script>
@@ -44,6 +45,7 @@
 
   <VimeoComponent />
 </main>
+<Reviews />
 
 <style>
   :root {
