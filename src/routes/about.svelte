@@ -1,11 +1,13 @@
 <script>
-  // import reviews from '~/components/reviews.vue'
+  import VimeoComponent from "../components/vimeoComponent.svelte";
+  import HellowComponent from "../components/hellowComponent.svelte";
   let play = true;
   let play2 = true;
 </script>
 
+<HellowComponent />
 <main class="main">
-  <section class="hellow">
+  <!-- <section class="hellow">
     <div class="hellow__ava">
       <img src="image/ava.jpg" alt="" />
     </div>
@@ -14,7 +16,6 @@
       меня зовут Настя.
     </h1>
     <h2 class="hellow__subhedline subhedline">
-      <!-- eslint-disable-next-line prettier/prettier -->
       &nbsp;&nbsp;&nbsp;Я свадебный фотограф, живу и работаю в основном в Челябинске,
       но сниму свадьбу в любом месте кроме всратой деревни<br />
       PS. Знаю английский как родной!
@@ -39,92 +40,9 @@
         ><img src="icons/instagram.svg" alt="instagram" /></a
       >
     </div>
-  </section>
-  <section class="backstage">
-    <div class="backstage__video">
-      <h2 class="vertical hedline">О себе</h2>
-      {#if play2}
-        <div class="vimeo__video__placeholder">
-          <svg
-            on:click={() => (play2 = !play2)}
-            xmlns="http://www.w3.org/2000/svg"
-            xmlns:xlink="http://www.w3.org/1999/xlink"
-            version="1.1"
-            x="0px"
-            y="0px"
-            viewBox="0 0 60 60"
-            style="enable-background: new 0 0 60 60"
-            xml:space="preserve"
-          >
-            <g>
-              <path
-                d="M45.563,29.174l-22-15c-0.307-0.208-0.703-0.231-1.031-0.058C22.205,14.289,22,14.629,22,15v30   c0,0.371,0.205,0.711,0.533,0.884C22.679,45.962,22.84,46,23,46c0.197,0,0.394-0.059,0.563-0.174l22-15   C45.836,30.64,46,30.331,46,30S45.836,29.36,45.563,29.174z M24,43.107V16.893L43.225,30L24,43.107z"
-              />
-              <path
-                d="M30,0C13.458,0,0,13.458,0,30s13.458,30,30,30s30-13.458,30-30S46.542,0,30,0z M30,58C14.561,58,2,45.439,2,30   S14.561,2,30,2s28,12.561,28,28S45.439,58,30,58z"
-              />
-            </g>
-          </svg>
-          <img src="/image/about.webp" alt="" />
-        </div>
-      {:else}
-        <iframe
-          title="backstage"
-          src="https://player.vimeo.com/video/495014995?autoplay=1&loop=1&title=0&byline=0&portrait=0"
-          class="backstage_iframe"
-          frameborder="0"
-          allow="autoplay; fullscreen"
-          allowfullscreen
-        />
-      {/if}
-      <p class="video__decription subhedline">
-        Lorem ipsum dolor sit amet consectetur, adipisicing elit. Hic modi,
-        animi atque debitis fugit delectus iste eligendi excepturi nam ea.
-      </p>
-    </div>
-    <div class="backstage__video">
-      <h2 class="vertical hedline">Backstage</h2>
+  </section> -->
 
-      {#if play}
-        <div class="vimeo__video__placeholder">
-          <svg
-            on:click={() => (play = !play)}
-            xmlns="http://www.w3.org/2000/svg"
-            xmlns:xlink="http://www.w3.org/1999/xlink"
-            version="1.1"
-            x="0px"
-            y="0px"
-            viewBox="0 0 60 60"
-            style="enable-background: new 0 0 60 60"
-            xml:space="preserve"
-          >
-            <g>
-              <path
-                d="M45.563,29.174l-22-15c-0.307-0.208-0.703-0.231-1.031-0.058C22.205,14.289,22,14.629,22,15v30   c0,0.371,0.205,0.711,0.533,0.884C22.679,45.962,22.84,46,23,46c0.197,0,0.394-0.059,0.563-0.174l22-15   C45.836,30.64,46,30.331,46,30S45.836,29.36,45.563,29.174z M24,43.107V16.893L43.225,30L24,43.107z"
-              />
-              <path
-                d="M30,0C13.458,0,0,13.458,0,30s13.458,30,30,30s30-13.458,30-30S46.542,0,30,0z M30,58C14.561,58,2,45.439,2,30   S14.561,2,30,2s28,12.561,28,28S45.439,58,30,58z"
-              />
-            </g>
-          </svg>
-          <img src="/image/backstage.png" alt="" />
-        </div>
-      {:else}
-        <iframe
-          title="backstage"
-          src="https://player.vimeo.com/video/477028282?autoplay=1&loop=1&title=0&byline=0&portrait=0"
-          class="backstage_iframe"
-          frameborder="0"
-          allow="autoplay; fullscreen"
-          allowfullscreen
-        />
-      {/if}
-      <p class="video__decription subhedline">
-        Lorem ipsum dolor sit amet consectetur, adipisicing elit. Hic modi,
-        animi atque debitis fugit delectus iste eligendi excepturi nam ea.
-      </p>
-    </div>
-  </section>
+  <VimeoComponent />
 </main>
 
 <style>
@@ -167,29 +85,7 @@
     /* margin-left: 5vw; */
     /* margin-top: 15vh; */
   }
-  @media (max-width: 1200px) {
-    .backstage__video {
-      display: flex;
-      flex-direction: column;
-      justify-content: space-around;
-      align-items: center;
-      /* grid-template-columns: 1fr;
-      grid-template-rows: auto auto auto; */
-      /* margin-left: 5vw; */
-      /* margin-top: 15vh; */
-    }
-    .video__decription {
-      padding: 2vh;
-      margin: 0;
-      max-width: var(--video_width);
-    }
-    .vimeo__video__placeholder {
-      /* margin: auto; */
-    }
-    .vertical {
-      width: var(--video_width);
-    }
-  }
+
   .vimeo__video__placeholder {
     grid-area: 2/1/3/2;
     border-radius: 5px;
@@ -244,8 +140,8 @@
   .subhedline {
     font-family: Comfortaa;
     font-weight: 150;
-    font-size: clamp(16px, 32px, 1.8vw);
-    line-height: clamp(18px, 40px, 2.6vw);
+    font-size: clamp(16px, 26px, 1.5vw);
+    line-height: clamp(20px, 36px, 2.5vw);
     color: #ffffff;
   }
   .hellow__subhedline {
@@ -315,5 +211,35 @@
     height: 100%;
     object-fit: cover;
     object-position: center;
+  }
+  @media (max-width: 1200px) {
+    .backstage__video {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-around;
+      align-items: center;
+      /* grid-template-columns: 1fr;
+      grid-template-rows: auto auto auto; */
+      /* margin-left: 5vw; */
+      /* margin-top: 15vh; */
+    }
+    .video__decription {
+      padding: 2vh;
+      margin: 0;
+      max-width: var(--video_width);
+    }
+    .subhedline {
+      font-family: Comfortaa;
+      font-weight: 150;
+      font-size: clamp(16px, 34px, 1.8vw);
+      line-height: clamp(20px, 36px, 2.5vw);
+      color: #ffffff;
+    }
+    .vimeo__video__placeholder {
+      /* margin: auto; */
+    }
+    .vertical {
+      width: var(--video_width);
+    }
   }
 </style>
