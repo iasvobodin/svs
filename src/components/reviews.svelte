@@ -128,6 +128,7 @@
     }
     .ava {
         /* box-shadow: 5px 5px 5px 0px #292929; */
+        /* filter: grayscale(100%); */
         grid-area: 1/1;
         overflow: hidden;
         border-radius: 5px 0px 0px 5px;

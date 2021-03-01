@@ -2,50 +2,15 @@
   import VimeoComponent from "../components/vimeoComponent.svelte";
   import HellowComponent from "../components/hellowComponent.svelte";
   import Reviews from "../components/reviews.svelte";
+  import Price from "../components/price.svelte";
   let play = true;
   let play2 = true;
 </script>
 
 <HellowComponent />
-<main class="main">
-  <!-- <section class="hellow">
-    <div class="hellow__ava">
-      <img src="image/ava.jpg" alt="" />
-    </div>
-    <h1 class="hellow__hedline">
-      Привет,<br />
-      меня зовут Настя.
-    </h1>
-    <h2 class="hellow__subhedline subhedline">
-      &nbsp;&nbsp;&nbsp;Я свадебный фотограф, живу и работаю в основном в Челябинске,
-      но сниму свадьбу в любом месте кроме всратой деревни<br />
-      PS. Знаю английский как родной!
-    </h2>
-    <div class="social">
-      <a
-        target="_blank"
-        class="social__icon"
-        href="https://vk.com/svobodinaphoto"
-        ><img src="icons/vk.svg" alt="vk" /></a
-      >
-      <a
-        target="_blank"
-        class="social__icon"
-        href="https://www.facebook.com/svobodinaphoto"
-        ><img src="icons/facebook.svg" alt="facebook" /></a
-      >
-      <a
-        target="_blank"
-        class="social__icon"
-        href="https://www.instagram.com/svobodinaphoto/"
-        ><img src="icons/instagram.svg" alt="instagram" /></a
-      >
-    </div>
-  </section> -->
-
-  <VimeoComponent />
-</main>
+<VimeoComponent />
 <Reviews />
+<Price />
 
 <style>
   :root {

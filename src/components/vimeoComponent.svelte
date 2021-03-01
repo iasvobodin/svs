@@ -47,7 +47,7 @@
         </div>
         <img
           class="video__placeholder__image"
-          src="/image/backstage.png"
+          src="/image/backstage.jpg"
           alt=""
         />
       </div>
@@ -149,6 +149,14 @@
       align-items: center;
       margin: 0;
     }
+    .video__placeholder__button {
+      position: absolute;
+      width: 60px;
+      margin: 2vw;
+      /* align-self: center;
+    justify-self: center; */
+      bottom: 0px;
+    }
     .video__backstage {
       display: flex;
       flex-direction: column-reverse;
@@ -169,9 +177,12 @@
       color: #ffffff;
     }
     .video__title {
+      position: relative;
       width: var(--video_width);
+      /* z-index: 2; */
     }
     .video__placeholder {
+      position: relative;
       margin: auto;
     }
   }

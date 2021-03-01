@@ -56,7 +56,6 @@
 
 <style>
   .gallery__img {
-    /* display: none; */
     position: absolute;
     height: 100%;
     width: 100%;
