@@ -129,7 +129,8 @@
   .video__placeholder__button {
     cursor: pointer;
     position: absolute;
-    width: 60px;
+    width: 64px;
+    padding: 2px;
     margin: 2vw;
     /* align-self: center;
     justify-self: center; */
@@ -151,7 +152,8 @@
     }
     .video__placeholder__button {
       position: absolute;
-      width: 60px;
+      width: min(64px, 5.5vw);
+      padding: 2px;
       margin: 2vw;
       /* align-self: center;
     justify-self: center; */
