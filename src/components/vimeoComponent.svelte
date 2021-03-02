@@ -38,7 +38,7 @@
     Lorem ipsum dolor sit amet consectetur, adipisicing elit. Hic modi, animi
     atque debitis fugit delectus iste eligendi excepturi nam ea.
   </p>
-  <div class="first__column">
+  <div style="" class="first__column">
     <h2 class="video__title hedline">Backstage</h2>
     {#if play}
       <div class="video__placeholder">
@@ -67,6 +67,7 @@
 <style>
   :root {
     --video_width: min(90vw, 700px);
+    --video_translate: 10vw;
   }
   .video__title {
     z-index: 2;
@@ -143,12 +144,16 @@
     object-position: center;
   }
   @media (max-width: 1250px) {
+    :root {
+      --video_width: min(90vw, 550px);
+    }
     .video {
+      margin: 0;
+      margin-right: var(--video_translate);
       display: flex;
       flex-direction: column;
       justify-content: space-around;
       align-items: center;
-      margin: 0;
     }
     .video__placeholder__button {
       position: absolute;
@@ -160,11 +165,12 @@
       bottom: 0px;
     }
     .video__backstage {
+      margin: 0;
+      margin-left: var(--video_translate);
       display: flex;
       flex-direction: column-reverse;
       justify-content: space-around;
       align-items: center;
-      margin: 0;
     }
     .video__decription {
       padding: 2vh;
@@ -183,9 +189,17 @@
       width: var(--video_width);
       /* z-index: 2; */
     }
+
     .video__placeholder {
       position: relative;
       margin: auto;
+      /* height: calc(min(90vw, 600px) / 1.77);
+      width: min(90vw, 600px); */
+    }
+  }
+  @media (max-width: 650px) {
+    :root {
+      --video_translate: 0vw;
     }
   }
 </style>

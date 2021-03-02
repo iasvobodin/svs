@@ -7,6 +7,16 @@
   let play2 = true;
 </script>
 
+<!-- <video
+  width="50%"
+  height="auto"
+  autoplay
+  preload="metadata"
+  muted="muted"
+  playsinline=""
+>
+  <source src="/image/backstage.mp4" type="video/mp4" />
+</video> -->
 <HellowComponent />
 <VimeoComponent />
 <Reviews />
