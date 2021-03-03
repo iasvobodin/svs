@@ -1,4 +1,4 @@
-<h3>Контакты</h3>
+<h2>Контакты</h2>
 <section class="footer">
   <div class="left">
     <h4 class="contact_title">
@@ -43,9 +43,7 @@
     </div>
   </div>
   <div class="right">
-    <h4 class="contact_title">
-      Или оставьте заявку, я презвоню вам в ближайшее время
-    </h4>
+    <h4 class="contact_title">Или оставьте заявку.</h4>
     <form class="form">
       <h4>Оставить заявку</h4>
       <p type="Ваше имя:"><input placeholder="Напишите как вас зовут" /></p>
@@ -62,13 +60,26 @@
 
 <style>
   .contact_title {
-    width: 60%;
+    width: 50%;
+    margin: auto;
+    margin-bottom: 3vh;
+    text-align: center;
   }
   .form {
-    width: 340px;
+    width: 100%;
     height: 440px;
-    background: #1a1a1a;
+    background-image: repeating-linear-gradient(
+        90deg,
+        rgba(33, 33, 33, 0.43) 0px,
+        rgba(33, 33, 33, 0.43) 2px,
+        transparent 2px,
+        transparent 4px
+      ),
+      linear-gradient(90deg, rgb(33, 33, 33), transparent),
+      linear-gradient(0deg, rgb(33, 33, 33), transparent),
+      linear-gradient(90deg, rgb(175, 175, 175), rgb(175, 175, 175));
     border-radius: 5px;
+    margin: auto;
     /* box-shadow: 0 0 40px -10px rgb(212, 212, 212); */
     /* margin: calc(50vh - 220px) auto; */
     padding: 20px 30px;
@@ -116,16 +127,19 @@
   }
 
   .footer {
+    margin: auto;
     margin-top: 7vh;
     display: grid;
+    column-gap: 5vw;
     grid-template-columns: repeat(auto-fill, minmax(max(35vw, 400px), 1fr));
+    width: 90vw;
     justify-content: center;
   }
   a {
     text-decoration: none;
     text-decoration-line: none;
-    text-align: center;
-    place-self: center;
+    /* text-align: center; */
+    /* place-self: center; */
   }
   .social__icon {
     width: 25px;
@@ -135,6 +149,7 @@
   .contact {
     display: grid;
     width: 100%;
-    grid-template-columns: repeat(auto-fill, minmax(max(30vw, 200px), 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(max(15vw, 200px), 1fr));
+    row-gap: 5vh;
   }
 </style>

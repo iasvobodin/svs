@@ -4,7 +4,10 @@
     меня зовут Настя.
   </h1>
   <div class="hellow__ava">
-    <img src="image/ava.jpg" alt="" />
+    <video controls autoplay preload="metadata" muted="muted" playsinline="">
+      <source src="/backstage.mp4" type="video/mp4" />
+    </video>
+    <!-- <img src="image/ava.jpg" alt="" /> -->
   </div>
   <div class="description__social">
     <h2 class="hellow__subhedline subhedline">
@@ -116,6 +119,12 @@
     -webkit-filter: grayscale(0);
     filter: grayscale(0);
     transform: translateX(-20%);
+  }
+  video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
   }
   img {
     width: 100%;

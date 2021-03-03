@@ -17,11 +17,17 @@ h6 {
 	font-family: Cormorant Infant;
 	margin: 0;
 	font-weight: 300;
-	line-height: 1.2;
+	/* line-height: 1.2; */
 }
 
 h1 {
 	font-size: 2em;
+}
+
+h2 {
+	font-size: max(36px, 5.8vw);
+	line-height: max(40px, 5.8vw);
+	margin: 5vw;
 }
 
 h3 {
