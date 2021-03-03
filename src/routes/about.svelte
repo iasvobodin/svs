@@ -3,6 +3,7 @@
   import HellowComponent from "../components/hellowComponent.svelte";
   import Reviews from "../components/reviews.svelte";
   import Price from "../components/price.svelte";
+  import Footer from "../components/footer.svelte";
   let play = true;
   let play2 = true;
 </script>
@@ -21,6 +22,7 @@
 <VimeoComponent />
 <Reviews />
 <Price />
+<Footer />
 
 <style>
   :root {

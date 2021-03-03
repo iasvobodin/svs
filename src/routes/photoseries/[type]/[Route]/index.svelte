@@ -9,7 +9,7 @@
   }
 </script>
 
-<!--<script context="module" ✂prettier:content✂="CglleHBvcnQgYXN5bmMgZnVuY3Rpb24gcHJlbG9hZCh7IHBhcmFtcyB9KSB7CgkJbGV0IFtzbHVnLCB5ZWFyLCBtb250aCwgZGF5XSA9IHBhcmFtcy5zbHVnOwoKCQlyZXR1cm4geyBzbHVnLCB5ZWFyLCBtb250aCwgZGF5IH07Cgl9Cg==" ✂prettier:content✂="e30=" ✂prettier:content✂="e30=" ✂prettier:content✂="e30=" ✂prettier:content✂="e30=" ✂prettier:content✂="e30=" ✂prettier:content✂="e30=" ✂prettier:content✂="e30=" ✂prettier:content✂="e30=" ✂prettier:content✂="e30=" ✂prettier:content✂="e30=" ✂prettier:content✂="e30=" ✂prettier:content✂="e30=" ✂prettier:content✂="e30=" ✂prettier:content✂="e30=">{}</script>-->
+<!--<script context="module" ✂prettier:content✂="CglleHBvcnQgYXN5bmMgZnVuY3Rpb24gcHJlbG9hZCh7IHBhcmFtcyB9KSB7CgkJbGV0IFtzbHVnLCB5ZWFyLCBtb250aCwgZGF5XSA9IHBhcmFtcy5zbHVnOwoKCQlyZXR1cm4geyBzbHVnLCB5ZWFyLCBtb250aCwgZGF5IH07Cgl9Cg==" ✂prettier:content✂="e30=" ✂prettier:content✂="e30=" ✂prettier:content✂="e30=" ✂prettier:content✂="e30=" ✂prettier:content✂="e30=" ✂prettier:content✂="e30=" ✂prettier:content✂="e30=" ✂prettier:content✂="e30=" ✂prettier:content✂="e30=" ✂prettier:content✂="e30=" ✂prettier:content✂="e30=" ✂prettier:content✂="e30=" ✂prettier:content✂="e30=" ✂prettier:content✂="e30=" ✂prettier:content✂="e30=">{}</script>-->
 <script>
   import { debounce } from "lodash-es/lodash";
   import { onMount, tick } from "svelte";
@@ -23,6 +23,7 @@
     eventAnimation,
     leaveRoute,
     leaveIndex,
+    typePhotoseries,
     photoseries,
     homePageState,
   } from "store.js";
@@ -132,6 +133,7 @@
     getJL(gallery);
   }
   onMount(() => {
+    console.log($typePhotoseries, "typePhotoseries");
     console.log("random", anime.random(0, 270));
     height = window.innerHeight;
     width = window.innerWidth;
