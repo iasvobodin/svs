@@ -9,7 +9,7 @@
     RenderTarget,
   } from "curtainsjs/src/index.mjs";
   import anime from "animejs";
-  import { debounce, forEach } from "lodash-es/lodash";
+  import { debounce } from "lodash-es/lodash";
   import { tweened } from "svelte/motion";
   import fragment from "assets/photoseries.frag";
   import vertex from "assets/photoseries.vert";
