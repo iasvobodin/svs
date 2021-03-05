@@ -4,10 +4,10 @@
     меня зовут Настя.
   </h1>
   <div class="hellow__ava">
-    <video controls autoplay preload="metadata" muted="muted" playsinline="">
+    <!-- <video controls autoplay preload="metadata" muted="muted" playsinline="">
       <source src="/backstage.mp4" type="video/mp4" />
-    </video>
-    <!-- <img src="image/ava.jpg" alt="" /> -->
+    </video> -->
+    <img src="image/ava.jpg" alt="" />
   </div>
   <div class="description__social">
     <h2 class="hellow__subhedline subhedline">

@@ -7,6 +7,12 @@
 
 <div class="reviews__holder">
     <h2 class="review__title">Отзывы</h2>
+    <div class="review__image">
+        <img
+            src="https://raw.githubusercontent.com/iasvobodin/svs/images/static/image/webp/1440/20-07-03-19-19-22.webp"
+            alt=""
+        />
+    </div>
     <div class="cont">
         {#each reviewsSlice as review}
             <div class="review">
@@ -136,6 +142,17 @@
 <style>
     :root {
         --card__height: 350px;
+    }
+    .review__image {
+        width: 100%;
+        height: 50vh;
+        margin-bottom: 5vh;
+    }
+    .review__image > img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        object-position: 50% 90%;
     }
     .button {
         width: 40px;
