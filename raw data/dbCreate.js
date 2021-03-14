@@ -24,12 +24,11 @@ data.sort(function (a, b) {
 })
 // сортируем исходный файл убираем всё ненужное
 const lightData = data.map((el) => {
+
   return {
     Name: el.FileName.slice(0, -4),
     Params: {
-      Colors: color
-        .find((e) => e.Name === el.FileName)
-        .color.map((e) => hex2rgb(e)),
+      Colors: color.find((e) => e.Name === el.FileName),
       Color: color.find((e) => e.Name === el.FileName).color[0],
       Sh: el.ShutterSpeedValue,
       F: el.ApertureValue,
@@ -39,10 +38,8 @@ const lightData = data.map((el) => {
     Keywords: el.Keywords,
   }
 })
-// const db2 = db
-// db2.filter(el => el.Props.Type === 'Series')
 
-db.Series.forEach((el) => {
+db.Series.forEach((el, i) => {
   el.ImageName = lightData
     .filter((image) => image.Keywords.includes(el.Name))
     .map((image) => image.Name)
@@ -113,22 +110,6 @@ const photoseries = db.Series.map((el, index) => {
     Route: el.Name.toLowerCase(),
     Title: el.Title,
     Type: el.Type,
-    smallPortrait: {
-       textureTag: "smallPortrait",
-      src: `${el.Portrait}`,
-    },
-    largePortrait: {
-       textureTag: "largePortrait",
-      src: `${el.Portrait}`,
-    },
-    smallLandscape: {
-       textureTag: "smallLandscape",
-      src: `${el.Cover.Name}`,
-    },
-    largeLandscape: {
-       textureTag: "largeLandscape",
-      src: `${el.Cover.Name}`,
-    },
     LandscapeFileName: el.Cover.Name,
     PortraitFileName: el.Portrait,
     PortraitAspect: el.PortraitAspect,

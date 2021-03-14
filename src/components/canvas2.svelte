@@ -20,6 +20,7 @@
   import shaderPassFs from "assets/shaderPassFs.frag";
   import shaderPassVs from "assets/shaderPassFs.vert";
   import rgbFs from "assets/rgbPass.frag";
+  import PlanePicture from "../components/planePicture.svelte";
   // import fragment from "assets/start.frag";
   // import vertex from "assets/start.vert";
   import {
@@ -214,7 +215,7 @@
   function initCurtains() {
     curtains = new Curtains({
       container: webgl,
-      pixelRatio: Math.min(1.5, window.devicePixelRatio),
+      pixelRatio: 1, // Math.min(1.5, window.devicePixelRatio),
       production: process.env.NODE_ENV !== "development",
       autoRender: false,
       antialias: false,
@@ -319,23 +320,21 @@
         type: plane.htmlElement.dataset.type,
         color: plane.htmlElement.dataset.color.split(","),
         id: plane.htmlElement.dataset.id,
-        // route: $photoseries[plane.index].Route,
-        // color: $photoseries[plane.index].ColorVector,
-        // id: $photoseries[plane.index].Id,
-        // type: $photoseries[plane.index].Type,
       };
-      getUnifors(plane, {
-        pCorr: false,
-        sCorr: true,
-        fCorr: true,
-      });
-      setTexture(plane);
+      // getUnifors(plane, {
+      //   pCorr: false,
+      //   sCorr: true,
+      //   fCorr: true,
+      // });
       plane.onReady(() => {
         // console.log(plane.htmlElement.dataset.color);
+        setTexture(plane);
       });
-      plane.onAfterResize(() => {});
+      plane.onAfterResize(() => {
+        plane.textures[0].needUpdate();
+        getUnifors(plane);
+      });
       plane.onLoading(() => {});
-      console.log(plane.userData.id, plane.index - 1);
 
       planes.push(plane);
     };
@@ -385,7 +384,9 @@
       pl.images.length === 0 &&
       pl.loadImage(planeImages[pl.index - 1]);
     pl.textures[0] &&
-      pl.textures[0].onSourceUploaded(() => {
+      pl.textures[0].onSourceUploaded((eee) => {
+        pl.textures[0].needUpdate();
+        console.log(eee, "inside texture loaded");
         load++;
         if (pl.relativeTranslation.z < 0) {
           pl.visible = 0;
@@ -535,6 +536,8 @@
     // const curtainsHeight =
     //     curtains.getBoundingRect().height / curtains.pixelRatio;
     const top = (curtainsHeight - height) / 2;
+    // debugger;
+    console.log(width, height, left, top);
     const calcCords = {};
     // SET CORRECTION FRAGMENT SHADER NEED TO START AND RESIZE
     if (opt.fCorr) {
@@ -599,6 +602,9 @@
     curtainsHeight = curtains.getBoundingRect().height;
   }
   function resize() {
+    // planes.forEach((pl) => {
+    //   getUnifors(pl);
+    // });
     // radius =
     //     elWidth / Math.sin((Math.PI * 2) / $photoseries.length / 2) / 2;
     // // if ($homePageState) {
@@ -1063,7 +1069,8 @@
       href="/photoseries/{$activePhotoseries.Type}/{$activePhotoseries.Route}"
       >r</a
     >
-    <picture class="standart__picture">
+    <PlanePicture seriya={$activePhotoseries} />
+    <!-- <picture class="standart__picture">
       <source
         media="(orientation: portrait)"
         srcset="https://raw.githubusercontent.com/iasvobodin/svs/images/static/image/webp/720/{$activePhotoseries.PortraitFileName}.webp"
@@ -1082,6 +1089,7 @@
       <img
         style="opacity:0"
         data-sampler="planeTexture"
+        data-id={$activePhotoseries.Id}
         class="slider__img"
         alt="SvobodinaPhoto"
         crossorigin="anonimous"
@@ -1089,7 +1097,7 @@
         draggable="false"
         src="https://raw.githubusercontent.com/iasvobodin/svs/images/static/image/jpg/720/{$activePhotoseries.LandscapeFileName}.jpg"
       />
-    </picture>
+    </picture> -->
   </div>
   {#if $typePhotoseries}
     {#each $typePhotoseries as seriya, index (index)}
@@ -1105,7 +1113,8 @@
         class="plane"
       >
         {#if showPicture}
-          <picture class="standart__picture">
+          <PlanePicture {seriya} />
+          <!-- <picture class="standart__picture">
             <source
               media="(orientation: portrait)"
               srcset="https://raw.githubusercontent.com/iasvobodin/svs/images/static/image/webp/720/{seriya
@@ -1128,6 +1137,7 @@
             <img
               style="opacity:0"
               data-sampler="planeTexture"
+              data-id={seriya.Id}
               class="slider__img"
               alt="SvobodinaPhoto"
               crossorigin="anonimous"
@@ -1136,7 +1146,7 @@
               src="https://raw.githubusercontent.com/iasvobodin/svs/images/static/image/jpg/720/{seriya
                 .largeLandscape.src}.jpg"
             />
-          </picture>
+          </picture> -->
         {/if}
       </div>
     {/each}

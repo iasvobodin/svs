@@ -87,7 +87,7 @@
                 transparent 100%
             ),
             linear-gradient(90deg, rgb(0, 0, 0), rgb(0, 0, 0));
-        box-shadow: 100px 100px 10px -99px rgba(107, 0, 102, 0.486);
+        box-shadow: 100px 100px 1px -99px rgba(255, 255, 255, 0.171);
     }
     .price__tarif > h3 {
         align-self: start;

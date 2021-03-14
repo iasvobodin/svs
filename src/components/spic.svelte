@@ -22,7 +22,7 @@
   const observer = new IntersectionObserver((entries, observer) => {
     visible = entries[0].isIntersecting;
     entries.forEach((entry, i) => {
-      console.log(entry);
+      // console.log(entry);
       if (entry.isIntersecting) {
         const lazyImg = entry.target;
         observer.unobserve(lazyImg);
@@ -38,17 +38,14 @@
 <div class="holder" bind:this={gallery}>
   {#if visible}
     <picture transition:fade>
-      <source
-        srcset="https://raw.githubusercontent.com/iasvobodin/svs/images/static/image/webp/{wwidth}/{src}.webp"
-        type="image/webp"
-      />
+      <source srcset="image/image2/{wwidth}_{src}.webp" type="image/webp" />
       <img
         class="gallery__img"
         alt="SvobodinaPhoto"
         crossorigin="anonimous"
         decoding="async"
         draggable="false"
-        src="https://raw.githubusercontent.com/iasvobodin/svs/images/static/image/jpg/{wwidth}/{src}.jpg"
+        src="image/image2/{wwidth}_{src}.jpg"
       />
     </picture>
   {/if}

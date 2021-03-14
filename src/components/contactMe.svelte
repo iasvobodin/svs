@@ -1,3 +1,7 @@
+<script>
+  import pricedata from "../../static/db/price.json";
+</script>
+
 <h2>Контакты</h2>
 <div class="contact__image">
   <img
@@ -48,23 +52,49 @@
   <div class="right">
     <form class="form">
       <h3>Оставить заявку</h3>
-      <p type="Ваше имя:"><input placeholder="Напишите как вас зовут" /></p>
-      <p type="Телефон:">
-        <input placeholder="Как с вами можно связаться" />
-      </p>
-      <p type="Сообщение">
-        <input placeholder="Напишете что-нибудь =)" />
-      </p>
-      <p>
-        <label for="bday">Enter your birthday:</label>
-        <input type="date" placeholder="Напишете что-нибудь =)" />
-      </p>
+      <div class="form__holder">
+        <div class="form__right">
+          <label for="name">Ваше имя:</label>
+          <input id="name" type="text" name="name" />
+          <!-- <p type="Ваше имя:"><input /></p> -->
+          <label
+            >Телефон:
+            <input type="tel" />
+          </label>
+          <!-- <p type="Телефон:">
+            <input type="tel" />
+          </p> -->
+        </div>
+        <div class="form__left">
+          <p>
+            <label for="bday">Дата съёмки:</label>
+            <input type="date" />
+          </p>
+          <p type="Тип съёмки:">
+            <select>
+              {#each pricedata as el}
+                <option>{el.title}</option>
+              {/each}
+            </select>
+          </p>
+        </div>
+      </div>
+
+      <label
+        >Сообщение
+        <textarea name="" id="" cols="30" rows="3" />
+      </label>
       <button>Отправить</button>
     </form>
   </div>
 </section>
 
 <style>
+  .form__holder {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    column-gap: 1vw;
+  }
   .contact__image {
     width: 100%;
     height: 50vh;
@@ -123,7 +153,14 @@
     position: relative;
   }
 
-  input {
+  input,
+  textarea,
+  select {
+    color: lavenderblush;
+    font-family: Cormorant Infant;
+    margin: 0;
+    font-weight: 300;
+    font-size: 20px;
     width: 100%;
     padding: 10px;
     box-sizing: border-box;
@@ -134,7 +171,8 @@
     transition: all 0.3s;
     border-bottom: 2px solid #ffffff;
   }
-  input:focus {
+  input,
+  textarea:focus {
     border-bottom: 2px solid #cf5300;
   }
   p:before {
@@ -164,7 +202,7 @@
   .footer {
     margin: auto;
     margin-top: 7vh;
-    display: grid;
+    /* display: grid; */
     column-gap: 5vw;
     grid-template-columns: repeat(auto-fill, minmax(max(35vw, 250px), 1fr));
     width: 95vw;

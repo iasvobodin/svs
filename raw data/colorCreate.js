@@ -1,8 +1,6 @@
-// import df from './'
-// const sqip = require('sqip').default
 const resolve = require('path').resolve
 const fs = require('fs')
-const lqip = require('lqip')
+const ColorThief = require('colorthief');
 
 // joining path of directory
 const directoryPath = resolve(__dirname, './image')
@@ -14,10 +12,12 @@ fs.readdir(directoryPath, function (err, files) {
   }
   const color = []
   console.log(files)
+  const ff = files.filter(el => el.endsWith('jpg'))
+  ff.forEach((file, index) => {
 
-  files.forEach((file, index) => {
-    ;(async () => {
-      const data = await lqip.palette(`./image/${file}`)
+
+    (async () => {
+      const data = await ColorThief.getPalette(`./image/${file}`, 5)
       // пушим все цвета объектами
       color.push({
         color: data,
@@ -33,45 +33,4 @@ fs.readdir(directoryPath, function (err, files) {
       }
     })()
   })
-  // })
-
-  // files.forEach((file, index) => {
-  //   (async () => {
-  //     const data = await sqip({
-  //       input: `../img2/${file}`,
-  //       plugins: [{
-  //         name: 'primitive',
-  //         options: {
-  //           numberOfPrimitives: 25,
-  //           mode: 8,
-  //           alpha: 0
-  //         }
-  //       },
-  //       {
-  //         name: 'blur',
-  //         options: {
-  //           blur: 15
-  //         }
-  //       },
-  //       // 'blur',
-  //       'svgo',
-  //       'data-uri'
-  //       ]
-  //     })
-  //     // пушим все цвета объектами
-  //     color.push({
-  //       svg: data.content,
-  //       Name: file,
-  //       id: index,
-  //       background: data.metadata.dataURI
-  //     })
-  //     // записываем в файл
-  //     try {
-  //       fs.writeFileSync('./colorrr.json', JSON.stringify(color, null, 2))
-  //       console.log(`file color.json ${index} is redy`)
-  //     } catch (error) {
-  //       console.log(error)
-  //     }
-  //   })()
-  // })
 })

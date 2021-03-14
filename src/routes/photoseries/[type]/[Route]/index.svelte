@@ -9,7 +9,7 @@
   }
 </script>
 
-<!--<script context="module" ✂prettier:content✂="CglleHBvcnQgYXN5bmMgZnVuY3Rpb24gcHJlbG9hZCh7IHBhcmFtcyB9KSB7CgkJbGV0IFtzbHVnLCB5ZWFyLCBtb250aCwgZGF5XSA9IHBhcmFtcy5zbHVnOwoKCQlyZXR1cm4geyBzbHVnLCB5ZWFyLCBtb250aCwgZGF5IH07Cgl9Cg==" ✂prettier:content✂="e30=" ✂prettier:content✂="e30=" ✂prettier:content✂="e30=" ✂prettier:content✂="e30=" ✂prettier:content✂="e30=" ✂prettier:content✂="e30=" ✂prettier:content✂="e30=" ✂prettier:content✂="e30=" ✂prettier:content✂="e30=" ✂prettier:content✂="e30=" ✂prettier:content✂="e30=" ✂prettier:content✂="e30=" ✂prettier:content✂="e30=" ✂prettier:content✂="e30=" ✂prettier:content✂="e30=">{}</script>-->
+<!--<script context="module" ✂prettier:content✂="CglleHBvcnQgYXN5bmMgZnVuY3Rpb24gcHJlbG9hZCh7IHBhcmFtcyB9KSB7CgkJbGV0IFtzbHVnLCB5ZWFyLCBtb250aCwgZGF5XSA9IHBhcmFtcy5zbHVnOwoKCQlyZXR1cm4geyBzbHVnLCB5ZWFyLCBtb250aCwgZGF5IH07Cgl9Cg==" ✂prettier:content✂="e30=" ✂prettier:content✂="e30=" ✂prettier:content✂="e30=" ✂prettier:content✂="e30=" ✂prettier:content✂="e30=" ✂prettier:content✂="e30=" ✂prettier:content✂="e30=" ✂prettier:content✂="e30=" ✂prettier:content✂="e30=" ✂prettier:content✂="e30=" ✂prettier:content✂="e30=" ✂prettier:content✂="e30=" ✂prettier:content✂="e30=" ✂prettier:content✂="e30=" ✂prettier:content✂="e30=" ✂prettier:content✂="e30=" ✂prettier:content✂="e30=" ✂prettier:content✂="e30=" ✂prettier:content✂="e30=" ✂prettier:content✂="e30=">{}</script>-->
 <script>
   import { debounce } from "lodash-es/lodash";
   import { onMount, tick } from "svelte";
@@ -81,12 +81,12 @@
           }px, ${
         Math.floor(el.top) + anime.random(-height * 0.045, height * 0.045)
       }px);
-          box-shadow: inset 0px 0px 0px 2px ${text.Spec[i].Color};
+          box-shadow: inset 0px 0px 0px 2px rgb(${text.Spec[i].Color});
           width: ${Math.floor(el.width)}px;
           height: ${Math.floor(el.height)}px;
-          background-image: radial-gradient(circle at bottom center, ${
-            text.Spec[i].Colors[0]
-          },${text.Spec[i].Colors[1]});
+          background-image: radial-gradient(circle at bottom center, rgb(${
+            text.Spec[i].Colors.color[0]
+          }),rgb(${text.Spec[i].Colors.color[1]}));
         `);
       // el.style = `
       //     transform: translate(${Math.floor(el.left)}px, ${Math.floor(
@@ -106,9 +106,14 @@
   $: gallery = data;
 
   function imageWidth(x) {
+    [320, 480, 600, 720, 1024, 1440, 1920, 2560];
     const calcWidth =
-      x < 480
+      x < 320
+        ? 320
+        : x < 480
         ? 480
+        : x < 600
+        ? 600
         : x < 720
         ? 720
         : x < 1024
@@ -195,6 +200,7 @@
     width: 100%;
     overflow: hidden;
     position: relative;
+    /* color:rgb(110, 110, 30); */
 
     /* max-width: 95vw; */
     /* width: 80vw;

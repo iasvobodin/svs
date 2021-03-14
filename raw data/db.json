@@ -1,6 +1,62 @@
 {
   "Series": [
     {
+      "id": "19",
+      "Name": "MariyaAlexandr",
+      "Title": "Мария и Александр",
+      "Descripion": "",
+      "Type":"lovestory",
+      "EngDescription": ""
+    },
+    {
+      "id": "18",
+      "Name": "SvetaVeronika060920",
+      "Title": "Света и Вероника",
+      "Descripion": "",
+      "Type":"portrait",
+      "EngDescription": ""
+    },
+    {
+      "id": "17",
+      "Name": "Alexandra060121",
+      "Title": "Александра",
+      "Descripion": "",
+      "Type":"portrait",
+      "EngDescription": ""
+    },
+    {
+      "id": "16",
+      "Name": "Mariya200121",
+      "Title": "Мария",
+      "Descripion": "",
+      "Type":"portrait",
+      "EngDescription": ""
+    },
+    {
+      "id": "20",
+      "Name": "Dasha160920",
+      "Title": "Даша",
+      "Descripion": "",
+      "Type":"portrait",
+      "EngDescription": ""
+    },
+    {
+      "id": "15",
+      "Name": "Yulya060820",
+      "Title": "Юля П.",
+      "Descripion": "",
+      "Type":"portrait",
+      "EngDescription": ""
+    },
+    {
+      "id": "14",
+      "Name": "Yulya040121",
+      "Title": "Юля Е.",
+      "Descripion": "",
+      "Type":"portrait",
+      "EngDescription": ""
+    },
+    {
       "id": "13",
       "Name": "YulyaKirill",
       "Title": "Юля и Кирилл",

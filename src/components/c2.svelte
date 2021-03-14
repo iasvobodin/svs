@@ -495,7 +495,7 @@
         opt = { pCorr: true, sCorr: true, fCorr: true }
     ) {
         // GET BOUND
-        const { width, height, left } = plane.getWebGLBoundingRect();
+        const { width, height, left, top } = plane.getWebGLBoundingRect();
         const {
             width: curtainsWidth,
             height: curtainsHeight,
@@ -504,7 +504,7 @@
         //     curtains.getBoundingRect().width / curtains.pixelRatio;
         // const curtainsHeight =
         //     curtains.getBoundingRect().height / curtains.pixelRatio;
-        const top = (curtainsHeight - height) / 2;
+        // const top = (curtainsHeight - height) / 2;
         const calcCords = {};
         // SET CORRECTION FRAGMENT SHADER NEED TO START AND RESIZE
         if (opt.fCorr) {

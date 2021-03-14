@@ -1,417 +1,402 @@
 [
   {
     "Id": 0,
-    "Route": "yulyakirill",
-    "Title": "Юля и Кирилл",
-    "Type": "wedding",
-    "smallPortrait": {
-      "textureTag": "smallPortrait",
-      "src": "20-08-29-14-42-00"
-    },
-    "largePortrait": {
-      "textureTag": "largePortrait",
-      "src": "20-08-29-14-42-00"
-    },
-    "smallLandscape": {
-      "textureTag": "smallLandscape",
-      "src": "20-08-29-16-20-24"
-    },
-    "largeLandscape": {
-      "textureTag": "largeLandscape",
-      "src": "20-08-29-16-20-24"
-    },
-    "LandscapeFileName": "20-08-29-16-20-24",
-    "PortraitFileName": "20-08-29-14-42-00",
+    "Route": "mariyaalexandr",
+    "Title": "Мария и Александр",
+    "Type": "lovestory",
+    "LandscapeFileName": "20-06-25-19-16-16",
+    "PortraitFileName": "20-06-25-18-31-56",
     "PortraitAspect": 0.667,
     "LandscapeAspect": 1.5,
-    "ColorHex": "#837972",
+    "ColorHex": [
+      51,
+      37,
+      31
+    ],
     "ColorVector": [
-      0.514,
-      0.475,
-      0.447
+      0,
+      0,
+      0
     ]
   },
   {
     "Id": 1,
-    "Route": "yulyaevgeniy",
-    "Title": "Юля и Евгений",
-    "Type": "wedding",
-    "smallPortrait": {
-      "textureTag": "smallPortrait",
-      "src": "20-03-09-11-17-09"
-    },
-    "largePortrait": {
-      "textureTag": "largePortrait",
-      "src": "20-03-09-11-17-09"
-    },
-    "smallLandscape": {
-      "textureTag": "smallLandscape",
-      "src": "20-03-09-11-13-31"
-    },
-    "largeLandscape": {
-      "textureTag": "largeLandscape",
-      "src": "20-03-09-11-13-31"
-    },
-    "LandscapeFileName": "20-03-09-11-13-31",
-    "PortraitFileName": "20-03-09-11-17-09",
+    "Route": "svetaveronika060920",
+    "Title": "Света и Вероника",
+    "Type": "portrait",
+    "LandscapeFileName": "20-09-06-13-21-22",
+    "PortraitFileName": "20-09-06-13-27-34",
     "PortraitAspect": 0.667,
     "LandscapeAspect": 1.5,
-    "ColorHex": "#d8baab",
+    "ColorHex": [
+      72,
+      61,
+      55
+    ],
     "ColorVector": [
-      0.847,
-      0.7290000000000001,
-      0.6709999999999999
+      0,
+      0,
+      0
     ]
   },
   {
     "Id": 2,
-    "Route": "nastyaigor",
-    "Title": "Анастасия и Игорь",
-    "Type": "wedding",
-    "smallPortrait": {
-      "textureTag": "smallPortrait",
-      "src": "20-07-03-17-25-34"
-    },
-    "largePortrait": {
-      "textureTag": "largePortrait",
-      "src": "20-07-03-17-25-34"
-    },
-    "smallLandscape": {
-      "textureTag": "smallLandscape",
-      "src": "20-07-03-17-11-29"
-    },
-    "largeLandscape": {
-      "textureTag": "largeLandscape",
-      "src": "20-07-03-17-11-29"
-    },
-    "LandscapeFileName": "20-07-03-17-11-29",
-    "PortraitFileName": "20-07-03-17-25-34",
+    "Route": "alexandra060121",
+    "Title": "Александра",
+    "Type": "portrait",
+    "LandscapeFileName": "21-01-06-13-40-15",
+    "PortraitFileName": "21-01-06-13-09-37",
     "PortraitAspect": 0.667,
     "LandscapeAspect": 1.5,
-    "ColorHex": "#dde5eb",
+    "ColorHex": [
+      34,
+      37,
+      24
+    ],
     "ColorVector": [
-      0.867,
-      0.898,
-      0.922
+      0,
+      0,
+      0
     ]
   },
   {
     "Id": 3,
-    "Route": "inna",
-    "Title": "Инна",
-    "Type": "wedding",
-    "smallPortrait": {
-      "textureTag": "smallPortrait",
-      "src": "20-08-03-14-47-25"
-    },
-    "largePortrait": {
-      "textureTag": "largePortrait",
-      "src": "20-08-03-14-47-25"
-    },
-    "smallLandscape": {
-      "textureTag": "smallLandscape",
-      "src": "20-08-03-14-42-01"
-    },
-    "largeLandscape": {
-      "textureTag": "largeLandscape",
-      "src": "20-08-03-14-42-01"
-    },
-    "LandscapeFileName": "20-08-03-14-42-01",
-    "PortraitFileName": "20-08-03-14-47-25",
+    "Route": "mariya200121",
+    "Title": "Мария",
+    "Type": "portrait",
+    "LandscapeFileName": "21-01-20-14-43-50",
+    "PortraitFileName": "21-01-20-14-36-57",
     "PortraitAspect": 0.667,
     "LandscapeAspect": 1.5,
-    "ColorHex": "#98836d",
+    "ColorHex": [
+      222,
+      213,
+      207
+    ],
     "ColorVector": [
-      0.596,
-      0.514,
-      0.42700000000000005
+      0,
+      0,
+      0
     ]
   },
   {
     "Id": 4,
-    "Route": "bacheloretteparty",
-    "Title": "Девичник",
-    "Type": "wedding",
-    "smallPortrait": {
-      "textureTag": "smallPortrait",
-      "src": "19-05-05-15-36-26"
-    },
-    "largePortrait": {
-      "textureTag": "largePortrait",
-      "src": "19-05-05-15-36-26"
-    },
-    "smallLandscape": {
-      "textureTag": "smallLandscape",
-      "src": "19-05-05-15-24-54"
-    },
-    "largeLandscape": {
-      "textureTag": "largeLandscape",
-      "src": "19-05-05-15-24-54"
-    },
-    "LandscapeFileName": "19-05-05-15-24-54",
-    "PortraitFileName": "19-05-05-15-36-26",
-    "PortraitAspect": 0.668,
-    "LandscapeAspect": 1.498,
-    "ColorHex": "#534132",
+    "Route": "dasha160920",
+    "Title": "Даша",
+    "Type": "portrait",
+    "LandscapeFileName": "20-09-16-12-49-01",
+    "PortraitFileName": "20-09-16-13-21-21",
+    "PortraitAspect": 0.667,
+    "LandscapeAspect": 1.5,
+    "ColorHex": [
+      129,
+      106,
+      89
+    ],
     "ColorVector": [
-      0.325,
-      0.255,
-      0.196
+      0,
+      0,
+      0
     ]
   },
   {
     "Id": 5,
-    "Route": "ekaterinapavel",
-    "Title": "Екатерина и Павел",
-    "Type": "wedding",
-    "smallPortrait": {
-      "textureTag": "smallPortrait",
-      "src": "19-05-01-12-13-58"
-    },
-    "largePortrait": {
-      "textureTag": "largePortrait",
-      "src": "19-05-01-12-13-58"
-    },
-    "smallLandscape": {
-      "textureTag": "smallLandscape",
-      "src": "19-05-01-12-24-16"
-    },
-    "largeLandscape": {
-      "textureTag": "largeLandscape",
-      "src": "19-05-01-12-24-16"
-    },
-    "LandscapeFileName": "19-05-01-12-24-16",
-    "PortraitFileName": "19-05-01-12-13-58",
+    "Route": "yulya060820",
+    "Title": "Юля П.",
+    "Type": "portrait",
+    "LandscapeFileName": "20-08-06-19-06-01",
+    "PortraitFileName": "20-08-06-18-38-32",
     "PortraitAspect": 0.668,
     "LandscapeAspect": 1.498,
-    "ColorHex": "#434542",
+    "ColorHex": [
+      189,
+      160,
+      129
+    ],
     "ColorVector": [
-      0.263,
-      0.271,
-      0.259
+      0,
+      0,
+      0
     ]
   },
   {
     "Id": 6,
-    "Route": "angelinaroman",
-    "Title": "Ангелина и Роман",
-    "Type": "wedding",
-    "smallPortrait": {
-      "textureTag": "smallPortrait",
-      "src": "19-05-05-16-18-52"
-    },
-    "largePortrait": {
-      "textureTag": "largePortrait",
-      "src": "19-05-05-16-18-52"
-    },
-    "smallLandscape": {
-      "textureTag": "smallLandscape",
-      "src": "19-05-05-16-11-45"
-    },
-    "largeLandscape": {
-      "textureTag": "largeLandscape",
-      "src": "19-05-05-16-11-45"
-    },
-    "LandscapeFileName": "19-05-05-16-11-45",
-    "PortraitFileName": "19-05-05-16-18-52",
-    "PortraitAspect": 0.668,
-    "LandscapeAspect": 1.498,
-    "ColorHex": "#593828",
+    "Route": "yulya040121",
+    "Title": "Юля Е.",
+    "Type": "portrait",
+    "LandscapeFileName": "21-01-04-12-23-33",
+    "PortraitFileName": "21-01-04-12-33-53",
+    "PortraitAspect": 0.667,
+    "LandscapeAspect": 0.667,
+    "ColorHex": [
+      216,
+      218,
+      220
+    ],
     "ColorVector": [
-      0.349,
-      0.22,
-      0.157
+      0,
+      0,
+      0
     ]
   },
   {
     "Id": 7,
-    "Route": "alexandravadim",
-    "Title": "Александра и Вадим",
+    "Route": "yulyakirill",
+    "Title": "Юля и Кирилл",
     "Type": "wedding",
-    "smallPortrait": {
-      "textureTag": "smallPortrait",
-      "src": "19-08-24-16-57-52"
-    },
-    "largePortrait": {
-      "textureTag": "largePortrait",
-      "src": "19-08-24-16-57-52"
-    },
-    "smallLandscape": {
-      "textureTag": "smallLandscape",
-      "src": "19-08-24-16-57-52"
-    },
-    "largeLandscape": {
-      "textureTag": "largeLandscape",
-      "src": "19-08-24-16-57-52"
-    },
-    "LandscapeFileName": "19-08-24-16-57-52",
-    "PortraitFileName": "19-08-24-16-57-52",
-    "LandscapeAspect": 1.498,
-    "ColorHex": "#a48b6b",
+    "LandscapeFileName": "20-08-29-16-20-24",
+    "PortraitFileName": "20-08-29-14-42-00",
+    "PortraitAspect": 0.667,
+    "LandscapeAspect": 1.5,
+    "ColorHex": [
+      60,
+      48,
+      44
+    ],
     "ColorVector": [
-      0.643,
-      0.545,
-      0.42
+      0,
+      0,
+      0
     ]
   },
   {
     "Id": 8,
-    "Route": "elenanikita",
-    "Title": "Лена и Никита",
-    "Type": "lovestory",
-    "smallPortrait": {
-      "textureTag": "smallPortrait",
-      "src": "19-05-10-17-21-49"
-    },
-    "largePortrait": {
-      "textureTag": "largePortrait",
-      "src": "19-05-10-17-21-49"
-    },
-    "smallLandscape": {
-      "textureTag": "smallLandscape",
-      "src": "19-05-10-17-43-45"
-    },
-    "largeLandscape": {
-      "textureTag": "largeLandscape",
-      "src": "19-05-10-17-43-45"
-    },
-    "LandscapeFileName": "19-05-10-17-43-45",
-    "PortraitFileName": "19-05-10-17-21-49",
-    "PortraitAspect": 0.668,
-    "LandscapeAspect": 1.498,
-    "ColorHex": "#4a4237",
+    "Route": "yulyaevgeniy",
+    "Title": "Юля и Евгений",
+    "Type": "wedding",
+    "LandscapeFileName": "20-03-09-11-13-31",
+    "PortraitFileName": "20-03-09-11-17-09",
+    "PortraitAspect": 0.667,
+    "LandscapeAspect": 1.5,
+    "ColorHex": [
+      199,
+      171,
+      156
+    ],
     "ColorVector": [
-      0.29,
-      0.259,
-      0.21600000000000003
+      0,
+      0,
+      0
     ]
   },
   {
     "Id": 9,
-    "Route": "dashamaksim",
-    "Title": "Даша и Максим",
-    "Type": "lovestory",
-    "smallPortrait": {
-      "textureTag": "smallPortrait",
-      "src": "19-05-07-19-38-34"
-    },
-    "largePortrait": {
-      "textureTag": "largePortrait",
-      "src": "19-05-07-19-38-34"
-    },
-    "smallLandscape": {
-      "textureTag": "smallLandscape",
-      "src": "19-05-07-19-32-56"
-    },
-    "largeLandscape": {
-      "textureTag": "largeLandscape",
-      "src": "19-05-07-19-32-56"
-    },
-    "LandscapeFileName": "19-05-07-19-32-56",
-    "PortraitFileName": "19-05-07-19-38-34",
-    "PortraitAspect": 0.668,
-    "LandscapeAspect": 1.498,
-    "ColorHex": "#487fab",
+    "Route": "nastyaigor",
+    "Title": "Анастасия и Игорь",
+    "Type": "wedding",
+    "LandscapeFileName": "20-07-03-17-11-29",
+    "PortraitFileName": "20-07-03-17-25-34",
+    "PortraitAspect": 0.667,
+    "LandscapeAspect": 1.5,
+    "ColorHex": [
+      43,
+      30,
+      26
+    ],
     "ColorVector": [
-      0.282,
-      0.498,
-      0.6709999999999999
+      0,
+      0,
+      0
     ]
   },
   {
     "Id": 10,
-    "Route": "alenaalexei",
-    "Title": "Алёна и Алексей",
+    "Route": "inna",
+    "Title": "Инна",
     "Type": "wedding",
-    "smallPortrait": {
-      "textureTag": "smallPortrait",
-      "src": "19-07-27-10-14-37"
-    },
-    "largePortrait": {
-      "textureTag": "largePortrait",
-      "src": "19-07-27-10-14-37"
-    },
-    "smallLandscape": {
-      "textureTag": "smallLandscape",
-      "src": "19-07-27-18-08-26"
-    },
-    "largeLandscape": {
-      "textureTag": "largeLandscape",
-      "src": "19-07-27-18-08-26"
-    },
-    "LandscapeFileName": "19-07-27-18-08-26",
-    "PortraitFileName": "19-07-27-10-14-37",
-    "PortraitAspect": 0.668,
-    "LandscapeAspect": 1.498,
-    "ColorHex": "#46242e",
+    "LandscapeFileName": "20-08-03-14-42-01",
+    "PortraitFileName": "20-08-03-14-47-25",
+    "PortraitAspect": 0.667,
+    "LandscapeAspect": 1.5,
+    "ColorHex": [
+      195,
+      191,
+      185
+    ],
     "ColorVector": [
-      0.275,
-      0.141,
-      0.18
+      0,
+      0,
+      0
     ]
   },
   {
     "Id": 11,
-    "Route": "ritavlad",
-    "Title": "Рита и Влад",
+    "Route": "bacheloretteparty",
+    "Title": "Девичник",
     "Type": "wedding",
-    "smallPortrait": {
-      "textureTag": "smallPortrait",
-      "src": "19-06-15-10-17-30"
-    },
-    "largePortrait": {
-      "textureTag": "largePortrait",
-      "src": "19-06-15-10-17-30"
-    },
-    "smallLandscape": {
-      "textureTag": "smallLandscape",
-      "src": "19-06-15-11-55-28"
-    },
-    "largeLandscape": {
-      "textureTag": "largeLandscape",
-      "src": "19-06-15-11-55-28"
-    },
-    "LandscapeFileName": "19-06-15-11-55-28",
-    "PortraitFileName": "19-06-15-10-17-30",
+    "LandscapeFileName": "19-05-05-15-24-54",
+    "PortraitFileName": "19-05-05-15-36-26",
     "PortraitAspect": 0.668,
     "LandscapeAspect": 1.498,
-    "ColorHex": "#4c372c",
+    "ColorHex": [
+      125,
+      98,
+      83
+    ],
     "ColorVector": [
-      0.298,
-      0.21600000000000003,
-      0.17300000000000001
+      0,
+      0,
+      0
     ]
   },
   {
     "Id": 12,
+    "Route": "ekaterinapavel",
+    "Title": "Екатерина и Павел",
+    "Type": "wedding",
+    "LandscapeFileName": "19-05-01-12-24-16",
+    "PortraitFileName": "19-05-01-12-13-58",
+    "PortraitAspect": 0.668,
+    "LandscapeAspect": 1.498,
+    "ColorHex": [
+      212,
+      210,
+      205
+    ],
+    "ColorVector": [
+      0,
+      0,
+      0
+    ]
+  },
+  {
+    "Id": 13,
+    "Route": "angelinaroman",
+    "Title": "Ангелина и Роман",
+    "Type": "wedding",
+    "LandscapeFileName": "19-05-05-16-11-45",
+    "PortraitFileName": "19-05-05-16-18-52",
+    "PortraitAspect": 0.668,
+    "LandscapeAspect": 1.498,
+    "ColorHex": [
+      206,
+      181,
+      171
+    ],
+    "ColorVector": [
+      0,
+      0,
+      0
+    ]
+  },
+  {
+    "Id": 14,
+    "Route": "alexandravadim",
+    "Title": "Александра и Вадим",
+    "Type": "wedding",
+    "LandscapeFileName": "19-08-24-16-57-52",
+    "PortraitFileName": "19-08-24-16-54-28",
+    "PortraitAspect": 1.498,
+    "LandscapeAspect": 1.498,
+    "ColorHex": [
+      27,
+      26,
+      29
+    ],
+    "ColorVector": [
+      0,
+      0,
+      0
+    ]
+  },
+  {
+    "Id": 15,
+    "Route": "elenanikita",
+    "Title": "Лена и Никита",
+    "Type": "lovestory",
+    "LandscapeFileName": "19-05-10-17-43-45",
+    "PortraitFileName": "19-05-10-17-21-49",
+    "PortraitAspect": 0.668,
+    "LandscapeAspect": 1.498,
+    "ColorHex": [
+      42,
+      32,
+      24
+    ],
+    "ColorVector": [
+      0,
+      0,
+      0
+    ]
+  },
+  {
+    "Id": 16,
+    "Route": "dashamaksim",
+    "Title": "Даша и Максим",
+    "Type": "lovestory",
+    "LandscapeFileName": "19-05-07-19-32-56",
+    "PortraitFileName": "19-05-07-19-38-34",
+    "PortraitAspect": 0.668,
+    "LandscapeAspect": 1.498,
+    "ColorHex": [
+      193,
+      202,
+      210
+    ],
+    "ColorVector": [
+      0,
+      0,
+      0
+    ]
+  },
+  {
+    "Id": 17,
+    "Route": "alenaalexei",
+    "Title": "Алёна и Алексей",
+    "Type": "wedding",
+    "LandscapeFileName": "19-07-27-18-08-26",
+    "PortraitFileName": "19-07-27-10-14-37",
+    "PortraitAspect": 0.668,
+    "LandscapeAspect": 1.498,
+    "ColorHex": [
+      64,
+      52,
+      55
+    ],
+    "ColorVector": [
+      0,
+      0,
+      0
+    ]
+  },
+  {
+    "Id": 18,
+    "Route": "ritavlad",
+    "Title": "Рита и Влад",
+    "Type": "wedding",
+    "LandscapeFileName": "19-06-15-11-55-28",
+    "PortraitFileName": "19-06-15-10-17-30",
+    "PortraitAspect": 0.668,
+    "LandscapeAspect": 1.498,
+    "ColorHex": [
+      191,
+      187,
+      185
+    ],
+    "ColorVector": [
+      0,
+      0,
+      0
+    ]
+  },
+  {
+    "Id": 19,
     "Route": "irinaivan",
     "Title": "Ирина и Иван",
     "Type": "wedding",
-    "smallPortrait": {
-      "textureTag": "smallPortrait",
-      "src": "19-03-02-12-03-07"
-    },
-    "largePortrait": {
-      "textureTag": "largePortrait",
-      "src": "19-03-02-12-03-07"
-    },
-    "smallLandscape": {
-      "textureTag": "smallLandscape",
-      "src": "19-03-02-17-25-38"
-    },
-    "largeLandscape": {
-      "textureTag": "largeLandscape",
-      "src": "19-03-02-17-25-38"
-    },
     "LandscapeFileName": "19-03-02-17-25-38",
     "PortraitFileName": "19-03-02-12-03-07",
     "PortraitAspect": 0.668,
     "LandscapeAspect": 1.498,
-    "ColorHex": "#503a2c",
+    "ColorHex": [
+      150,
+      148,
+      147
+    ],
     "ColorVector": [
-      0.314,
-      0.22699999999999998,
-      0.17300000000000001
+      0,
+      0,
+      0
     ]
   }
 ]

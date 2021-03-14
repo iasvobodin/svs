@@ -8,7 +8,7 @@
     "export": "sapper export",
     "exportStart": "npx serve __sapper__/export",
     "start": "node __sapper__/build",
-    "exif": "exiftool  -json -filename -ShutterSpeedValue -ApertureValue -FocalLength -ImageWidth -ImageHeight -Rating -Keywords 'src/image'> 'src/data.json'"
+    "exif": "exiftool  -json -filename -ShutterSpeedValue -ApertureValue -FocalLength -ImageWidth -ImageHeight -Rating -Keywords 'raw data/image'> 'raw data/data.json'"
   },
   "dependencies": {
     "@rollup/plugin-alias": "^3.1.1",
