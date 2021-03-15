@@ -54,8 +54,10 @@
       <h3>Оставить заявку</h3>
       <div class="form__holder">
         <div class="form__right">
-          <label for="name">Ваше имя:</label>
-          <input id="name" type="text" name="name" />
+          <label
+            >Ваше имя:
+            <input type="text" />
+          </label>
           <!-- <p type="Ваше имя:"><input /></p> -->
           <label
             >Телефон:
@@ -66,23 +68,27 @@
           </p> -->
         </div>
         <div class="form__left">
-          <p>
-            <label for="bday">Дата съёмки:</label>
+          <label for="bday"
+            >Дата съёмки:
             <input type="date" />
-          </p>
-          <p type="Тип съёмки:">
+          </label>
+          <label
+            >Тип съёмки:
             <select>
               {#each pricedata as el}
                 <option>{el.title}</option>
               {/each}
             </select>
-          </p>
+          </label>
+          <!-- <p type="Тип съёмки:">
+           
+          </p> -->
         </div>
       </div>
 
       <label
         >Сообщение
-        <textarea name="" id="" cols="30" rows="3" />
+        <textarea id="" cols="30" rows="3" />
       </label>
       <button>Отправить</button>
     </form>
@@ -92,8 +98,8 @@
 <style>
   .form__holder {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    column-gap: 1vw;
+    grid-template-columns: repeat(auto-fit, minmax(max(25vw, 240px), 1fr));
+    column-gap: 3vw;
   }
   .contact__image {
     width: 100%;
@@ -112,9 +118,12 @@
     margin-bottom: 3vh;
     text-align: center;
   }
+  .form > h3 {
+    text-align: center;
+  }
   .form {
     width: 100%;
-    /* height: 440px; */
+    height: auto;
     border-radius: 5px;
     margin: auto;
     background-image: linear-gradient(
@@ -145,37 +154,40 @@
         rgba(9, 5, 41, 0.04) 100%
       ),
       linear-gradient(90deg, rgb(16, 0, 16), rgb(16, 0, 16));
-    /* box-shadow: 0 0 40px -10px rgb(212, 212, 212); */
-    /* margin: calc(50vh - 220px) auto; */
-    padding: 15px 20px;
+    padding: 2.5vw;
     box-sizing: border-box;
-    /* font-family: "Montserrat", sans-serif; */
     position: relative;
   }
-
-  input,
   textarea,
-  select {
+  select,
+  input {
     color: lavenderblush;
     font-family: Cormorant Infant;
-    margin: 0;
     font-weight: 300;
     font-size: 20px;
     width: 100%;
-    padding: 10px;
     box-sizing: border-box;
     background: none;
     outline: none;
     resize: none;
     border: 0;
     transition: all 0.3s;
-    border-bottom: 2px solid #ffffff;
+    border-bottom: 1px solid #ffffff;
   }
-  input,
+  select,
+  input {
+    height: 50px;
+  }
+
+  input:focus,
+  select:focus,
   textarea:focus {
-    border-bottom: 2px solid #cf5300;
+    border-bottom: 2px solid #b8009f;
   }
-  p:before {
+  input {
+    padding: 10px;
+  }
+  label:before {
     content: attr(type);
     display: block;
     margin: 28px 0 0;
@@ -183,7 +195,6 @@
     color: #ffffff;
   }
   button {
-    float: right;
     padding: 8px 12px;
     margin: 8px 0 0;
     /* font-family: "Montserrat", sans-serif; */
@@ -205,7 +216,7 @@
     /* display: grid; */
     column-gap: 5vw;
     grid-template-columns: repeat(auto-fill, minmax(max(35vw, 250px), 1fr));
-    width: 95vw;
+    width: min(1000px, 95vw);
     justify-content: center;
   }
   a {
@@ -219,28 +230,22 @@
     height: 35px;
     margin: 5px;
   }
+  .contact > a {
+    place-self: center;
+  }
   .contact {
     display: grid;
     width: 100%;
-    grid-template-columns: repeat(auto-fill, minmax(max(15vw, 200px), 1fr));
-    row-gap: 5vh;
+    grid-template-columns: repeat(6, minmax(40px, 1fr));
   }
-  @media (max-width: 600px) {
-    .contact > a {
-      display: grid;
-    }
+  @media (max-width: 300px) {
     .social__icon {
-      place-self: center;
+      width: 25px;
+      height: 25px;
+      margin: 5px;
     }
-    .contact {
-      display: grid;
-      width: 100%;
-      grid-template-columns: repeat(6, minmax(40px, 1fr));
-      row-gap: 5vh;
-      margin: 3vh 0px;
-    }
-    .social__description {
-      display: none;
-    }
+  }
+  .social__description {
+    /* display: none; */
   }
 </style>
