@@ -1,11 +1,20 @@
 <script>
-    import { onMount } from "svelte";
-
+    import { onMount, createEventDispatcher } from "svelte";
     export let seriya;
+
+    const dispatch = createEventDispatcher();
+
+    function loaded() {
+        dispatch("imageLoaded", {
+            route: seriya.Route,
+            planeImage,
+        });
+    }
+
     let planeImage;
     onMount(() => {
         planeImage.decode().then(() => {
-            console.log(seriya.Id, "onMount");
+            // console.log(seriya.Id, "onMount");
         });
     });
 </script>
@@ -28,7 +37,7 @@
     />
 
     <img
-        on:load={() => console.log(seriya.Id, "load")}
+        on:load={loaded}
         bind:this={planeImage}
         style="opacity:0"
         data-sampler="planeTexture"

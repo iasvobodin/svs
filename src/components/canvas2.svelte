@@ -119,10 +119,10 @@
 
     initMatchMedia();
 
-    addTransitionPlane();
+    // addTransitionPlane();
 
-    const activeElement = document.getElementsByClassName("activeplane");
-    addPlane(activeElement);
+    // const activeElement = document.getElementsByClassName("activeplane");
+    // addPlane(activeElement);
 
     const planeElement = document.getElementsByClassName("plane");
     planeElement && addPlane(planeElement);
@@ -281,7 +281,44 @@
       shaderPass.loader.loadImage(image);
     });
   }
-  function addPlane(planeNode, trPlane = false) {
+  function async addPlaneByLoad(event) {
+    // e.detail.route;
+    await tick()
+      let currentPlane = planes.find((e) => {
+      e.userData.route === event.detail.route;
+    });
+    console.log(currentPlane);
+ //.userData.route, event.detail.route);
+    // const planeImages = document.getElementsByClassName("slider__img");
+    // await tick();
+    // planeImages[pl.index - 1] &&
+    //   pl.images.length === 0 &&
+
+    //   pl.loadImage(planeImages[pl.index - 1]);
+    // pl.textures[0] &&
+    //   pl.textures[0].onSourceUploaded((eee) => {
+    //     pl.textures[0].needUpdate();
+    //     // console.log(eee, "inside texture loaded");
+    //     load++;
+    //     console.log(load);
+    //     if (pl.relativeTranslation.z < 0) {
+    //       pl.visible = 0;
+    //     } else {
+    //       pl.visible = 1;
+    //     }
+    //     document.documentElement.style.setProperty(
+    //       "--rpeloader__inset",
+    //       `${100 - load * (100 / $photoseries.length)}%`
+    //     );
+    //   });
+    // if (pl.images[0]) {
+    //   pl.images[0].onload = () => {
+    //     pl.textures[0].needUpdate();
+    //     getUnifors(pl);
+    //   };
+    // }
+  }
+  function addPlane(planeNode) {
     const paramsPlane = {
       widthSegments: 16,
       heightSegments: 16,
@@ -326,24 +363,25 @@
       //   sCorr: true,
       //   fCorr: true,
       // });
-      plane.onReady(() => {
-        // console.log(plane.htmlElement.dataset.color);
-        setTexture(plane);
-      });
-      plane.onAfterResize(() => {
-        plane.textures[0].needUpdate();
-        getUnifors(plane);
-      });
-      plane.onLoading(() => {});
-
+      // plane.onReady(() => {
+      //   // console.log(plane.htmlElement.dataset.color);
+      //   setTexture(plane);
+      // });
+      // plane.onAfterResize(() => {
+      //   plane.textures[0].needUpdate();
+      //   getUnifors(plane);
+      // });
+      // plane.onLoading(() => {});
+      console.log(plane);
       planes.push(plane);
     };
-    [...planeNode].length !== 1
-      ? [...planeNode].forEach((element, i) => {
-          const plane = new Plane(curtains, element, paramsPlane);
-          setPlane(plane);
-        })
-      : setPlane(new Plane(curtains, planeNode[0], paramsPlane));
+    // [...planeNode].length !== 1
+    //   ?
+    [...planeNode].forEach((element, i) => {
+      const plane = new Plane(curtains, element, paramsPlane);
+      setPlane(plane);
+    });
+    //   : setPlane(new Plane(curtains, planeNode[0], paramsPlane));
     // console.log(planeNode, "planeNode[0]");
   }
   function addTransitionPlane() {
@@ -386,8 +424,9 @@
     pl.textures[0] &&
       pl.textures[0].onSourceUploaded((eee) => {
         pl.textures[0].needUpdate();
-        console.log(eee, "inside texture loaded");
+        // console.log(eee, "inside texture loaded");
         load++;
+        console.log(load);
         if (pl.relativeTranslation.z < 0) {
           pl.visible = 0;
         } else {
@@ -1062,14 +1101,14 @@
     data-route={$activePhotoseries.Route}
     data-color={$activePhotoseries.ColorVector}
     data-type={$activePhotoseries.Type}
-    class="activeplane"
+    class="activeplane plane"
   >
     <a
       style="display: none;"
       href="/photoseries/{$activePhotoseries.Type}/{$activePhotoseries.Route}"
       >r</a
     >
-    <PlanePicture seriya={$activePhotoseries} />
+    <PlanePicture on:imageLoaded={addPlaneByLoad} seriya={$activePhotoseries} />
     <!-- <picture class="standart__picture">
       <source
         media="(orientation: portrait)"
@@ -1113,7 +1152,7 @@
         class="plane"
       >
         {#if showPicture}
-          <PlanePicture {seriya} />
+          <PlanePicture on:imageLoaded={addPlaneByLoad} {seriya} />
           <!-- <picture class="standart__picture">
             <source
               media="(orientation: portrait)"
