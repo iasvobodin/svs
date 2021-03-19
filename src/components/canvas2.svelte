@@ -73,6 +73,7 @@
     angleStep = (Math.PI * 2) / $photoseries.length,
     step = Math.PI / 2 - angleStep,
     load = 0,
+    currentPlane,
     sliderState = {
       clickDown: "",
       clickUp: "",
@@ -111,6 +112,7 @@
   // activePhotoseries.set($photoseries.find((el) => el.Route === "irinaivan"));
 
   onMount(() => {
+    console.log(Date.now(), "CANVASONMOUNT");
     showPicture = true;
     slider.addEventListener("mousemove", debounce(onChangeTitle, 30));
     slider.addEventListener("touchmove", debounce(onChangeTitle, 30));
@@ -281,14 +283,30 @@
       shaderPass.loader.loadImage(image);
     });
   }
-  function async addPlaneByLoad(event) {
-    // e.detail.route;
-    await tick()
-      let currentPlane = planes.find((e) => {
-      e.userData.route === event.detail.route;
+  function addPlaneByLoad(event) {
+    console.log(Date.now(), "image");
+    // debugger;
+    // if (planes) {
+    // console.log(
+    currentPlane = planes.find((pl) => {
+      pl.userData.route === event.detail.route;
     });
     console.log(currentPlane);
- //.userData.route, event.detail.route);
+    //   // event.detail.route
+    //   // );
+    //   // }
+    //   // e.detail.route;
+    //   (async () => {
+    //     await tick();
+    //     // debugger;
+    //     planes.forEach((e) => {
+    //       // console.log(e.userData.route, event.detail.route);
+    //     });
+
+    //     // console.log(event.detail.planeImage);
+    //   })();
+
+    //.userData.route, event.detail.route);
     // const planeImages = document.getElementsByClassName("slider__img");
     // await tick();
     // planeImages[pl.index - 1] &&
@@ -363,17 +381,19 @@
       //   sCorr: true,
       //   fCorr: true,
       // });
-      // plane.onReady(() => {
-      //   // console.log(plane.htmlElement.dataset.color);
-      //   setTexture(plane);
-      // });
+      console.log(Date.now(), "plane");
+      plane.onReady(() => {
+        planes.push(plane);
+
+        // console.log(plane.htmlElement.dataset.color);
+        // setTexture(plane);
+      });
       // plane.onAfterResize(() => {
       //   plane.textures[0].needUpdate();
       //   getUnifors(plane);
       // });
       // plane.onLoading(() => {});
-      console.log(plane);
-      planes.push(plane);
+      // console.log(plane);
     };
     // [...planeNode].length !== 1
     //   ?

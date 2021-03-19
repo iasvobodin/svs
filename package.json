@@ -15,7 +15,7 @@
     "animejs": "^3.2.1",
     "axios": "^0.21.1",
     "compression": "^1.7.4",
-    "curtainsjs": "^8.0.4",
+    "curtainsjs": "^8.1.0",
     "justified-layout": "^4.1.0",
     "lethargy": "^1.0.9",
     "lodash-es": "^4.17.20",
