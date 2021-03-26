@@ -7,6 +7,14 @@
     targetScroll = 0,
     scroll;
   onMount(() => {
+    import("locomotive-scroll").then((locomotiveModule) => {
+      const scroll = new locomotiveModule.default({
+        el: holder,
+        smooth: true,
+        smoothMobile: false,
+      });
+    });
+
     let invis = anime({
       targets: [".header", ".sub__title", ".canva"],
       autoplay: false,
@@ -111,21 +119,15 @@
   />
 </svelte:head>
 
-<div
-  data-scroll-speed="4"
-  bind:this={holder}
-  data-scroll-container
-  id="stick"
-  class="holder"
->
-  <div class="main__description">
-    <canvas
-      class="canva"
-      data-scroll
-      data-scroll-sticky
-      data-scroll-target="#stick"
-      id="hero-lightpass"
-    />
+<!--  -->
+<div data-scroll-container bind:this={holder} id="stick" class="holder">
+  <div
+    data-scroll
+    data-scroll-sticky
+    data-scroll-target="#stick"
+    class="main__description"
+  >
+    <canvas class="canva" id="hero-lightpass" />
     <h1 class="header">SvobodinaPhoto</h1>
     <p class="sub__title">Больше чем просто фотография</p>
   </div>
