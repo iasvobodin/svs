@@ -9,3 +9,5 @@ yarn-error.log
 /static/image/
 /raw data/image/
 /raw data/node_modules/
+/raw data/fout/
+/raw data/frames/
