@@ -6,9 +6,17 @@
     scrollTop = 0,
     targetScroll = 0,
     scroll;
-  onMount(() => {
+  onMount(async () => {
+    const locomotiveModule = await import("locomotive-scroll");
+
+    scroll = new locomotiveModule.default({
+      // el: holder,
+      smooth: true,
+      // smoothMobile: false,
+    });
+
     let invis = anime({
-      targets: [".header", ".sub__title", ".canva"],
+      targets: [".header", ".sub__title"],
       autoplay: false,
       opacity: 0,
       easing: "linear",
@@ -55,51 +63,77 @@
     const updateImage = (index) => {
       context.drawImage(images[index], 0, 0);
     };
-    // scroll.on("scroll", (func) => {
-    //   const scrollTop = func.scroll.y;
-    //   const maxScrollTop = holder.scrollHeight - window.innerHeight;
-    //   const scrollFraction = scrollTop / maxScrollTop;
-    //   console.log(func);
-    //   const frameIndex = Math.min(
-    //     frameCount - 1,
-    //     Math.ceil(scrollFraction * frameCount)
-    //   );
-    //   console.log(frameIndex);
-    //   requestAnimationFrame(() => updateImage(frameIndex + 1));
-    // });
 
-    const raf = () => {
-      targetScroll += (scrollTop - targetScroll) * 0.1;
-      // console.log(targetScroll);
-      // console.log("raf");
+    scroll.on("scroll", (func) => {
+      // Get all current elements : func.currentElements
+      if (typeof func.currentElements["hey"] === "object") {
+        let progress = func.currentElements["hey"].progress;
+        console.log(progress);
+        // ouput log example: 0.34
+        // gsap example : myGsapAnimation.progress(progress);
+      }
+    });
 
-      const maxScrollTop = html.scrollHeight - window.innerHeight;
-      const scrollFraction = targetScroll / maxScrollTop;
+    scroll.on("scroll", (func) => {
+      // if (typeof func.currentElements["hey"] === "object") {
+      //   let progress = func.currentElements["hey"].progress;
+      //   console.log(progress);
+      //   // ouput log example: 0.34
+      //   // gsap example : myGsapAnimation.progress(progress);
+      // }
+      const scrollTop = func.scroll.y;
+      const maxScrollTop = holder.scrollHeight - window.innerHeight;
+      const scrollFraction = scrollTop / maxScrollTop;
+      // console.log(func);
       const frameIndex = Math.min(
         frameCount - 1,
         Math.ceil(scrollFraction * frameCount)
       );
-      // debugger;
-      updateImage(frameIndex + 1);
-      requestAnimationFrame(raf);
-    };
-    raf();
-    window.addEventListener("scroll", () => {
-      //const
-      scrollTop = html.scrollTop;
-      invis.seek(scrollTop * 2);
-      console.log(scrollTop * 2);
-      // if (scrollTop > 500) {
-      //   scale.seek(scrollTop * 2);
-      // }
-      // const scrollFraction = scrollTop / maxScrollTop;
-      // const frameIndex = Math.min(
-      //   frameCount - 1,
-      //   Math.ceil(scrollFraction * frameCount)
-      // );
-
-      // requestAnimationFrame(() => updateImage(frameIndex + 1));
+      // console.log(frameIndex);
+      requestAnimationFrame(() => updateImage(frameIndex + 1));
     });
+
+    // scroll.on("scroll", (func) => {
+    //   // Get all current elements : func.currentElements
+    //   if (typeof func.currentElements["hey"] === "object") {
+    //     let progress = func.currentElements["hey"].progress;
+    //     console.log(progress);
+    //     // ouput log example: 0.34
+    //     // gsap example : myGsapAnimation.progress(progress);
+    //   }
+    // });
+    // const raf = () => {
+    //   targetScroll += (scrollTop - targetScroll) * 0.1;
+    //   // console.log(targetScroll);
+    //   // console.log("raf");
+
+    //   const maxScrollTop = html.scrollHeight - window.innerHeight;
+    //   const scrollFraction = targetScroll / maxScrollTop;
+    //   const frameIndex = Math.min(
+    //     frameCount - 1,
+    //     Math.ceil(scrollFraction * frameCount)
+    //   );
+    //   // debugger;
+    //   updateImage(frameIndex + 1);
+    //   requestAnimationFrame(raf);
+    // };
+    // raf();
+    // window.addEventListener("scroll", () => {
+    //   //const
+    //   scrollTop = html.scrollTop;
+    //   invis.seek(scrollTop * 2);
+    //   console.log(scrollTop * 2);
+    //   // if (scrollTop > 500) {
+    //   //   scale.seek(scrollTop * 2);
+    //   // }
+    //   // const scrollFraction = scrollTop / maxScrollTop;
+    //   // const frameIndex = Math.min(
+    //   //   frameCount - 1,
+    //   //   Math.ceil(scrollFraction * frameCount)
+    //   // );
+
+    //   // requestAnimationFrame(() => updateImage(frameIndex + 1));
+    // });
   });
 </script>
 
@@ -111,24 +145,19 @@
   />
 </svelte:head>
 
-<div
-  data-scroll-speed="4"
-  bind:this={holder}
-  data-scroll-container
-  id="stick"
-  class="holder"
->
-  <div class="main__description">
-    <canvas
-      class="canva"
-      data-scroll
-      data-scroll-sticky
-      data-scroll-target="#stick"
-      id="hero-lightpass"
-    />
+<!--  -->
+<div data-scroll-container bind:this={holder} id="stick" class="holder">
+  <div data-scroll data-scroll-target="#stick" class="main__description">
+    <canvas class="canva" id="hero-lightpass" />
     <h1 class="header">SvobodinaPhoto</h1>
     <p class="sub__title">Больше чем просто фотография</p>
   </div>
+  <div
+    data-scroll-offset="50%"
+    data-scroll
+    data-scroll-id="hey"
+    class="tets__div"
+  />
 </div>
 <div class="block2" />
 
@@ -144,7 +173,12 @@
     top: 0px;
     position: sticky;
   }
-
+  .tets__div {
+    /* margin-top: 50vh; */
+    width: 50px;
+    height: 50px;
+    background-color: red;
+  }
   .sub__title {
     place-self: center;
     overflow: hidden;
