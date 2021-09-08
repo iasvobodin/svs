@@ -6,4 +6,9 @@ yarn-error.log
 /static/image/jpg/
 /static/image/svg/
 /static/image/webp/
+/static/image/image2/
+/static/image/frames/
 /raw data/image/
+/raw data/frames/
+/raw data/node_modules/
+/raw data/
